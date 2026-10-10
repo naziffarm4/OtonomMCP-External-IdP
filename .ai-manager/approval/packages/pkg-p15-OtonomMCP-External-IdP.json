@@ -1,0 +1,3855 @@
+{
+  "packageId": "pkg-p15-OtonomMCP-External-IdP",
+  "revision": 1,
+  "approvalPackageRevision": 1,
+  "projectId": "OtonomMCP-External-IdP",
+  "specRevision": 1,
+  "projectSpecRevision": 1,
+  "sourceBindings": {
+    "projectId": "OtonomMCP-External-IdP",
+    "discoveryRevision": 1,
+    "discoveryFingerprint": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f",
+    "requirementsRevision": 1,
+    "requirementsFingerprint": "b34f6f9907c9e4cfee616c779900dd16849c82cfc74df27c5d2eb38e3304311e",
+    "architectureRevision": 1,
+    "architectureFingerprint": "307757d2ada57f1096a013268652d731b07b33195823dfccef62a29b7c14df55",
+    "businessRulesRevision": 1,
+    "businessRulesFingerprint": "6fbfc6097f68bd646d861f48df1f3915adbffd73e7d5b10b949fd4b7c0fe8f17",
+    "acceptanceCriteriaRevision": 1,
+    "acceptanceCriteriaFingerprint": "6b8f50f7a8d5ff0c8880341df503a42c3b5e0b78a56f911a6883aef2841d4b20",
+    "riskRevision": 1,
+    "riskFingerprint": "5e69ccb20e05c8f2db0095e91fc78d83b10c869d3f8a85dbb8a41c7856bb6288",
+    "specRevision": 1,
+    "specFingerprint": "131febfbc648734b4a024de0a0d86b0ec4a91ce70717e39e17ded107612b8d23",
+    "completenessFingerprint": "3a8c731f06e835f4e39eef244d3d203937c158ebc808ebac05cdc226f8e56838",
+    "completenessRevision": 1
+  },
+  "completenessResult": {
+    "projectId": "OtonomMCP-External-IdP",
+    "discoveryRevision": 1,
+    "discoveryFingerprint": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f",
+    "status": "BLOCKED_ON_HUMAN",
+    "isEligibleForApproval": false,
+    "isStale": false,
+    "evaluatedAreas": [
+      {
+        "area": "PROJECT_PURPOSE",
+        "status": "COMPLETE",
+        "evidence": [
+          "Project identity specified: name='OtonomMCP-External-IdP'",
+          "Purpose: OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+          "Desired outcome: Functional, tested, production-ready OtonomMCP-External-IdP fulfilling product requirements."
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "TARGET_USERS",
+        "status": "COMPLETE",
+        "evidence": [
+          "Target users/actors defined (1): End users"
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "PRODUCT_SCOPE",
+        "status": "INCOMPLETE",
+        "evidence": [
+          "No in-scope capabilities or boundaries specified"
+        ],
+        "missingInformation": [
+          "productScope.inScope"
+        ],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "FUNCTIONAL_REQUIREMENTS",
+        "status": "COMPLETE",
+        "evidence": [
+          "Functional capabilities defined (1 requirements with behavioral specifications)"
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "BUSINESS_RULES",
+        "status": "COMPLETE",
+        "evidence": [
+          "Standard domain rules apply; no complex custom business rules required"
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "NON_FUNCTIONAL_REQUIREMENTS",
+        "status": "INCOMPLETE",
+        "evidence": [
+          "No non-functional requirements (performance, reliability, usability) specified"
+        ],
+        "missingInformation": [
+          "nonFunctionalRequirements"
+        ],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "TECHNOLOGY_CONSTRAINTS",
+        "status": "BLOCKED_ON_HUMAN",
+        "evidence": [
+          "Unresolved technology decision: Which primary programming language and framework ecosystem should be used?",
+          "Unresolved technology decision: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+        ],
+        "missingInformation": [
+          "Which primary programming language and framework ecosystem should be used?",
+          "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+        ],
+        "blockingQuestions": [
+          {
+            "id": "Q-TECHNOLOGY-add08684cc9c",
+            "question": "Which primary programming language and framework ecosystem should be used?",
+            "category": "TECHNOLOGY",
+            "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+            "whatItAffects": [
+              "technology choice",
+              "architecture"
+            ],
+            "classification": "BLOCKING",
+            "requiredDecision": "Select programming language and framework",
+            "dependentSection": "technology",
+            "impact": "Implementation cannot begin without selected language and toolchain.",
+            "options": [
+              "TypeScript / Node.js",
+              "Python",
+              "Go",
+              "Rust",
+              "Other"
+            ],
+            "status": "OPEN"
+          },
+          {
+            "id": "Q-TECHNOLOGY-e528ff49e352",
+            "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+            "category": "TECHNOLOGY",
+            "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+            "whatItAffects": [
+              "technology choice",
+              "architecture",
+              "implementation scope"
+            ],
+            "classification": "BLOCKING",
+            "requiredDecision": "Select target platform",
+            "dependentSection": "technology",
+            "impact": "Cannot determine client stack or test targets without platform specification.",
+            "options": [
+              "Web Application",
+              "Mobile Application (iOS/Android)",
+              "Desktop Application",
+              "Command Line Tool (CLI)",
+              "Other"
+            ],
+            "status": "OPEN"
+          }
+        ],
+        "humanDecisions": []
+      },
+      {
+        "area": "ARCHITECTURE_REQUIREMENTS",
+        "status": "BLOCKED_ON_HUMAN",
+        "evidence": [
+          "Architecture requires Product Owner decision: Target Platform & Interface Selection",
+          "Architecture requires Product Owner decision: Deployment & Hosting Environment Model",
+          "Architecture requires Product Owner decision: Which primary programming language and framework ecosystem should be used?",
+          "Architecture requires Product Owner decision: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+        ],
+        "missingInformation": [
+          "Target Platform & Interface Selection",
+          "Deployment & Hosting Environment Model",
+          "Which primary programming language and framework ecosystem should be used?",
+          "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+        ],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "DATA_PERSISTENCE",
+        "status": "NOT_APPLICABLE",
+        "evidence": [
+          "Project is stateless; persistent data storage is genuinely not applicable."
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "EXTERNAL_INTEGRATIONS",
+        "status": "NOT_APPLICABLE",
+        "evidence": [
+          "Self-contained project; no external third-party integrations required."
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "SECURITY_REQUIREMENTS",
+        "status": "COMPLETE",
+        "evidence": [
+          "Local offline tool; baseline execution permissions apply"
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "ACCEPTANCE_CRITERIA",
+        "status": "INCOMPLETE",
+        "evidence": [
+          "Unresolved acceptance question: What are the primary end-to-end user workflows or core interactions?"
+        ],
+        "missingInformation": [
+          "acceptance.measurableCriteria",
+          "What are the primary end-to-end user workflows or core interactions?"
+        ],
+        "blockingQuestions": [
+          {
+            "id": "Q-PRODUCT_SCOPE-913a6ec242f9",
+            "question": "What are the primary end-to-end user workflows or core interactions?",
+            "category": "PRODUCT_SCOPE",
+            "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+            "whatItAffects": [
+              "implementation scope",
+              "acceptance criteria"
+            ],
+            "classification": "BLOCKING",
+            "requiredDecision": "Define primary workflows",
+            "dependentSection": "productScope",
+            "impact": "Tasks and test specifications cannot be formulated without workflows.",
+            "status": "OPEN"
+          }
+        ],
+        "humanDecisions": []
+      },
+      {
+        "area": "DEPLOYMENT_OPERATIONAL",
+        "status": "BLOCKED_ON_HUMAN",
+        "evidence": [
+          "Deployment model requires Product Owner decision: Deployment & Hosting Environment Model"
+        ],
+        "missingInformation": [
+          "Deployment & Hosting Environment Model"
+        ],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "RISKS_DEPENDENCIES",
+        "status": "COMPLETE",
+        "evidence": [
+          "Risks evaluated (0 risks documented)",
+          "External dependencies identified (0): None"
+        ],
+        "missingInformation": [],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      },
+      {
+        "area": "HUMAN_DECISION_POINTS",
+        "status": "BLOCKED_ON_HUMAN",
+        "evidence": [
+          "Product Owner decision pending: 'Target Platform & Interface Selection' with options: [Web Application, Mobile Application (iOS/Android), Desktop Application, Command Line Tool (CLI)]",
+          "Product Owner decision pending: 'Deployment & Hosting Environment Model' with options: [Cloud Hosted (AWS / GCP / Azure), Local / Self-Hosted Docker Container]",
+          "Product Owner decision pending: 'Which primary programming language and framework ecosystem should be used?' with options: [TypeScript / Node.js, Python, Go, Rust, Other]",
+          "Product Owner decision pending: 'What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' with options: [Web Application, Mobile Application (iOS/Android), Desktop Application, Command Line Tool (CLI), Other]"
+        ],
+        "missingInformation": [
+          "Target Platform & Interface Selection",
+          "Deployment & Hosting Environment Model",
+          "Which primary programming language and framework ecosystem should be used?",
+          "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+        ],
+        "blockingQuestions": [],
+        "humanDecisions": []
+      }
+    ],
+    "blockingIssues": [
+      "[PRODUCT_SCOPE] Incomplete specification",
+      "[NON_FUNCTIONAL_REQUIREMENTS] Incomplete specification",
+      "[TECHNOLOGY_CONSTRAINTS] Blocked on Product Owner decision",
+      "[ARCHITECTURE_REQUIREMENTS] Blocked on Product Owner decision",
+      "[ACCEPTANCE_CRITERIA] Incomplete specification",
+      "[DEPLOYMENT_OPERATIONAL] Blocked on Product Owner decision",
+      "[HUMAN_DECISION_POINTS] Blocked on Product Owner decision"
+    ],
+    "missingInformation": [
+      "productScope.inScope",
+      "nonFunctionalRequirements",
+      "Which primary programming language and framework ecosystem should be used?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "Target Platform & Interface Selection",
+      "Deployment & Hosting Environment Model",
+      "Which primary programming language and framework ecosystem should be used?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "acceptance.measurableCriteria",
+      "What are the primary end-to-end user workflows or core interactions?",
+      "Deployment & Hosting Environment Model",
+      "Target Platform & Interface Selection",
+      "Deployment & Hosting Environment Model",
+      "Which primary programming language and framework ecosystem should be used?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+    ],
+    "humanDecisions": [
+      {
+        "decisionId": "HDEC-03a573c86006",
+        "question": "Target Platform & Interface Selection",
+        "whyItMatters": "Choose the primary target runtime platform and application interface.",
+        "affectedSpecificationAreas": [
+          "technology choice",
+          "architecture",
+          "implementation scope"
+        ],
+        "availableOptions": [
+          "Web Application",
+          "Mobile Application (iOS/Android)",
+          "Desktop Application",
+          "Command Line Tool (CLI)"
+        ],
+        "consequenceOfEachOption": {
+          "Web Application": "Provides broadest cross-platform accessibility with zero client installation."
+        },
+        "authority": "USER",
+        "status": "PENDING_DECISION"
+      },
+      {
+        "decisionId": "HDEC-6ef75679d70c",
+        "question": "Deployment & Hosting Environment Model",
+        "whyItMatters": "Select the target deployment model for hosting the production system.",
+        "affectedSpecificationAreas": [
+          "architecture",
+          "operational requirements"
+        ],
+        "availableOptions": [
+          "Cloud Hosted (AWS / GCP / Azure)",
+          "Local / Self-Hosted Docker Container"
+        ],
+        "consequenceOfEachOption": {
+          "Local / Self-Hosted Docker Container": "Simplifies initial validation and eliminates cloud billing dependencies during discovery."
+        },
+        "authority": "USER",
+        "status": "PENDING_DECISION"
+      },
+      {
+        "decisionId": "Q-TECHNOLOGY-add08684cc9c",
+        "question": "Which primary programming language and framework ecosystem should be used?",
+        "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+        "affectedSpecificationAreas": [
+          "technology choice",
+          "architecture"
+        ],
+        "availableOptions": [
+          "TypeScript / Node.js",
+          "Python",
+          "Go",
+          "Rust",
+          "Other"
+        ],
+        "authority": "USER",
+        "status": "PENDING_DECISION"
+      },
+      {
+        "decisionId": "Q-TECHNOLOGY-e528ff49e352",
+        "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+        "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+        "affectedSpecificationAreas": [
+          "technology choice",
+          "architecture",
+          "implementation scope"
+        ],
+        "availableOptions": [
+          "Web Application",
+          "Mobile Application (iOS/Android)",
+          "Desktop Application",
+          "Command Line Tool (CLI)",
+          "Other"
+        ],
+        "authority": "USER",
+        "status": "PENDING_DECISION"
+      }
+    ],
+    "blockingQuestions": [
+      {
+        "id": "Q-PRODUCT_SCOPE-913a6ec242f9",
+        "question": "What are the primary end-to-end user workflows or core interactions?",
+        "category": "PRODUCT_SCOPE",
+        "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+        "whatItAffects": [
+          "implementation scope",
+          "acceptance criteria"
+        ],
+        "classification": "BLOCKING",
+        "requiredDecision": "Define primary workflows",
+        "dependentSection": "productScope",
+        "impact": "Tasks and test specifications cannot be formulated without workflows.",
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-TECHNOLOGY-add08684cc9c",
+        "question": "Which primary programming language and framework ecosystem should be used?",
+        "category": "TECHNOLOGY",
+        "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+        "whatItAffects": [
+          "technology choice",
+          "architecture"
+        ],
+        "classification": "BLOCKING",
+        "requiredDecision": "Select programming language and framework",
+        "dependentSection": "technology",
+        "impact": "Implementation cannot begin without selected language and toolchain.",
+        "options": [
+          "TypeScript / Node.js",
+          "Python",
+          "Go",
+          "Rust",
+          "Other"
+        ],
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-TECHNOLOGY-e528ff49e352",
+        "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+        "category": "TECHNOLOGY",
+        "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+        "whatItAffects": [
+          "technology choice",
+          "architecture",
+          "implementation scope"
+        ],
+        "classification": "BLOCKING",
+        "requiredDecision": "Select target platform",
+        "dependentSection": "technology",
+        "impact": "Cannot determine client stack or test targets without platform specification.",
+        "options": [
+          "Web Application",
+          "Mobile Application (iOS/Android)",
+          "Desktop Application",
+          "Command Line Tool (CLI)",
+          "Other"
+        ],
+        "status": "OPEN"
+      }
+    ],
+    "nonBlockingQuestions": [
+      {
+        "id": "Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658",
+        "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+        "category": "NON_FUNCTIONAL_REQUIREMENTS",
+        "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+        "whatItAffects": [
+          "operational telemetry"
+        ],
+        "classification": "NON_BLOCKING",
+        "requiredDecision": "Select optional telemetry provider or defer",
+        "dependentSection": "nonFunctionalRequirements",
+        "impact": "Informational for monitoring; does not prevent core business logic construction.",
+        "options": [
+          "OpenTelemetry / Prometheus",
+          "Sentry",
+          "Standard Console / File Logs only",
+          "Other"
+        ],
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-PROJECT_IDENTITY-f65f183a26b7",
+        "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+        "category": "PROJECT_IDENTITY",
+        "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+        "whatItAffects": [
+          "documentation files"
+        ],
+        "classification": "INFORMATIONAL",
+        "requiredDecision": "Select documentation format preference",
+        "dependentSection": "projectIdentity",
+        "impact": "Zero execution impact.",
+        "options": [
+          "Markdown Documentation in docs/",
+          "OpenAPI / Swagger JSON & YAML",
+          "Other"
+        ],
+        "status": "OPEN"
+      }
+    ],
+    "evaluatedAt": "2026-10-10T12:40:30.054Z",
+    "fingerprint": "3a8c731f06e835f4e39eef244d3d203937c158ebc808ebac05cdc226f8e56838"
+  },
+  "unresolvedHumanDecisionPoints": [
+    {
+      "decisionId": "HDP-03A51A71C2FD",
+      "title": "Business Rule Decision: BD-ECF6C0A9",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedRisks": [
+        "RISK-BUSINESS-77024C82BE7B"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-095579CCCD96",
+      "title": "Acceptance Decision: ACD-7CFD09F9",
+      "question": "How should business rule 'Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-4A080B8D has status PENDING_DECISION.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-69A9A98AACEC"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-77E69217"
+      ],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-0F5BA56A24A5",
+      "title": "Architecture Decision: SCOPE-UNDECIDED-Q-TECHNOLOGY-add08684cc9c",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-253CBDBF02D6"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-1503D07E5B7D",
+      "title": "Acceptance Decision: ACD-27C86C3C",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-DCE9710124A2"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-158DF1B50F81",
+      "title": "Business Rule Decision: BD-60E793EF",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "affectedRisks": [
+        "RISK-BUSINESS-9611BDD6071E"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "OpenTelemetry / Prometheus",
+        "Other",
+        "Sentry",
+        "Standard Console / File Logs only"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-1C888795F09F",
+      "title": "Decide Architecture: ARCH-DEC-005",
+      "question": "What target platform and user interface type will this system provide?",
+      "whyItMatters": "Decision ARCH-DEC-005 (PLATFORM) defines structural constraints.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-4FD80453F6A9"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [
+        "ARCH-DEC-005"
+      ],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "CLI (Command Line Interface)",
+        "Desktop Application",
+        "Library / Module",
+        "Web Application"
+      ],
+      "consequences": [
+        "Governs UI framework selection, runtime environment, and client persistence"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-1E1BF2246B2C",
+      "title": "Architecture Decision: SCOPE-UNDECIDED-Q-TECHNOLOGY-e528ff49e352",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-E0A16AF75AA1"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-1FA67F93A8BA",
+      "title": "Business Rule Decision: BD-07018E62",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRisks": [
+        "RISK-BUSINESS-0A47A47C4A48"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-21039CFBA8B2",
+      "title": "Acceptance Decision: ACD-0B5B076F",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-AC85A97C224D"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-2366BE874C2F",
+      "title": "Acceptance Decision: ACD-0F73DF62",
+      "question": "How should architectural decision 'What target platform and user interface type will this system provide?' be resolved?",
+      "whyItMatters": "Architecture decision ARCH-DEC-005 has status PENDING_DECISION.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-4C5E26B97AAF"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-E7AF4CA8"
+      ],
+      "availableOptions": [
+        "CLI (Command Line Interface)",
+        "Desktop Application",
+        "Library / Module",
+        "Web Application"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until decided"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-24DF5F3A4AF2",
+      "title": "Business Rule Decision: BD-C48F518F",
+      "question": "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "affectedRisks": [
+        "RISK-BUSINESS-7635D6BBA35B"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-82B98E12"
+      ],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Deployment & Hosting Environment Model."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-2AA2D711D514",
+      "title": "Decide Architecture: ARCH-DEC-001",
+      "question": "What architectural style and subsystem topology will govern the system?",
+      "whyItMatters": "Decision ARCH-DEC-001 (STYLE) defines structural constraints.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-028B2F39DD27"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [
+        "ARCH-DEC-001"
+      ],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "client-server",
+        "microservices",
+        "modular-monolith",
+        "monolith"
+      ],
+      "consequences": [
+        "Governs module boundaries, communication patterns, and deployment units"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-2C3AF4536E59",
+      "title": "Define Acceptance Threshold: Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Rule Enforcement",
+      "question": "What is the acceptable verification criteria or threshold for Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Rule Enforcement?",
+      "whyItMatters": "Criterion AC-77E69217 cannot be verified without an agreed threshold.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-5EEB7F176ACD"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-4A080B8D"
+      ],
+      "affectedAcceptanceCriteria": [
+        "AC-77E69217"
+      ],
+      "availableOptions": [
+        "Specify numeric/operational threshold",
+        "Waive requirement for MVP",
+        "Revise verification method"
+      ],
+      "consequences": [
+        "Acceptance threshold determines test pass/fail conditions."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-3674758F5306",
+      "title": "Architecture Decision: HDEC-6ef75679d70c",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-CA247D691BC4"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-413C37F0200E",
+      "title": "Business Rule Decision: BD-0B5D1364",
+      "question": "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRisks": [
+        "RISK-BUSINESS-0D5226BA3CFE"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-4A080B8D"
+      ],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-4606234B755C",
+      "title": "Acceptance Decision: ACD-5FCABE84",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-E8FE120B8BC7"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Accept",
+        "Reject",
+        "Defer"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-478AE13B97DE",
+      "title": "Acceptance Decision: ACD-061E4B36",
+      "question": "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-67640975B6EE"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Deployment & Hosting Environment Model."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-50F71E4DB33A",
+      "title": "Acceptance Decision: ACD-EF1F4544",
+      "question": "How should architectural decision 'What primary data storage technology and strategy should be selected?' be resolved?",
+      "whyItMatters": "Architecture decision ARCH-DEC-002 has status PENDING_DECISION.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-E720C85E37D4"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-C725C33A"
+      ],
+      "availableOptions": [
+        "Define selected architecture option"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until decided"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-59A919D3EC47",
+      "title": "Business Rule Decision: BD-7BF2CD23",
+      "question": "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "affectedRisks": [
+        "RISK-BUSINESS-DC3248BDE593"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-D30396C4"
+      ],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Target Platform & Interface Selection."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-5CF5A893C4CB",
+      "title": "Acceptance Decision: ACD-D316D83E",
+      "question": "How should business rule 'Pending Policy: Which primary programming language and framework ecosystem should be used?' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-6474DF22 has status PENDING_DECISION.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-791EA7BBB508"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-5D7EF5134C32",
+      "title": "Acceptance Decision: ACD-215E01CF",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-42AE3AB8B66D"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "OpenTelemetry / Prometheus",
+        "Other",
+        "Sentry",
+        "Standard Console / File Logs only"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-61C5E562DF6D",
+      "title": "Acceptance Decision: ACD-32ED0B94",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-8E87BECCC10A"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-63973A5E5B7A",
+      "title": "Business Rule Decision: BD-8BBF327D",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "affectedRisks": [
+        "RISK-BUSINESS-AAD323C07E07"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-83BD446AFEC4",
+      "title": "Business Rule Decision: BD-94A393BB",
+      "question": "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRisks": [
+        "RISK-BUSINESS-135D2D799002"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-6474DF22"
+      ],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Which primary programming language and framework ecosystem should be used?."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-85A1C8305FBC",
+      "title": "Architecture Decision: Q-PRODUCT_SCOPE-913a6ec242f9",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-A5CA025B8800"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Accept",
+        "Reject",
+        "Defer"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-89941F4F8710",
+      "title": "Business Rule Decision: BD-B72C116C",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRisks": [
+        "RISK-BUSINESS-5382339E925A"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-950DE9A23390",
+      "title": "Define Acceptance Threshold: PLATFORM: Boundary Verification",
+      "question": "What is the acceptable verification criteria or threshold for PLATFORM: Boundary Verification?",
+      "whyItMatters": "Criterion AC-E7AF4CA8 cannot be verified without an agreed threshold.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-F6F7CDE86DC3"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [
+        "ARCH-DEC-005"
+      ],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-E7AF4CA8"
+      ],
+      "availableOptions": [
+        "Specify numeric/operational threshold",
+        "Waive requirement for MVP",
+        "Revise verification method"
+      ],
+      "consequences": [
+        "Acceptance threshold determines test pass/fail conditions."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-972E36318D4D",
+      "title": "Deployment & Hosting Environment Model",
+      "question": "Select the target deployment model for hosting the production system.",
+      "whyItMatters": "Scope decision for Deployment & Hosting Environment Model affects project boundaries.",
+      "affectedRisks": [
+        "RISK-SCOPE-E3E2DBC404F2"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [
+        "Alternative choice establishes scope baseline."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-9CE295FA9F49",
+      "title": "Target Platform & Interface Selection",
+      "question": "Choose the primary target runtime platform and application interface.",
+      "whyItMatters": "Scope decision for Target Platform & Interface Selection affects project boundaries.",
+      "affectedRisks": [
+        "RISK-SCOPE-50502FE08D7A"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [
+        "Alternative choice establishes scope baseline."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-9E959329AEFE",
+      "title": "Define Acceptance Threshold: DATA: Boundary Verification",
+      "question": "What is the acceptable verification criteria or threshold for DATA: Boundary Verification?",
+      "whyItMatters": "Criterion AC-C725C33A cannot be verified without an agreed threshold.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-1B5AA4EAAF45"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [
+        "ARCH-DEC-002"
+      ],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-C725C33A"
+      ],
+      "availableOptions": [
+        "Specify numeric/operational threshold",
+        "Waive requirement for MVP",
+        "Revise verification method"
+      ],
+      "consequences": [
+        "Acceptance threshold determines test pass/fail conditions."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-A03A451A4DC1",
+      "title": "Acceptance Decision: ACD-DD8280B9",
+      "question": "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-DCFE04556BAB"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-FD7ED327"
+      ],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Target Platform & Interface Selection."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-A2929E705B7C",
+      "title": "Target Platform & Interface Selection",
+      "question": "Choose the primary target runtime platform and application interface.",
+      "whyItMatters": "Discovery decision for Target Platform & Interface Selection impacts project direction.",
+      "affectedRisks": [
+        "RISK-PRODUCT-89DDC06D06C5"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)"
+      ],
+      "consequences": [
+        "Alternative selection establishes scope baseline."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-B1BABAA01F34",
+      "title": "Acceptance Decision: ACD-9E2DF388",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-B7BACCE3D4C6"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-B8EC8D027FE1",
+      "title": "Architecture Decision: Q-PROJECT_IDENTITY-f65f183a26b7",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-9428E7D077C9"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-D215D9D425A7",
+      "title": "Decide Architecture: ARCH-DEC-004",
+      "question": "What runtime and programming languages constrain this project?",
+      "whyItMatters": "Decision ARCH-DEC-004 (TECH_STACK) defines structural constraints.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-786D37C36BA8"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [
+        "ARCH-DEC-004"
+      ],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Approve proposed approach",
+        "Select alternative architecture",
+        "Defer with prototype"
+      ],
+      "consequences": [
+        "Constrains toolchain, library ecosystem, and runtime execution"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-DB0219381F97",
+      "title": "Acceptance Decision: ACD-5495674F",
+      "question": "How should business rule 'Pending Policy: Deployment & Hosting Environment Model' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-82B98E12 has status PENDING_DECISION.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-CEBCA6A54BA4"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-E1038700BB0F",
+      "title": "Acceptance Decision: ACD-DEE770BF",
+      "question": "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-34E2EBA56DA2"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Which primary programming language and framework ecosystem should be used?."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-E3AEAB3AFF0B",
+      "title": "Architecture Decision: Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-09D95B2187A1"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "OpenTelemetry / Prometheus",
+        "Other",
+        "Sentry",
+        "Standard Console / File Logs only"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-E65CEC62D6AB",
+      "title": "Business Rule Decision: BD-32E4F153",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "affectedRisks": [
+        "RISK-BUSINESS-321852B7E925"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Accept",
+        "Reject",
+        "Defer"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-E9590870E3B2",
+      "title": "Decide Architecture: ARCH-DEC-002",
+      "question": "What primary data storage technology and strategy should be selected?",
+      "whyItMatters": "Decision ARCH-DEC-002 (DATA) defines structural constraints.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-26771BC4CC4C"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureDecisions": [
+        "ARCH-DEC-002"
+      ],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Approve proposed approach",
+        "Select alternative architecture",
+        "Defer with prototype"
+      ],
+      "consequences": [
+        "Determines data modeling, migration strategies, and persistence adapters"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-E9705CA3B52F",
+      "title": "Define Acceptance Threshold: Pending Policy: Deployment & Hosting Environment Model: Rule Enforcement",
+      "question": "What is the acceptable verification criteria or threshold for Pending Policy: Deployment & Hosting Environment Model: Rule Enforcement?",
+      "whyItMatters": "Criterion AC-E1E67B1D cannot be verified without an agreed threshold.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-C83067B775C8"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-82B98E12"
+      ],
+      "affectedAcceptanceCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "availableOptions": [
+        "Specify numeric/operational threshold",
+        "Waive requirement for MVP",
+        "Revise verification method"
+      ],
+      "consequences": [
+        "Acceptance threshold determines test pass/fail conditions."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-EC7EF7809EEF",
+      "title": "Define Acceptance Threshold: Pending Policy: Which primary programming language and framework ecosystem should be used?: Rule Enforcement",
+      "question": "What is the acceptable verification criteria or threshold for Pending Policy: Which primary programming language and framework ecosystem should be used?: Rule Enforcement?",
+      "whyItMatters": "Criterion AC-BBC12DD9 cannot be verified without an agreed threshold.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-B8E3F9C98CCD"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-6474DF22"
+      ],
+      "affectedAcceptanceCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "availableOptions": [
+        "Specify numeric/operational threshold",
+        "Waive requirement for MVP",
+        "Revise verification method"
+      ],
+      "consequences": [
+        "Acceptance threshold determines test pass/fail conditions."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-EDB5EEDB4BFE",
+      "title": "Business Rule Decision: BD-9B9D4454",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedRisks": [
+        "RISK-BUSINESS-36831F8920C1"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-EDC65B5BE88D",
+      "title": "Deployment & Hosting Environment Model",
+      "question": "Select the target deployment model for hosting the production system.",
+      "whyItMatters": "Discovery decision for Deployment & Hosting Environment Model impacts project direction.",
+      "affectedRisks": [
+        "RISK-PRODUCT-B888B78D9163"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [
+        "Alternative selection establishes scope baseline."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-EE4F2AEF9FB3",
+      "title": "Define Acceptance Threshold: Pending Policy: Target Platform & Interface Selection: Rule Enforcement",
+      "question": "What is the acceptable verification criteria or threshold for Pending Policy: Target Platform & Interface Selection: Rule Enforcement?",
+      "whyItMatters": "Criterion AC-FD7ED327 cannot be verified without an agreed threshold.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-E343FA23CDD6"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [
+        "BR-D30396C4"
+      ],
+      "affectedAcceptanceCriteria": [
+        "AC-FD7ED327"
+      ],
+      "availableOptions": [
+        "Specify numeric/operational threshold",
+        "Waive requirement for MVP",
+        "Revise verification method"
+      ],
+      "consequences": [
+        "Acceptance threshold determines test pass/fail conditions."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-F169D21498FA",
+      "title": "Acceptance Decision: ACD-161A2E36",
+      "question": "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-77D2C3FDD7D2"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-77E69217"
+      ],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?."
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-F1BA6E719659",
+      "title": "Acceptance Decision: ACD-60D9CAFC",
+      "question": "How should business rule 'Pending Policy: Target Platform & Interface Selection' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-D30396C4 has status PENDING_DECISION.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-4839383EA949"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [
+        "AC-FD7ED327"
+      ],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-F1F2F6866221",
+      "title": "Acceptance Decision: ACD-B7CCCA2A",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRisks": [
+        "RISK-REQUIREMENT-FB92909BB0D9"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDP-FBA5E4E7FF15",
+      "title": "Architecture Decision: HDEC-03a573c86006",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedRisks": [
+        "RISK-ARCHITECTURE-4D3BBDB084AA"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureDecisions": [],
+      "affectedBusinessRules": [],
+      "affectedAcceptanceCriteria": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [],
+      "recommendedInformation": "",
+      "authority": "PRODUCT_OWNER",
+      "status": "PENDING_DECISION",
+      "metadata": {}
+    },
+    {
+      "decisionId": "HDEC-03a573c86006",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedSpecificationAreas": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "availableOptions": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)"
+      ],
+      "consequenceOfEachOption": {
+        "Web Application": "Provides broadest cross-platform accessibility with zero client installation."
+      },
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "HDEC-6ef75679d70c",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedSpecificationAreas": [
+        "architecture",
+        "operational requirements"
+      ],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequenceOfEachOption": {
+        "Local / Self-Hosted Docker Container": "Simplifies initial validation and eliminates cloud billing dependencies during discovery."
+      },
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "Q-TECHNOLOGY-add08684cc9c",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedSpecificationAreas": [
+        "technology choice",
+        "architecture"
+      ],
+      "availableOptions": [
+        "TypeScript / Node.js",
+        "Python",
+        "Go",
+        "Rust",
+        "Other"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "Q-TECHNOLOGY-e528ff49e352",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedSpecificationAreas": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "availableOptions": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)",
+        "Other"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    }
+  ],
+  "risksRequiringAttention": [
+    {
+      "riskId": "RISK-ARCHITECTURE-028B2F39DD27",
+      "title": "Pending Architecture Decision: ARCH-DEC-001",
+      "description": "What architectural style and subsystem topology will govern the system?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision ARCH-DEC-001 (What architectural style and subsystem topology will govern the system?) is proposed but not finalized.",
+      "consequences": [
+        "Governs module boundaries, communication patterns, and deployment units"
+      ],
+      "mitigation": "Review architectural tradeoffs and obtain Product Owner decision.",
+      "contingency": "Default to conservative monolithic or standard reference pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-001"
+      ],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-028B2F39DD27",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-001"
+        ],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-09D95B2187A1",
+      "title": "Architecture Decision: Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658",
+      "description": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658 requires Product Owner selection: Can be configured as an integration without blocking core domain development.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-09D95B2187A1",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-253CBDBF02D6",
+      "title": "Architecture Decision: SCOPE-UNDECIDED-Q-TECHNOLOGY-add08684cc9c",
+      "description": "Which primary programming language and framework ecosystem should be used?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision SCOPE-UNDECIDED-Q-TECHNOLOGY-add08684cc9c requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-253CBDBF02D6",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-26771BC4CC4C",
+      "title": "Pending Architecture Decision: ARCH-DEC-002",
+      "description": "What primary data storage technology and strategy should be selected?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision ARCH-DEC-002 (What primary data storage technology and strategy should be selected?) is proposed but not finalized.",
+      "consequences": [
+        "Determines data modeling, migration strategies, and persistence adapters"
+      ],
+      "mitigation": "Review architectural tradeoffs and obtain Product Owner decision.",
+      "contingency": "Default to conservative monolithic or standard reference pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-002"
+      ],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-26771BC4CC4C",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-002"
+        ],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-4D3BBDB084AA",
+      "title": "Architecture Decision: HDEC-03a573c86006",
+      "description": "Target Platform & Interface Selection",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision HDEC-03a573c86006 requires Product Owner selection: Choose the primary target runtime platform and application interface.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-4D3BBDB084AA",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-4FD80453F6A9",
+      "title": "Pending Architecture Decision: ARCH-DEC-005",
+      "description": "What target platform and user interface type will this system provide?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision ARCH-DEC-005 (What target platform and user interface type will this system provide?) is proposed but not finalized.",
+      "consequences": [
+        "Governs UI framework selection, runtime environment, and client persistence"
+      ],
+      "mitigation": "Review architectural tradeoffs and obtain Product Owner decision.",
+      "contingency": "Default to conservative monolithic or standard reference pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-005"
+      ],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-4FD80453F6A9",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-005"
+        ],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-786D37C36BA8",
+      "title": "Pending Architecture Decision: ARCH-DEC-004",
+      "description": "What runtime and programming languages constrain this project?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision ARCH-DEC-004 (What runtime and programming languages constrain this project?) is proposed but not finalized.",
+      "consequences": [
+        "Constrains toolchain, library ecosystem, and runtime execution"
+      ],
+      "mitigation": "Review architectural tradeoffs and obtain Product Owner decision.",
+      "contingency": "Default to conservative monolithic or standard reference pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-004"
+      ],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-786D37C36BA8",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-004"
+        ],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-9428E7D077C9",
+      "title": "Architecture Decision: Q-PROJECT_IDENTITY-f65f183a26b7",
+      "description": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision Q-PROJECT_IDENTITY-f65f183a26b7 requires Product Owner selection: Cosmetic and developer documentation preference with zero runtime consequence.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-9428E7D077C9",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-A5CA025B8800",
+      "title": "Architecture Decision: Q-PRODUCT_SCOPE-913a6ec242f9",
+      "description": "What are the primary end-to-end user workflows or core interactions?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision Q-PRODUCT_SCOPE-913a6ec242f9 requires Product Owner selection: Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-A5CA025B8800",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-CA247D691BC4",
+      "title": "Architecture Decision: HDEC-6ef75679d70c",
+      "description": "Deployment & Hosting Environment Model",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision HDEC-6ef75679d70c requires Product Owner selection: Select the target deployment model for hosting the production system.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-CA247D691BC4",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-ARCHITECTURE-E0A16AF75AA1",
+      "title": "Architecture Decision: SCOPE-UNDECIDED-Q-TECHNOLOGY-e528ff49e352",
+      "description": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "category": "ARCHITECTURE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Architecture decision SCOPE-UNDECIDED-Q-TECHNOLOGY-e528ff49e352 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "consequences": [
+        "Architecture choice affects non-functional characteristics."
+      ],
+      "mitigation": "Product Owner must choose between architecture options.",
+      "contingency": "Select simplest proven pattern.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-ARCHITECTURE-E0A16AF75AA1",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-0A47A47C4A48",
+      "title": "Business Rule Decision: BD-07018E62",
+      "description": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-07018E62 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-0A47A47C4A48",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-0D5226BA3CFE",
+      "title": "Business Rule Decision: BD-0B5D1364",
+      "description": "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-0B5D1364 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-4A080B8D"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-0D5226BA3CFE",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-4A080B8D"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-135D2D799002",
+      "title": "Business Rule Decision: BD-94A393BB",
+      "description": "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-94A393BB requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Which primary programming language and framework ecosystem should be used?."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-6474DF22"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-135D2D799002",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-6474DF22"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-321852B7E925",
+      "title": "Business Rule Decision: BD-32E4F153",
+      "description": "What are the primary end-to-end user workflows or core interactions?",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-32E4F153 requires Product Owner selection: Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-321852B7E925",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-36831F8920C1",
+      "title": "Business Rule Decision: BD-9B9D4454",
+      "description": "Deployment & Hosting Environment Model",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-9B9D4454 requires Product Owner selection: Select the target deployment model for hosting the production system.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-36831F8920C1",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-5382339E925A",
+      "title": "Business Rule Decision: BD-B72C116C",
+      "description": "Which primary programming language and framework ecosystem should be used?",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-B72C116C requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-5382339E925A",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-7635D6BBA35B",
+      "title": "Business Rule Decision: BD-C48F518F",
+      "description": "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-C48F518F requires Product Owner selection: Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Deployment & Hosting Environment Model."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-82B98E12"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-7635D6BBA35B",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-82B98E12"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-77024C82BE7B",
+      "title": "Business Rule Decision: BD-ECF6C0A9",
+      "description": "Target Platform & Interface Selection",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-ECF6C0A9 requires Product Owner selection: Choose the primary target runtime platform and application interface.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-77024C82BE7B",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-9611BDD6071E",
+      "title": "Business Rule Decision: BD-60E793EF",
+      "description": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-60E793EF requires Product Owner selection: Can be configured as an integration without blocking core domain development.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-9611BDD6071E",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-AAD323C07E07",
+      "title": "Business Rule Decision: BD-8BBF327D",
+      "description": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-8BBF327D requires Product Owner selection: Cosmetic and developer documentation preference with zero runtime consequence.",
+      "consequences": [
+        "Policy selection changes business domain validation."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-AAD323C07E07",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-BUSINESS-DC3248BDE593",
+      "title": "Business Rule Decision: BD-7BF2CD23",
+      "description": "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "category": "BUSINESS",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Business rule decision BD-7BF2CD23 requires Product Owner selection: Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Target Platform & Interface Selection."
+      ],
+      "mitigation": "Product Owner must decide between rule alternatives.",
+      "contingency": "Hold execution of dependent business rule logic.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-D30396C4"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-BUSINESS-DC3248BDE593",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-D30396C4"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-PRODUCT-89DDC06D06C5",
+      "title": "Discovery Decision: Target Platform & Interface Selection",
+      "description": "Choose the primary target runtime platform and application interface.",
+      "category": "PRODUCT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Discovery human decision \"Target Platform & Interface Selection\" requires Product Owner selection.",
+      "consequences": [
+        "Unresolved discovery decision leaves product boundary uncertain."
+      ],
+      "mitigation": "Product Owner must decide between alternatives.",
+      "contingency": "Adopt conservative recommendation.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [
+        "Target Platform & Interface Selection"
+      ],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-PRODUCT-89DDC06D06C5",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": [
+          "Target Platform & Interface Selection"
+        ]
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-PRODUCT-B888B78D9163",
+      "title": "Discovery Decision: Deployment & Hosting Environment Model",
+      "description": "Select the target deployment model for hosting the production system.",
+      "category": "PRODUCT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Discovery human decision \"Deployment & Hosting Environment Model\" requires Product Owner selection.",
+      "consequences": [
+        "Unresolved discovery decision leaves product boundary uncertain."
+      ],
+      "mitigation": "Product Owner must decide between alternatives.",
+      "contingency": "Adopt conservative recommendation.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [
+        "Deployment & Hosting Environment Model"
+      ],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-PRODUCT-B888B78D9163",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": [
+          "Deployment & Hosting Environment Model"
+        ]
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-1B5AA4EAAF45",
+      "title": "Pending Acceptance Criterion: DATA: Boundary Verification",
+      "description": "Acceptance criterion AC-C725C33A is pending explicit Product Owner decision.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance criterion AC-C725C33A is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "consequences": [
+        "Unresolved acceptance threshold blocks verification and acceptance signoff."
+      ],
+      "mitigation": "Product Owner must decide acceptable threshold or verification criterion.",
+      "contingency": "Hold signoff on affected requirement until threshold is decided.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-002"
+      ],
+      "sourceAcceptanceCriteria": [
+        "AC-C725C33A"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-1B5AA4EAAF45",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-002"
+        ],
+        "acceptanceCriteriaIds": [
+          "AC-C725C33A"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-34E2EBA56DA2",
+      "title": "Acceptance Decision: ACD-DEE770BF",
+      "description": "Pending human decision from acceptance criteria: Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-DEE770BF requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-34E2EBA56DA2",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-BBC12DD9"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-42AE3AB8B66D",
+      "title": "Acceptance Decision: ACD-215E01CF",
+      "description": "Pending human decision from acceptance criteria: Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-215E01CF requires Product Owner selection: Can be configured as an integration without blocking core domain development.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-42AE3AB8B66D",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-4839383EA949",
+      "title": "Acceptance Decision: ACD-60D9CAFC",
+      "description": "Pending human decision from acceptance criteria: How should business rule 'Pending Policy: Target Platform & Interface Selection' be resolved for acceptance?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-60D9CAFC requires Product Owner selection: Underlying business rule BR-D30396C4 has status PENDING_DECISION.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-FD7ED327"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-4839383EA949",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-FD7ED327"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-4C5E26B97AAF",
+      "title": "Acceptance Decision: ACD-0F73DF62",
+      "description": "Pending human decision from acceptance criteria: How should architectural decision 'What target platform and user interface type will this system provide?' be resolved?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-0F73DF62 requires Product Owner selection: Architecture decision ARCH-DEC-005 has status PENDING_DECISION.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-E7AF4CA8"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-4C5E26B97AAF",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-E7AF4CA8"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-5EEB7F176ACD",
+      "title": "Pending Acceptance Criterion: Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Rule Enforcement",
+      "description": "Acceptance criterion AC-77E69217 is pending explicit Product Owner decision.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance criterion AC-77E69217 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "consequences": [
+        "Unresolved acceptance threshold blocks verification and acceptance signoff."
+      ],
+      "mitigation": "Product Owner must decide acceptable threshold or verification criterion.",
+      "contingency": "Hold signoff on affected requirement until threshold is decided.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-4A080B8D"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-77E69217"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-5EEB7F176ACD",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-4A080B8D"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-77E69217"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-67640975B6EE",
+      "title": "Acceptance Decision: ACD-061E4B36",
+      "description": "Pending human decision from acceptance criteria: Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-061E4B36 requires Product Owner selection: Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-67640975B6EE",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-E1E67B1D"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-69A9A98AACEC",
+      "title": "Acceptance Decision: ACD-7CFD09F9",
+      "description": "Pending human decision from acceptance criteria: How should business rule 'Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' be resolved for acceptance?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-7CFD09F9 requires Product Owner selection: Underlying business rule BR-4A080B8D has status PENDING_DECISION.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-77E69217"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-69A9A98AACEC",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-77E69217"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-77D2C3FDD7D2",
+      "title": "Acceptance Decision: ACD-161A2E36",
+      "description": "Pending human decision from acceptance criteria: Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-161A2E36 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-77E69217"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-77D2C3FDD7D2",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-77E69217"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-791EA7BBB508",
+      "title": "Acceptance Decision: ACD-D316D83E",
+      "description": "Pending human decision from acceptance criteria: How should business rule 'Pending Policy: Which primary programming language and framework ecosystem should be used?' be resolved for acceptance?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-D316D83E requires Product Owner selection: Underlying business rule BR-6474DF22 has status PENDING_DECISION.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-791EA7BBB508",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-BBC12DD9"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-8E87BECCC10A",
+      "title": "Acceptance Decision: ACD-32ED0B94",
+      "description": "Pending human decision from acceptance criteria: What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-32ED0B94 requires Product Owner selection: Cosmetic and developer documentation preference with zero runtime consequence.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-8E87BECCC10A",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-AC85A97C224D",
+      "title": "Acceptance Decision: ACD-0B5B076F",
+      "description": "Pending human decision from acceptance criteria: Target Platform & Interface Selection",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-0B5B076F requires Product Owner selection: Choose the primary target runtime platform and application interface.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-AC85A97C224D",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-B7BACCE3D4C6",
+      "title": "Acceptance Decision: ACD-9E2DF388",
+      "description": "Pending human decision from acceptance criteria: Which primary programming language and framework ecosystem should be used?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-9E2DF388 requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-B7BACCE3D4C6",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-B8E3F9C98CCD",
+      "title": "Pending Acceptance Criterion: Pending Policy: Which primary programming language and framework ecosystem should be used?: Rule Enforcement",
+      "description": "Acceptance criterion AC-BBC12DD9 is pending explicit Product Owner decision.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance criterion AC-BBC12DD9 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "consequences": [
+        "Unresolved acceptance threshold blocks verification and acceptance signoff."
+      ],
+      "mitigation": "Product Owner must decide acceptable threshold or verification criterion.",
+      "contingency": "Hold signoff on affected requirement until threshold is decided.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-6474DF22"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-B8E3F9C98CCD",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-6474DF22"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-BBC12DD9"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-C83067B775C8",
+      "title": "Pending Acceptance Criterion: Pending Policy: Deployment & Hosting Environment Model: Rule Enforcement",
+      "description": "Acceptance criterion AC-E1E67B1D is pending explicit Product Owner decision.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance criterion AC-E1E67B1D is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "consequences": [
+        "Unresolved acceptance threshold blocks verification and acceptance signoff."
+      ],
+      "mitigation": "Product Owner must decide acceptable threshold or verification criterion.",
+      "contingency": "Hold signoff on affected requirement until threshold is decided.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-82B98E12"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-C83067B775C8",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-82B98E12"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-E1E67B1D"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-CEBCA6A54BA4",
+      "title": "Acceptance Decision: ACD-5495674F",
+      "description": "Pending human decision from acceptance criteria: How should business rule 'Pending Policy: Deployment & Hosting Environment Model' be resolved for acceptance?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-5495674F requires Product Owner selection: Underlying business rule BR-82B98E12 has status PENDING_DECISION.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-CEBCA6A54BA4",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-E1E67B1D"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-DCE9710124A2",
+      "title": "Acceptance Decision: ACD-27C86C3C",
+      "description": "Pending human decision from acceptance criteria: Deployment & Hosting Environment Model",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-27C86C3C requires Product Owner selection: Select the target deployment model for hosting the production system.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-DCE9710124A2",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-DCFE04556BAB",
+      "title": "Acceptance Decision: ACD-DD8280B9",
+      "description": "Pending human decision from acceptance criteria: Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-DD8280B9 requires Product Owner selection: Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-FD7ED327"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-DCFE04556BAB",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-FD7ED327"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-E343FA23CDD6",
+      "title": "Pending Acceptance Criterion: Pending Policy: Target Platform & Interface Selection: Rule Enforcement",
+      "description": "Acceptance criterion AC-FD7ED327 is pending explicit Product Owner decision.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance criterion AC-FD7ED327 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "consequences": [
+        "Unresolved acceptance threshold blocks verification and acceptance signoff."
+      ],
+      "mitigation": "Product Owner must decide acceptable threshold or verification criterion.",
+      "contingency": "Hold signoff on affected requirement until threshold is decided.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-D30396C4"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-FD7ED327"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-E343FA23CDD6",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-D30396C4"
+        ],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-FD7ED327"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-E720C85E37D4",
+      "title": "Acceptance Decision: ACD-EF1F4544",
+      "description": "Pending human decision from acceptance criteria: How should architectural decision 'What primary data storage technology and strategy should be selected?' be resolved?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-EF1F4544 requires Product Owner selection: Architecture decision ARCH-DEC-002 has status PENDING_DECISION.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [
+        "AC-C725C33A"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-E720C85E37D4",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [
+          "AC-C725C33A"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-E8FE120B8BC7",
+      "title": "Acceptance Decision: ACD-5FCABE84",
+      "description": "Pending human decision from acceptance criteria: What are the primary end-to-end user workflows or core interactions?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-5FCABE84 requires Product Owner selection: Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-E8FE120B8BC7",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-F6F7CDE86DC3",
+      "title": "Pending Acceptance Criterion: PLATFORM: Boundary Verification",
+      "description": "Acceptance criterion AC-E7AF4CA8 is pending explicit Product Owner decision.",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance criterion AC-E7AF4CA8 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "consequences": [
+        "Unresolved acceptance threshold blocks verification and acceptance signoff."
+      ],
+      "mitigation": "Product Owner must decide acceptable threshold or verification criterion.",
+      "contingency": "Hold signoff on affected requirement until threshold is decided.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-005"
+      ],
+      "sourceAcceptanceCriteria": [
+        "AC-E7AF4CA8"
+      ],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-F6F7CDE86DC3",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-005"
+        ],
+        "acceptanceCriteriaIds": [
+          "AC-E7AF4CA8"
+        ],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-REQUIREMENT-FB92909BB0D9",
+      "title": "Acceptance Decision: ACD-B7CCCA2A",
+      "description": "Pending human decision from acceptance criteria: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "category": "REQUIREMENT",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Acceptance human decision ACD-B7CCCA2A requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "consequences": [
+        "Unresolved acceptance choice blocks criteria finalization."
+      ],
+      "mitigation": "Product Owner must choose between available acceptance options.",
+      "contingency": "Hold test implementation for affected criteria.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-REQUIREMENT-FB92909BB0D9",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-SCOPE-50502FE08D7A",
+      "title": "Scope Decision: Target Platform & Interface Selection",
+      "description": "Scope human decision HDEC-03a573c86006 requires Product Owner selection.",
+      "category": "SCOPE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Scope decision \"Target Platform & Interface Selection\" is unresolved: Choose the primary target runtime platform and application interface.",
+      "consequences": [
+        "Unclear scope boundaries introduce scope creep or missed deliverables."
+      ],
+      "mitigation": "Product Owner must decide between available options.",
+      "contingency": "Exclude undecided items from immediate scope.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-SCOPE-50502FE08D7A",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    },
+    {
+      "riskId": "RISK-SCOPE-E3E2DBC404F2",
+      "title": "Scope Decision: Deployment & Hosting Environment Model",
+      "description": "Scope human decision HDEC-6ef75679d70c requires Product Owner selection.",
+      "category": "SCOPE",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "severity": "CRITICAL",
+      "status": "PENDING_DECISION",
+      "response": "PENDING_DECISION",
+      "statement": "Scope decision \"Deployment & Hosting Environment Model\" is unresolved: Select the target deployment model for hosting the production system.",
+      "consequences": [
+        "Unclear scope boundaries introduce scope creep or missed deliverables."
+      ],
+      "mitigation": "Product Owner must decide between available options.",
+      "contingency": "Exclude undecided items from immediate scope.",
+      "owner": "PRODUCT_OWNER",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "sourceAcceptanceCriteria": [],
+      "sourceDiscovery": [],
+      "dependencies": [],
+      "traceability": {
+        "riskId": "RISK-SCOPE-E3E2DBC404F2",
+        "requirementIds": [],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [],
+        "acceptanceCriteriaIds": [],
+        "discoveryKeys": []
+      },
+      "metadata": {}
+    }
+  ],
+  "status": "BLOCKED_ON_HUMAN",
+  "isStale": false,
+  "provenance": {
+    "createdBy": "MCP_TOOL",
+    "engineVersion": "P15-APPROVAL-1.0",
+    "evaluatedAt": "2026-10-10T12:40:34.766Z",
+    "sourceStores": [
+      "AdaptiveDiscoveryStore",
+      "RequirementsScopeStore",
+      "ArchitectureTechnologyStore",
+      "BusinessRulesStore",
+      "AcceptanceCriteriaStore",
+      "RiskHumanDecisionStore",
+      "ProjectSpecStore",
+      "CompletenessGateStore"
+    ]
+  },
+  "history": [
+    {
+      "eventType": "APPROVAL_PACKAGE_CREATED",
+      "actor": "SYSTEM",
+      "actorRole": "SYSTEM",
+      "timestamp": "2026-10-10T12:40:34.766Z",
+      "status": "BLOCKED_ON_HUMAN",
+      "revision": 1
+    }
+  ],
+  "createdAt": "2026-10-10T12:40:34.766Z",
+  "updatedAt": "2026-10-10T12:40:34.766Z",
+  "projectUnderstanding": {
+    "projectId": "OtonomMCP-External-IdP",
+    "projectName": "OtonomMCP-External-IdP",
+    "apparentPurpose": {
+      "classification": "greenfield-new-project",
+      "summary": "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "rawDescription": "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "domainKeywords": [],
+      "evidence": []
+    },
+    "targetUsers": [
+      "End users"
+    ],
+    "technologyStack": {
+      "primaryLanguages": [],
+      "frameworks": [],
+      "buildTools": [],
+      "packageManagers": [],
+      "runtimes": [],
+      "containerization": [],
+      "ciCd": [],
+      "workspaceType": "standalone",
+      "dependencies": [],
+      "devDependencies": [],
+      "evidence": []
+    },
+    "architectureSummary": {
+      "identifiedAreas": [],
+      "architecturalPattern": "UNDECIDED",
+      "summary": "Standard modular architecture",
+      "evidence": []
+    },
+    "existingCapabilities": [],
+    "confirmedRequirements": [
+      {
+        "id": "FREQ-da14abb226aa",
+        "type": "CONFIRMED_FACT",
+        "origin": "EXISTING_REQUIREMENT",
+        "statement": "Core Functionality: OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+        "evidence": []
+      }
+    ],
+    "clarifiedRequirements": [],
+    "unresolvedUnknowns": [],
+    "unresolvedContradictions": [],
+    "currentImplementationState": {
+      "lifecycleState": "GREENFIELD",
+      "hasActiveTask": false,
+      "isBlocked": false,
+      "totalTasksInDag": 0,
+      "completedTasksCount": 0,
+      "evidence": []
+    },
+    "constraints": [],
+    "assumptions": [],
+    "nonGoals": [],
+    "proposedDevelopmentScope": [
+      "Core Functionality"
+    ],
+    "evidenceReferences": [],
+    "sourceDiscoveryReference": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f",
+    "generatedAt": "2026-10-10T12:40:34.766Z"
+  },
+  "proposedDevelopmentPlan": {
+    "objectives": [
+      "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi."
+    ],
+    "proposedScope": [
+      "Core Functionality"
+    ],
+    "proposedFeatureGroups": [
+      {
+        "name": "Core Capabilities",
+        "description": "Primary features for OtonomMCP-External-IdP",
+        "targetCapabilities": [
+          "Core Functionality"
+        ]
+      }
+    ],
+    "dependencies": [],
+    "constraints": [],
+    "knownRisks": [
+      "Pending Architecture Decision: ARCH-DEC-001: Architecture decision ARCH-DEC-001 (What architectural style and subsystem topology will govern the system?) is proposed but not finalized.",
+      "Architecture Decision: Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658: Architecture decision Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658 requires Product Owner selection: Can be configured as an integration without blocking core domain development.",
+      "Architecture Decision: SCOPE-UNDECIDED-Q-TECHNOLOGY-add08684cc9c: Architecture decision SCOPE-UNDECIDED-Q-TECHNOLOGY-add08684cc9c requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "Pending Architecture Decision: ARCH-DEC-002: Architecture decision ARCH-DEC-002 (What primary data storage technology and strategy should be selected?) is proposed but not finalized.",
+      "Architecture Decision: HDEC-03a573c86006: Architecture decision HDEC-03a573c86006 requires Product Owner selection: Choose the primary target runtime platform and application interface.",
+      "Pending Architecture Decision: ARCH-DEC-005: Architecture decision ARCH-DEC-005 (What target platform and user interface type will this system provide?) is proposed but not finalized.",
+      "Pending Architecture Decision: ARCH-DEC-004: Architecture decision ARCH-DEC-004 (What runtime and programming languages constrain this project?) is proposed but not finalized.",
+      "Architecture Decision: Q-PROJECT_IDENTITY-f65f183a26b7: Architecture decision Q-PROJECT_IDENTITY-f65f183a26b7 requires Product Owner selection: Cosmetic and developer documentation preference with zero runtime consequence.",
+      "Architecture Decision: Q-PRODUCT_SCOPE-913a6ec242f9: Architecture decision Q-PRODUCT_SCOPE-913a6ec242f9 requires Product Owner selection: Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "Architecture Decision: HDEC-6ef75679d70c: Architecture decision HDEC-6ef75679d70c requires Product Owner selection: Select the target deployment model for hosting the production system.",
+      "Architecture Decision: SCOPE-UNDECIDED-Q-TECHNOLOGY-e528ff49e352: Architecture decision SCOPE-UNDECIDED-Q-TECHNOLOGY-e528ff49e352 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "Business Rule Decision: BD-07018E62: Business rule decision BD-07018E62 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "Business Rule Decision: BD-0B5D1364: Business rule decision BD-0B5D1364 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "Business Rule Decision: BD-94A393BB: Business rule decision BD-94A393BB requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "Business Rule Decision: BD-32E4F153: Business rule decision BD-32E4F153 requires Product Owner selection: Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "Business Rule Decision: BD-9B9D4454: Business rule decision BD-9B9D4454 requires Product Owner selection: Select the target deployment model for hosting the production system.",
+      "Business Rule Decision: BD-B72C116C: Business rule decision BD-B72C116C requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "Business Rule Decision: BD-C48F518F: Business rule decision BD-C48F518F requires Product Owner selection: Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "Business Rule Decision: BD-ECF6C0A9: Business rule decision BD-ECF6C0A9 requires Product Owner selection: Choose the primary target runtime platform and application interface.",
+      "Business Rule Decision: BD-60E793EF: Business rule decision BD-60E793EF requires Product Owner selection: Can be configured as an integration without blocking core domain development.",
+      "Business Rule Decision: BD-8BBF327D: Business rule decision BD-8BBF327D requires Product Owner selection: Cosmetic and developer documentation preference with zero runtime consequence.",
+      "Business Rule Decision: BD-7BF2CD23: Business rule decision BD-7BF2CD23 requires Product Owner selection: Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "Discovery Decision: Target Platform & Interface Selection: Discovery human decision \"Target Platform & Interface Selection\" requires Product Owner selection.",
+      "Discovery Decision: Deployment & Hosting Environment Model: Discovery human decision \"Deployment & Hosting Environment Model\" requires Product Owner selection.",
+      "Pending Acceptance Criterion: DATA: Boundary Verification: Acceptance criterion AC-C725C33A is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "Acceptance Decision: ACD-DEE770BF: Acceptance human decision ACD-DEE770BF requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "Acceptance Decision: ACD-215E01CF: Acceptance human decision ACD-215E01CF requires Product Owner selection: Can be configured as an integration without blocking core domain development.",
+      "Acceptance Decision: ACD-60D9CAFC: Acceptance human decision ACD-60D9CAFC requires Product Owner selection: Underlying business rule BR-D30396C4 has status PENDING_DECISION.",
+      "Acceptance Decision: ACD-0F73DF62: Acceptance human decision ACD-0F73DF62 requires Product Owner selection: Architecture decision ARCH-DEC-005 has status PENDING_DECISION.",
+      "Pending Acceptance Criterion: Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Rule Enforcement: Acceptance criterion AC-77E69217 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "Acceptance Decision: ACD-061E4B36: Acceptance human decision ACD-061E4B36 requires Product Owner selection: Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "Acceptance Decision: ACD-7CFD09F9: Acceptance human decision ACD-7CFD09F9 requires Product Owner selection: Underlying business rule BR-4A080B8D has status PENDING_DECISION.",
+      "Acceptance Decision: ACD-161A2E36: Acceptance human decision ACD-161A2E36 requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "Acceptance Decision: ACD-D316D83E: Acceptance human decision ACD-D316D83E requires Product Owner selection: Underlying business rule BR-6474DF22 has status PENDING_DECISION.",
+      "Acceptance Decision: ACD-32ED0B94: Acceptance human decision ACD-32ED0B94 requires Product Owner selection: Cosmetic and developer documentation preference with zero runtime consequence.",
+      "Acceptance Decision: ACD-0B5B076F: Acceptance human decision ACD-0B5B076F requires Product Owner selection: Choose the primary target runtime platform and application interface.",
+      "Acceptance Decision: ACD-9E2DF388: Acceptance human decision ACD-9E2DF388 requires Product Owner selection: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "Pending Acceptance Criterion: Pending Policy: Which primary programming language and framework ecosystem should be used?: Rule Enforcement: Acceptance criterion AC-BBC12DD9 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "Pending Acceptance Criterion: Pending Policy: Deployment & Hosting Environment Model: Rule Enforcement: Acceptance criterion AC-E1E67B1D is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "Acceptance Decision: ACD-5495674F: Acceptance human decision ACD-5495674F requires Product Owner selection: Underlying business rule BR-82B98E12 has status PENDING_DECISION.",
+      "Acceptance Decision: ACD-27C86C3C: Acceptance human decision ACD-27C86C3C requires Product Owner selection: Select the target deployment model for hosting the production system.",
+      "Acceptance Decision: ACD-DD8280B9: Acceptance human decision ACD-DD8280B9 requires Product Owner selection: Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "Pending Acceptance Criterion: Pending Policy: Target Platform & Interface Selection: Rule Enforcement: Acceptance criterion AC-FD7ED327 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "Acceptance Decision: ACD-EF1F4544: Acceptance human decision ACD-EF1F4544 requires Product Owner selection: Architecture decision ARCH-DEC-002 has status PENDING_DECISION.",
+      "Acceptance Decision: ACD-5FCABE84: Acceptance human decision ACD-5FCABE84 requires Product Owner selection: Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "Pending Acceptance Criterion: PLATFORM: Boundary Verification: Acceptance criterion AC-E7AF4CA8 is pending explicit Product Owner decision. Observable verification expectation is unconfirmed.",
+      "Acceptance Decision: ACD-B7CCCA2A: Acceptance human decision ACD-B7CCCA2A requires Product Owner selection: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "Scope Decision: Target Platform & Interface Selection: Scope decision \"Target Platform & Interface Selection\" is unresolved: Choose the primary target runtime platform and application interface.",
+      "Scope Decision: Deployment & Hosting Environment Model: Scope decision \"Deployment & Hosting Environment Model\" is unresolved: Select the target deployment model for hosting the production system."
+    ],
+    "unresolvedIssues": [
+      "Target Platform & Interface Selection",
+      "How should business rule 'Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' be resolved for acceptance?",
+      "Which primary programming language and framework ecosystem should be used?",
+      "Deployment & Hosting Environment Model",
+      "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "What target platform and user interface type will this system provide?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "Target Platform & Interface Selection",
+      "How should architectural decision 'What target platform and user interface type will this system provide?' be resolved?",
+      "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "What architectural style and subsystem topology will govern the system?",
+      "What is the acceptable verification criteria or threshold for Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Rule Enforcement?",
+      "Deployment & Hosting Environment Model",
+      "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "What are the primary end-to-end user workflows or core interactions?",
+      "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "How should architectural decision 'What primary data storage technology and strategy should be selected?' be resolved?",
+      "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "How should business rule 'Pending Policy: Which primary programming language and framework ecosystem should be used?' be resolved for acceptance?",
+      "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "What are the primary end-to-end user workflows or core interactions?",
+      "Which primary programming language and framework ecosystem should be used?",
+      "What is the acceptable verification criteria or threshold for PLATFORM: Boundary Verification?",
+      "Select the target deployment model for hosting the production system.",
+      "Choose the primary target runtime platform and application interface.",
+      "What is the acceptable verification criteria or threshold for DATA: Boundary Verification?",
+      "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "Choose the primary target runtime platform and application interface.",
+      "Which primary programming language and framework ecosystem should be used?",
+      "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "What runtime and programming languages constrain this project?",
+      "How should business rule 'Pending Policy: Deployment & Hosting Environment Model' be resolved for acceptance?",
+      "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "What are the primary end-to-end user workflows or core interactions?",
+      "What primary data storage technology and strategy should be selected?",
+      "What is the acceptable verification criteria or threshold for Pending Policy: Deployment & Hosting Environment Model: Rule Enforcement?",
+      "What is the acceptable verification criteria or threshold for Pending Policy: Which primary programming language and framework ecosystem should be used?: Rule Enforcement?",
+      "Deployment & Hosting Environment Model",
+      "Select the target deployment model for hosting the production system.",
+      "What is the acceptable verification criteria or threshold for Pending Policy: Target Platform & Interface Selection: Rule Enforcement?",
+      "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "How should business rule 'Pending Policy: Target Platform & Interface Selection' be resolved for acceptance?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "Target Platform & Interface Selection",
+      "Target Platform & Interface Selection",
+      "Deployment & Hosting Environment Model",
+      "Which primary programming language and framework ecosystem should be used?",
+      "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+    ],
+    "excludedScope": [],
+    "suggestedImplementationOrder": [
+      "Core Functionality"
+    ]
+  },
+  "unresolvedItems": [],
+  "assumptions": [],
+  "evidenceReferences": [],
+  "packageFingerprint": "4b542748892ecbdfda3df3b3139121b75fd84c9544d16e7471ca37bb73b117db"
+}

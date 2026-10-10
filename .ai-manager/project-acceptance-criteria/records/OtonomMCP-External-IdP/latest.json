@@ -1,0 +1,729 @@
+{
+  "projectId": "OtonomMCP-External-IdP",
+  "acceptanceCriteriaRevision": 1,
+  "sourceRequirementsRevision": 1,
+  "sourceRequirementsFingerprint": "b34f6f9907c9e4cfee616c779900dd16849c82cfc74df27c5d2eb38e3304311e",
+  "sourceArchitectureRevision": 1,
+  "sourceArchitectureFingerprint": "307757d2ada57f1096a013268652d731b07b33195823dfccef62a29b7c14df55",
+  "sourceBusinessRulesRevision": 1,
+  "sourceBusinessRulesFingerprint": "6fbfc6097f68bd646d861f48df1f3915adbffd73e7d5b10b949fd4b7c0fe8f17",
+  "sourceDiscoveryRevision": 1,
+  "sourceDiscoveryFingerprint": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f",
+  "isStale": false,
+  "criteria": [
+    {
+      "criterionId": "AC-77E69217",
+      "title": "Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Rule Enforcement",
+      "description": "Acceptance criterion ensuring business rule 'Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' is observably satisfied.",
+      "criterionType": "COMPATIBILITY",
+      "statement": "The product observably enforces business rule 'Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?': Domain behavior for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)? is pending Product Owner decision. Available options: Command Line Tool (CLI), Desktop Application, Mobile Application (iOS/Android), Other, Web Application",
+      "priority": "HIGH",
+      "status": "PENDING_DECISION",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-4A080B8D"
+      ],
+      "sourceArchitectureDecisions": [],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Verification against selected policy once resolved",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-77E69217",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-4A080B8D"
+        ],
+        "architectureDecisionIds": []
+      },
+      "metadata": {
+        "ruleCategory": "POLICY_RULE"
+      }
+    },
+    {
+      "criterionId": "AC-7ED0AA8B",
+      "title": "Core Functionality: Functional Verification",
+      "description": "Authoritative acceptance criterion derived from functional requirement 'Core Functionality'.",
+      "criterionType": "FUNCTIONAL",
+      "statement": "When functionality 'Core Functionality' is invoked under normal conditions, the product executes: OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi..",
+      "priority": "HIGH",
+      "status": "DEFINED",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Observable execution succeeds without error and satisfies 'Core Functionality'.",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-7ED0AA8B",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": []
+      },
+      "metadata": {}
+    },
+    {
+      "criterionId": "AC-8D6F007F",
+      "title": "API: Boundary Verification",
+      "description": "Authoritative acceptance criterion ensuring product satisfies observable architectural boundary condition for 'What communication protocol will expose external and internal interfaces?'.",
+      "criterionType": "COMPATIBILITY",
+      "statement": "The product exposes a typed in-process TypeScript module API; no HTTP/REST server or endpoint is required; the module can be consumed directly in-process; the boundary conforms to architecture decision 'What communication protocol will expose external and internal interfaces?'.",
+      "priority": "HIGH",
+      "status": "DEFINED",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-003"
+      ],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Product operates at its boundary as a typed in-process TypeScript module without external HTTP/REST servers or endpoints in conformance with architecture decision 'What communication protocol will expose external and internal interfaces?'.",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-8D6F007F",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-003"
+        ]
+      },
+      "metadata": {
+        "decisionArea": "API"
+      }
+    },
+    {
+      "criterionId": "AC-BBC12DD9",
+      "title": "Pending Policy: Which primary programming language and framework ecosystem should be used?: Rule Enforcement",
+      "description": "Acceptance criterion ensuring business rule 'Pending Policy: Which primary programming language and framework ecosystem should be used?' is observably satisfied.",
+      "criterionType": "BUSINESS_RULE",
+      "statement": "The product observably enforces business rule 'Pending Policy: Which primary programming language and framework ecosystem should be used?': Domain behavior for Which primary programming language and framework ecosystem should be used? is pending Product Owner decision. Available options: Go, Other, Python, Rust, TypeScript / Node.js",
+      "priority": "HIGH",
+      "status": "PENDING_DECISION",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-6474DF22"
+      ],
+      "sourceArchitectureDecisions": [],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Verification against selected policy once resolved",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-BBC12DD9",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-6474DF22"
+        ],
+        "architectureDecisionIds": []
+      },
+      "metadata": {
+        "ruleCategory": "POLICY_RULE"
+      }
+    },
+    {
+      "criterionId": "AC-C725C33A",
+      "title": "DATA: Boundary Verification",
+      "description": "Authoritative acceptance criterion ensuring product satisfies observable architectural boundary condition for 'What primary data storage technology and strategy should be selected?'.",
+      "criterionType": "DATA",
+      "statement": "Observable architectural requirement for 'DATA': What primary data storage technology and strategy should be selected?.",
+      "priority": "HIGH",
+      "status": "PENDING_DECISION",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-002"
+      ],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Product operates at its boundary in conformance with architecture decision 'What primary data storage technology and strategy should be selected?'.",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-C725C33A",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-002"
+        ]
+      },
+      "metadata": {
+        "decisionArea": "DATA"
+      }
+    },
+    {
+      "criterionId": "AC-D45B8437",
+      "title": "Core Functionality Rule: Rule Enforcement",
+      "description": "Acceptance criterion ensuring business rule 'Core Functionality Rule' is observably satisfied.",
+      "criterionType": "BUSINESS_RULE",
+      "statement": "The product observably enforces business rule 'Core Functionality Rule': OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "priority": "HIGH",
+      "status": "DEFINED",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [
+        "BR-369628EF"
+      ],
+      "sourceArchitectureDecisions": [],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Verification that OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-D45B8437",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [
+          "BR-369628EF"
+        ],
+        "architectureDecisionIds": []
+      },
+      "metadata": {
+        "ruleCategory": "DOMAIN_INVARIANT"
+      }
+    },
+    {
+      "criterionId": "AC-E1E67B1D",
+      "title": "Pending Policy: Deployment & Hosting Environment Model: Rule Enforcement",
+      "description": "Acceptance criterion ensuring business rule 'Pending Policy: Deployment & Hosting Environment Model' is observably satisfied.",
+      "criterionType": "DEPLOYMENT",
+      "statement": "The product observably enforces business rule 'Pending Policy: Deployment & Hosting Environment Model': Domain behavior for Deployment & Hosting Environment Model is pending Product Owner decision. Available options: Cloud Hosted (AWS / GCP / Azure), Local / Self-Hosted Docker Container",
+      "priority": "HIGH",
+      "status": "PENDING_DECISION",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-82B98E12"
+      ],
+      "sourceArchitectureDecisions": [],
+      "verificationMethod": "DEPLOYMENT_CHECK",
+      "expectedResult": "Verification against selected policy once resolved",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-E1E67B1D",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-82B98E12"
+        ],
+        "architectureDecisionIds": []
+      },
+      "metadata": {
+        "ruleCategory": "POLICY_RULE"
+      }
+    },
+    {
+      "criterionId": "AC-E7AF4CA8",
+      "title": "PLATFORM: Boundary Verification",
+      "description": "Authoritative acceptance criterion ensuring product satisfies observable architectural boundary condition for 'What target platform and user interface type will this system provide?'.",
+      "criterionType": "COMPATIBILITY",
+      "statement": "Observable architectural requirement for 'PLATFORM': What target platform and user interface type will this system provide?.",
+      "priority": "HIGH",
+      "status": "PENDING_DECISION",
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceBusinessRules": [],
+      "sourceArchitectureDecisions": [
+        "ARCH-DEC-005"
+      ],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Product operates at its boundary in conformance with architecture decision 'What target platform and user interface type will this system provide?'.",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-E7AF4CA8",
+        "requirementIds": [
+          "FREQ-da14abb226aa"
+        ],
+        "businessRuleIds": [],
+        "architectureDecisionIds": [
+          "ARCH-DEC-005"
+        ]
+      },
+      "metadata": {
+        "decisionArea": "PLATFORM"
+      }
+    },
+    {
+      "criterionId": "AC-FD7ED327",
+      "title": "Pending Policy: Target Platform & Interface Selection: Rule Enforcement",
+      "description": "Acceptance criterion ensuring business rule 'Pending Policy: Target Platform & Interface Selection' is observably satisfied.",
+      "criterionType": "COMPATIBILITY",
+      "statement": "The product observably enforces business rule 'Pending Policy: Target Platform & Interface Selection': Domain behavior for Target Platform & Interface Selection is pending Product Owner decision. Available options: Command Line Tool (CLI), Desktop Application, Mobile Application (iOS/Android), Web Application",
+      "priority": "HIGH",
+      "status": "PENDING_DECISION",
+      "sourceRequirements": [],
+      "sourceBusinessRules": [
+        "BR-D30396C4"
+      ],
+      "sourceArchitectureDecisions": [],
+      "verificationMethod": "AUTOMATED_TEST",
+      "expectedResult": "Verification against selected policy once resolved",
+      "dependencies": [],
+      "traceability": {
+        "criterionId": "AC-FD7ED327",
+        "requirementIds": [],
+        "businessRuleIds": [
+          "BR-D30396C4"
+        ],
+        "architectureDecisionIds": []
+      },
+      "metadata": {
+        "ruleCategory": "POLICY_RULE"
+      }
+    }
+  ],
+  "coverage": {
+    "totalRequirements": 1,
+    "coveredRequirements": [
+      "FREQ-da14abb226aa"
+    ],
+    "uncoveredRequirements": [],
+    "uncoveredRequirementsDetails": [],
+    "totalBusinessRules": 5,
+    "coveredBusinessRules": [
+      "BR-369628EF",
+      "BR-4A080B8D",
+      "BR-6474DF22",
+      "BR-82B98E12",
+      "BR-D30396C4"
+    ],
+    "uncoveredBusinessRules": [],
+    "architectureDecisionsRequiringVerification": 3,
+    "architectureDecisionsVerified": [
+      "ARCH-DEC-002",
+      "ARCH-DEC-003",
+      "ARCH-DEC-005"
+    ],
+    "criteriaCount": 9,
+    "pendingDecisionCount": 23
+  },
+  "pendingHumanDecisions": [
+    {
+      "decisionId": "ACD-061E4B36",
+      "question": "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "affectedCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Deployment & Hosting Environment Model."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-0B5B076F",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "architecture",
+        "implementation scope",
+        "technology choice"
+      ],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-0F73DF62",
+      "question": "How should architectural decision 'What target platform and user interface type will this system provide?' be resolved?",
+      "whyItMatters": "Architecture decision ARCH-DEC-005 has status PENDING_DECISION.",
+      "affectedCriteria": [
+        "AC-E7AF4CA8"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "availableOptions": [
+        "CLI (Command Line Interface)",
+        "Desktop Application",
+        "Library / Module",
+        "Web Application"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until decided"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-161A2E36",
+      "question": "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedCriteria": [
+        "AC-77E69217"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-215E01CF",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "operational telemetry"
+      ],
+      "availableOptions": [
+        "OpenTelemetry / Prometheus",
+        "Other",
+        "Sentry",
+        "Standard Console / File Logs only"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-27C86C3C",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "architecture",
+        "operational requirements"
+      ],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-32ED0B94",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "documentation files"
+      ],
+      "availableOptions": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-5495674F",
+      "question": "How should business rule 'Pending Policy: Deployment & Hosting Environment Model' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-82B98E12 has status PENDING_DECISION.",
+      "affectedCriteria": [
+        "AC-E1E67B1D"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-5FCABE84",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "acceptance criteria",
+        "implementation scope"
+      ],
+      "availableOptions": [],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-60D9CAFC",
+      "question": "How should business rule 'Pending Policy: Target Platform & Interface Selection' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-D30396C4 has status PENDING_DECISION.",
+      "affectedCriteria": [
+        "AC-FD7ED327"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-7CFD09F9",
+      "question": "How should business rule 'Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-4A080B8D has status PENDING_DECISION.",
+      "affectedCriteria": [
+        "AC-77E69217"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-9E2DF388",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "architecture",
+        "technology choice"
+      ],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-B7CCCA2A",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedCriteria": [],
+      "affectedRequirements": [
+        "architecture",
+        "implementation scope",
+        "technology choice"
+      ],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-D316D83E",
+      "question": "How should business rule 'Pending Policy: Which primary programming language and framework ecosystem should be used?' be resolved for acceptance?",
+      "whyItMatters": "Underlying business rule BR-6474DF22 has status PENDING_DECISION.",
+      "affectedCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Confirm business rule policy and thresholds",
+        "Modify business rule to eliminate ambiguity",
+        "Exclude rule from current milestone"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until resolved"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-DD8280B9",
+      "question": "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "affectedCriteria": [
+        "AC-FD7ED327"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Target Platform & Interface Selection."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-DEE770BF",
+      "question": "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedCriteria": [
+        "AC-BBC12DD9"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Which primary programming language and framework ecosystem should be used?."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "ACD-EF1F4544",
+      "question": "How should architectural decision 'What primary data storage technology and strategy should be selected?' be resolved?",
+      "whyItMatters": "Architecture decision ARCH-DEC-002 has status PENDING_DECISION.",
+      "affectedCriteria": [
+        "AC-C725C33A"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "availableOptions": [
+        "Define selected architecture option"
+      ],
+      "consequences": [
+        "Acceptance criterion remains in PENDING_DECISION until decided"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    }
+  ],
+  "conflicts": [],
+  "requirementsTraceability": [
+    {
+      "requirementId": "FREQ-da14abb226aa",
+      "requirementTitle": "Core Functionality",
+      "isCovered": true,
+      "criteriaIds": [
+        "AC-7ED0AA8B",
+        "AC-8D6F007F",
+        "AC-C725C33A",
+        "AC-D45B8437",
+        "AC-E7AF4CA8"
+      ]
+    }
+  ],
+  "businessRulesTraceability": [
+    {
+      "ruleId": "BR-369628EF",
+      "ruleTitle": "Core Functionality Rule",
+      "isCovered": true,
+      "criteriaIds": [
+        "AC-D45B8437"
+      ]
+    },
+    {
+      "ruleId": "BR-4A080B8D",
+      "ruleTitle": "Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "isCovered": true,
+      "criteriaIds": [
+        "AC-77E69217"
+      ]
+    },
+    {
+      "ruleId": "BR-6474DF22",
+      "ruleTitle": "Pending Policy: Which primary programming language and framework ecosystem should be used?",
+      "isCovered": true,
+      "criteriaIds": [
+        "AC-BBC12DD9"
+      ]
+    },
+    {
+      "ruleId": "BR-82B98E12",
+      "ruleTitle": "Pending Policy: Deployment & Hosting Environment Model",
+      "isCovered": true,
+      "criteriaIds": [
+        "AC-E1E67B1D"
+      ]
+    },
+    {
+      "ruleId": "BR-D30396C4",
+      "ruleTitle": "Pending Policy: Target Platform & Interface Selection",
+      "isCovered": true,
+      "criteriaIds": [
+        "AC-FD7ED327"
+      ]
+    }
+  ],
+  "architectureTraceability": [
+    {
+      "decisionId": "ARCH-DEC-001",
+      "decisionTitle": "STYLE: What architectural style and subsystem topology will govern the system?",
+      "requiresVerification": false,
+      "criteriaIds": []
+    },
+    {
+      "decisionId": "ARCH-DEC-002",
+      "decisionTitle": "DATA: What primary data storage technology and strategy should be selected?",
+      "requiresVerification": true,
+      "criteriaIds": [
+        "AC-C725C33A"
+      ]
+    },
+    {
+      "decisionId": "ARCH-DEC-003",
+      "decisionTitle": "API: What communication protocol will expose external and internal interfaces?",
+      "requiresVerification": true,
+      "criteriaIds": [
+        "AC-8D6F007F"
+      ]
+    },
+    {
+      "decisionId": "ARCH-DEC-004",
+      "decisionTitle": "TECH_STACK: What runtime and programming languages constrain this project?",
+      "requiresVerification": false,
+      "criteriaIds": []
+    },
+    {
+      "decisionId": "ARCH-DEC-005",
+      "decisionTitle": "PLATFORM: What target platform and user interface type will this system provide?",
+      "requiresVerification": true,
+      "criteriaIds": [
+        "AC-E7AF4CA8"
+      ]
+    }
+  ],
+  "createdAt": "2026-10-10T12:40:18.784Z",
+  "fingerprint": "6b8f50f7a8d5ff0c8880341df503a42c3b5e0b78a56f911a6883aef2841d4b20"
+}

@@ -1,0 +1,349 @@
+{
+  "projectId": "OtonomMCP-External-IdP",
+  "businessRulesRevision": 1,
+  "sourceRequirementsRevision": 1,
+  "sourceRequirementsFingerprint": "b34f6f9907c9e4cfee616c779900dd16849c82cfc74df27c5d2eb38e3304311e",
+  "sourceArchitectureRevision": 1,
+  "sourceArchitectureFingerprint": "307757d2ada57f1096a013268652d731b07b33195823dfccef62a29b7c14df55",
+  "sourceDiscoveryRevision": 1,
+  "sourceDiscoveryFingerprint": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f",
+  "isStale": false,
+  "rules": [
+    {
+      "ruleId": "BR-369628EF",
+      "title": "Core Functionality Rule",
+      "description": "Authoritative domain requirement rule for Core Functionality",
+      "category": "DOMAIN_INVARIANT",
+      "statement": "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "priority": "HIGH",
+      "status": "CONFIRMED",
+      "sourceReferences": [
+        "PRODUCT_OWNER_DISCOVERY"
+      ],
+      "sourceRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "sourceArchitectureDecisions": [],
+      "sourceDiscoveryReferences": [
+        "PRODUCT_OWNER_DISCOVERY"
+      ],
+      "affectedRequirements": [
+        "FREQ-da14abb226aa"
+      ],
+      "affectedArchitectureAreas": [],
+      "dependencies": [],
+      "validationExpectation": "Verification that OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "metadata": {}
+    },
+    {
+      "ruleId": "BR-4A080B8D",
+      "title": "Pending Policy: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "description": "Domain policy awaiting Product Owner resolution: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "category": "POLICY_RULE",
+      "statement": "Domain behavior for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)? is pending Product Owner decision. Available options: Command Line Tool (CLI), Desktop Application, Mobile Application (iOS/Android), Other, Web Application",
+      "priority": "UNRESOLVED",
+      "status": "PENDING_DECISION",
+      "sourceReferences": [
+        "SCOPE-UNDECIDED-Q-TECHNOLOGY-e528ff49e352"
+      ],
+      "sourceRequirements": [],
+      "sourceArchitectureDecisions": [],
+      "sourceDiscoveryReferences": [
+        "requirements.undecidedScope"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureAreas": [],
+      "dependencies": [],
+      "validationExpectation": "Verification against selected policy once resolved",
+      "metadata": {}
+    },
+    {
+      "ruleId": "BR-6474DF22",
+      "title": "Pending Policy: Which primary programming language and framework ecosystem should be used?",
+      "description": "Domain policy awaiting Product Owner resolution: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "category": "POLICY_RULE",
+      "statement": "Domain behavior for Which primary programming language and framework ecosystem should be used? is pending Product Owner decision. Available options: Go, Other, Python, Rust, TypeScript / Node.js",
+      "priority": "UNRESOLVED",
+      "status": "PENDING_DECISION",
+      "sourceReferences": [
+        "SCOPE-UNDECIDED-Q-TECHNOLOGY-add08684cc9c"
+      ],
+      "sourceRequirements": [],
+      "sourceArchitectureDecisions": [],
+      "sourceDiscoveryReferences": [
+        "requirements.undecidedScope"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureAreas": [],
+      "dependencies": [],
+      "validationExpectation": "Verification against selected policy once resolved",
+      "metadata": {}
+    },
+    {
+      "ruleId": "BR-82B98E12",
+      "title": "Pending Policy: Deployment & Hosting Environment Model",
+      "description": "Domain policy awaiting Product Owner resolution: Select the target deployment model for hosting the production system.",
+      "category": "POLICY_RULE",
+      "statement": "Domain behavior for Deployment & Hosting Environment Model is pending Product Owner decision. Available options: Cloud Hosted (AWS / GCP / Azure), Local / Self-Hosted Docker Container",
+      "priority": "UNRESOLVED",
+      "status": "PENDING_DECISION",
+      "sourceReferences": [
+        "SCOPE-UNDECIDED-HDEC-6ef75679d70c"
+      ],
+      "sourceRequirements": [],
+      "sourceArchitectureDecisions": [],
+      "sourceDiscoveryReferences": [
+        "requirements.undecidedScope"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureAreas": [],
+      "dependencies": [],
+      "validationExpectation": "Verification against selected policy once resolved",
+      "metadata": {}
+    },
+    {
+      "ruleId": "BR-D30396C4",
+      "title": "Pending Policy: Target Platform & Interface Selection",
+      "description": "Domain policy awaiting Product Owner resolution: Choose the primary target runtime platform and application interface.",
+      "category": "POLICY_RULE",
+      "statement": "Domain behavior for Target Platform & Interface Selection is pending Product Owner decision. Available options: Command Line Tool (CLI), Desktop Application, Mobile Application (iOS/Android), Web Application",
+      "priority": "UNRESOLVED",
+      "status": "PENDING_DECISION",
+      "sourceReferences": [
+        "SCOPE-UNDECIDED-HDEC-03a573c86006"
+      ],
+      "sourceRequirements": [],
+      "sourceArchitectureDecisions": [],
+      "sourceDiscoveryReferences": [
+        "requirements.undecidedScope"
+      ],
+      "affectedRequirements": [],
+      "affectedArchitectureAreas": [],
+      "dependencies": [],
+      "validationExpectation": "Verification against selected policy once resolved",
+      "metadata": {}
+    }
+  ],
+  "pendingHumanDecisions": [
+    {
+      "decisionId": "BD-07018E62",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "architecture",
+        "implementation scope",
+        "technology choice"
+      ],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-0B5D1364",
+      "question": "Unresolved domain policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?: Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedRules": [
+        "BR-4A080B8D"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Other",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-32E4F153",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "acceptance criteria",
+        "implementation scope"
+      ],
+      "availableOptions": [],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-60E793EF",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "operational telemetry"
+      ],
+      "availableOptions": [
+        "OpenTelemetry / Prometheus",
+        "Other",
+        "Sentry",
+        "Standard Console / File Logs only"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-7BF2CD23",
+      "question": "Unresolved domain policy for Target Platform & Interface Selection: Choose the primary target runtime platform and application interface.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Target Platform & Interface Selection",
+      "affectedRules": [
+        "BR-D30396C4"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Target Platform & Interface Selection."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-8BBF327D",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "documentation files"
+      ],
+      "availableOptions": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-94A393BB",
+      "question": "Unresolved domain policy for Which primary programming language and framework ecosystem should be used?: Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRules": [
+        "BR-6474DF22"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Which primary programming language and framework ecosystem should be used?."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-9B9D4454",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "architecture",
+        "operational requirements"
+      ],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-B72C116C",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "architecture",
+        "technology choice"
+      ],
+      "availableOptions": [
+        "Go",
+        "Other",
+        "Python",
+        "Rust",
+        "TypeScript / Node.js"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-C48F518F",
+      "question": "Unresolved domain policy for Deployment & Hosting Environment Model: Select the target deployment model for hosting the production system.",
+      "whyItMatters": "Product Owner decision required before committing to scope: Deployment & Hosting Environment Model",
+      "affectedRules": [
+        "BR-82B98E12"
+      ],
+      "affectedRequirements": [],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequences": [
+        "Choosing an option defines the authoritative business policy for Deployment & Hosting Environment Model."
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "BD-ECF6C0A9",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedRules": [],
+      "affectedRequirements": [
+        "architecture",
+        "implementation scope",
+        "technology choice"
+      ],
+      "availableOptions": [
+        "Command Line Tool (CLI)",
+        "Desktop Application",
+        "Mobile Application (iOS/Android)",
+        "Web Application"
+      ],
+      "consequences": [],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    }
+  ],
+  "conflicts": [],
+  "requirementsTraceability": [
+    {
+      "requirementId": "FREQ-da14abb226aa",
+      "requirementTitle": "Core Functionality",
+      "addressedByRules": [
+        "BR-369628EF"
+      ],
+      "addressedByDecisions": []
+    }
+  ],
+  "createdAt": "2026-10-10T12:40:14.318Z",
+  "fingerprint": "6fbfc6097f68bd646d861f48df1f3915adbffd73e7d5b10b949fd4b7c0fe8f17"
+}

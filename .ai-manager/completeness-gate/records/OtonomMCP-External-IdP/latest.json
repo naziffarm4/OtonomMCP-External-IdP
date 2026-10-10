@@ -1,0 +1,463 @@
+{
+  "projectId": "OtonomMCP-External-IdP",
+  "discoveryRevision": 1,
+  "discoveryFingerprint": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f",
+  "status": "BLOCKED_ON_HUMAN",
+  "isEligibleForApproval": false,
+  "isStale": false,
+  "evaluatedAreas": [
+    {
+      "area": "PROJECT_PURPOSE",
+      "status": "COMPLETE",
+      "evidence": [
+        "Project identity specified: name='OtonomMCP-External-IdP'",
+        "Purpose: OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+        "Desired outcome: Functional, tested, production-ready OtonomMCP-External-IdP fulfilling product requirements."
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "TARGET_USERS",
+      "status": "COMPLETE",
+      "evidence": [
+        "Target users/actors defined (1): End users"
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "PRODUCT_SCOPE",
+      "status": "INCOMPLETE",
+      "evidence": [
+        "No in-scope capabilities or boundaries specified"
+      ],
+      "missingInformation": [
+        "productScope.inScope"
+      ],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "FUNCTIONAL_REQUIREMENTS",
+      "status": "COMPLETE",
+      "evidence": [
+        "Functional capabilities defined (1 requirements with behavioral specifications)"
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "BUSINESS_RULES",
+      "status": "COMPLETE",
+      "evidence": [
+        "Standard domain rules apply; no complex custom business rules required"
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "NON_FUNCTIONAL_REQUIREMENTS",
+      "status": "INCOMPLETE",
+      "evidence": [
+        "No non-functional requirements (performance, reliability, usability) specified"
+      ],
+      "missingInformation": [
+        "nonFunctionalRequirements"
+      ],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "TECHNOLOGY_CONSTRAINTS",
+      "status": "BLOCKED_ON_HUMAN",
+      "evidence": [
+        "Unresolved technology decision: Which primary programming language and framework ecosystem should be used?",
+        "Unresolved technology decision: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+      ],
+      "missingInformation": [
+        "Which primary programming language and framework ecosystem should be used?",
+        "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+      ],
+      "blockingQuestions": [
+        {
+          "id": "Q-TECHNOLOGY-add08684cc9c",
+          "question": "Which primary programming language and framework ecosystem should be used?",
+          "category": "TECHNOLOGY",
+          "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+          "whatItAffects": [
+            "technology choice",
+            "architecture"
+          ],
+          "classification": "BLOCKING",
+          "requiredDecision": "Select programming language and framework",
+          "dependentSection": "technology",
+          "impact": "Implementation cannot begin without selected language and toolchain.",
+          "options": [
+            "TypeScript / Node.js",
+            "Python",
+            "Go",
+            "Rust",
+            "Other"
+          ],
+          "status": "OPEN"
+        },
+        {
+          "id": "Q-TECHNOLOGY-e528ff49e352",
+          "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+          "category": "TECHNOLOGY",
+          "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+          "whatItAffects": [
+            "technology choice",
+            "architecture",
+            "implementation scope"
+          ],
+          "classification": "BLOCKING",
+          "requiredDecision": "Select target platform",
+          "dependentSection": "technology",
+          "impact": "Cannot determine client stack or test targets without platform specification.",
+          "options": [
+            "Web Application",
+            "Mobile Application (iOS/Android)",
+            "Desktop Application",
+            "Command Line Tool (CLI)",
+            "Other"
+          ],
+          "status": "OPEN"
+        }
+      ],
+      "humanDecisions": []
+    },
+    {
+      "area": "ARCHITECTURE_REQUIREMENTS",
+      "status": "BLOCKED_ON_HUMAN",
+      "evidence": [
+        "Architecture requires Product Owner decision: Target Platform & Interface Selection",
+        "Architecture requires Product Owner decision: Deployment & Hosting Environment Model",
+        "Architecture requires Product Owner decision: Which primary programming language and framework ecosystem should be used?",
+        "Architecture requires Product Owner decision: What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+      ],
+      "missingInformation": [
+        "Target Platform & Interface Selection",
+        "Deployment & Hosting Environment Model",
+        "Which primary programming language and framework ecosystem should be used?",
+        "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+      ],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "DATA_PERSISTENCE",
+      "status": "NOT_APPLICABLE",
+      "evidence": [
+        "Project is stateless; persistent data storage is genuinely not applicable."
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "EXTERNAL_INTEGRATIONS",
+      "status": "NOT_APPLICABLE",
+      "evidence": [
+        "Self-contained project; no external third-party integrations required."
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "SECURITY_REQUIREMENTS",
+      "status": "COMPLETE",
+      "evidence": [
+        "Local offline tool; baseline execution permissions apply"
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "ACCEPTANCE_CRITERIA",
+      "status": "INCOMPLETE",
+      "evidence": [
+        "Unresolved acceptance question: What are the primary end-to-end user workflows or core interactions?"
+      ],
+      "missingInformation": [
+        "acceptance.measurableCriteria",
+        "What are the primary end-to-end user workflows or core interactions?"
+      ],
+      "blockingQuestions": [
+        {
+          "id": "Q-PRODUCT_SCOPE-913a6ec242f9",
+          "question": "What are the primary end-to-end user workflows or core interactions?",
+          "category": "PRODUCT_SCOPE",
+          "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+          "whatItAffects": [
+            "implementation scope",
+            "acceptance criteria"
+          ],
+          "classification": "BLOCKING",
+          "requiredDecision": "Define primary workflows",
+          "dependentSection": "productScope",
+          "impact": "Tasks and test specifications cannot be formulated without workflows.",
+          "status": "OPEN"
+        }
+      ],
+      "humanDecisions": []
+    },
+    {
+      "area": "DEPLOYMENT_OPERATIONAL",
+      "status": "BLOCKED_ON_HUMAN",
+      "evidence": [
+        "Deployment model requires Product Owner decision: Deployment & Hosting Environment Model"
+      ],
+      "missingInformation": [
+        "Deployment & Hosting Environment Model"
+      ],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "RISKS_DEPENDENCIES",
+      "status": "COMPLETE",
+      "evidence": [
+        "Risks evaluated (0 risks documented)",
+        "External dependencies identified (0): None"
+      ],
+      "missingInformation": [],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    },
+    {
+      "area": "HUMAN_DECISION_POINTS",
+      "status": "BLOCKED_ON_HUMAN",
+      "evidence": [
+        "Product Owner decision pending: 'Target Platform & Interface Selection' with options: [Web Application, Mobile Application (iOS/Android), Desktop Application, Command Line Tool (CLI)]",
+        "Product Owner decision pending: 'Deployment & Hosting Environment Model' with options: [Cloud Hosted (AWS / GCP / Azure), Local / Self-Hosted Docker Container]",
+        "Product Owner decision pending: 'Which primary programming language and framework ecosystem should be used?' with options: [TypeScript / Node.js, Python, Go, Rust, Other]",
+        "Product Owner decision pending: 'What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?' with options: [Web Application, Mobile Application (iOS/Android), Desktop Application, Command Line Tool (CLI), Other]"
+      ],
+      "missingInformation": [
+        "Target Platform & Interface Selection",
+        "Deployment & Hosting Environment Model",
+        "Which primary programming language and framework ecosystem should be used?",
+        "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+      ],
+      "blockingQuestions": [],
+      "humanDecisions": []
+    }
+  ],
+  "blockingIssues": [
+    "[PRODUCT_SCOPE] Incomplete specification",
+    "[NON_FUNCTIONAL_REQUIREMENTS] Incomplete specification",
+    "[TECHNOLOGY_CONSTRAINTS] Blocked on Product Owner decision",
+    "[ARCHITECTURE_REQUIREMENTS] Blocked on Product Owner decision",
+    "[ACCEPTANCE_CRITERIA] Incomplete specification",
+    "[DEPLOYMENT_OPERATIONAL] Blocked on Product Owner decision",
+    "[HUMAN_DECISION_POINTS] Blocked on Product Owner decision"
+  ],
+  "missingInformation": [
+    "productScope.inScope",
+    "nonFunctionalRequirements",
+    "Which primary programming language and framework ecosystem should be used?",
+    "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+    "Target Platform & Interface Selection",
+    "Deployment & Hosting Environment Model",
+    "Which primary programming language and framework ecosystem should be used?",
+    "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+    "acceptance.measurableCriteria",
+    "What are the primary end-to-end user workflows or core interactions?",
+    "Deployment & Hosting Environment Model",
+    "Target Platform & Interface Selection",
+    "Deployment & Hosting Environment Model",
+    "Which primary programming language and framework ecosystem should be used?",
+    "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?"
+  ],
+  "humanDecisions": [
+    {
+      "decisionId": "HDEC-03a573c86006",
+      "question": "Target Platform & Interface Selection",
+      "whyItMatters": "Choose the primary target runtime platform and application interface.",
+      "affectedSpecificationAreas": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "availableOptions": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)"
+      ],
+      "consequenceOfEachOption": {
+        "Web Application": "Provides broadest cross-platform accessibility with zero client installation."
+      },
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "HDEC-6ef75679d70c",
+      "question": "Deployment & Hosting Environment Model",
+      "whyItMatters": "Select the target deployment model for hosting the production system.",
+      "affectedSpecificationAreas": [
+        "architecture",
+        "operational requirements"
+      ],
+      "availableOptions": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "consequenceOfEachOption": {
+        "Local / Self-Hosted Docker Container": "Simplifies initial validation and eliminates cloud billing dependencies during discovery."
+      },
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "Q-TECHNOLOGY-add08684cc9c",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "affectedSpecificationAreas": [
+        "technology choice",
+        "architecture"
+      ],
+      "availableOptions": [
+        "TypeScript / Node.js",
+        "Python",
+        "Go",
+        "Rust",
+        "Other"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    },
+    {
+      "decisionId": "Q-TECHNOLOGY-e528ff49e352",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "affectedSpecificationAreas": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "availableOptions": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)",
+        "Other"
+      ],
+      "authority": "USER",
+      "status": "PENDING_DECISION"
+    }
+  ],
+  "blockingQuestions": [
+    {
+      "id": "Q-PRODUCT_SCOPE-913a6ec242f9",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "category": "PRODUCT_SCOPE",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "whatItAffects": [
+        "implementation scope",
+        "acceptance criteria"
+      ],
+      "classification": "BLOCKING",
+      "requiredDecision": "Define primary workflows",
+      "dependentSection": "productScope",
+      "impact": "Tasks and test specifications cannot be formulated without workflows.",
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-TECHNOLOGY-add08684cc9c",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "category": "TECHNOLOGY",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "whatItAffects": [
+        "technology choice",
+        "architecture"
+      ],
+      "classification": "BLOCKING",
+      "requiredDecision": "Select programming language and framework",
+      "dependentSection": "technology",
+      "impact": "Implementation cannot begin without selected language and toolchain.",
+      "options": [
+        "TypeScript / Node.js",
+        "Python",
+        "Go",
+        "Rust",
+        "Other"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-TECHNOLOGY-e528ff49e352",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "category": "TECHNOLOGY",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "whatItAffects": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "classification": "BLOCKING",
+      "requiredDecision": "Select target platform",
+      "dependentSection": "technology",
+      "impact": "Cannot determine client stack or test targets without platform specification.",
+      "options": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)",
+        "Other"
+      ],
+      "status": "OPEN"
+    }
+  ],
+  "nonBlockingQuestions": [
+    {
+      "id": "Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "category": "NON_FUNCTIONAL_REQUIREMENTS",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "whatItAffects": [
+        "operational telemetry"
+      ],
+      "classification": "NON_BLOCKING",
+      "requiredDecision": "Select optional telemetry provider or defer",
+      "dependentSection": "nonFunctionalRequirements",
+      "impact": "Informational for monitoring; does not prevent core business logic construction.",
+      "options": [
+        "OpenTelemetry / Prometheus",
+        "Sentry",
+        "Standard Console / File Logs only",
+        "Other"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-PROJECT_IDENTITY-f65f183a26b7",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "category": "PROJECT_IDENTITY",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "whatItAffects": [
+        "documentation files"
+      ],
+      "classification": "INFORMATIONAL",
+      "requiredDecision": "Select documentation format preference",
+      "dependentSection": "projectIdentity",
+      "impact": "Zero execution impact.",
+      "options": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "status": "OPEN"
+    }
+  ],
+  "evaluatedAt": "2026-10-10T12:40:30.054Z",
+  "fingerprint": "3a8c731f06e835f4e39eef244d3d203937c158ebc808ebac05cdc226f8e56838"
+}

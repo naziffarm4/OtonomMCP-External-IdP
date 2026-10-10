@@ -1,0 +1,391 @@
+{
+  "projectId": "OtonomMCP-External-IdP",
+  "discoveryRevision": 1,
+  "previousRevision": null,
+  "createdAt": "2026-10-10T12:39:40.011Z",
+  "source": "PRODUCT_OWNER_REQUEST",
+  "changedSections": [
+    "acceptance",
+    "architecture",
+    "functionalRequirements",
+    "humanDecisions",
+    "nonFunctionalRequirements",
+    "openQuestions",
+    "productScope",
+    "projectIdentity",
+    "risks",
+    "technology"
+  ],
+  "sections": {
+    "projectIdentity": {
+      "name": "OtonomMCP-External-IdP",
+      "purpose": "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "desiredOutcome": "Functional, tested, production-ready OtonomMCP-External-IdP fulfilling product requirements."
+    },
+    "productScope": {
+      "inScope": [],
+      "outOfScope": [],
+      "targetUsers": [
+        "End users"
+      ],
+      "primaryWorkflows": []
+    },
+    "functionalRequirements": {
+      "capabilities": [
+        {
+          "id": "FREQ-da14abb226aa",
+          "title": "Core Functionality",
+          "description": "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+          "behavior": "System executes core functional capabilities requested by Product Owner.",
+          "businessRules": [],
+          "source": "PRODUCT_OWNER_DISCOVERY"
+        }
+      ],
+      "behaviors": [],
+      "businessRules": []
+    },
+    "nonFunctionalRequirements": {
+      "performance": [],
+      "security": [],
+      "reliability": [],
+      "scalability": [],
+      "availability": [],
+      "usability": [],
+      "compatibility": []
+    },
+    "technology": {
+      "requiredTechnologies": [],
+      "preferredTechnologies": [],
+      "prohibitedTechnologies": [],
+      "platformConstraints": []
+    },
+    "architecture": {
+      "architecturalConstraints": [],
+      "integrationRequirements": [],
+      "dataStorageExpectations": []
+    },
+    "acceptance": {
+      "expectedBehavior": [
+        "End-to-end functionality of OtonomMCP-External-IdP according to specified capabilities"
+      ],
+      "measurableCriteria": [
+        "Automated test suite passing with zero regressions",
+        "Primary workflows demonstrable end-to-end"
+      ],
+      "definitionOfCompletion": [
+        "All functional capabilities verified by automated tests",
+        "No unresolved blocking discovery questions or pending Product Owner decisions"
+      ]
+    },
+    "risks": {
+      "technicalRisks": [],
+      "productRisks": [],
+      "operationalRisks": [],
+      "dependencies": []
+    },
+    "humanDecisions": [
+      {
+        "id": "HDEC-03a573c86006",
+        "title": "Target Platform & Interface Selection",
+        "description": "Choose the primary target runtime platform and application interface.",
+        "affectedAreas": [
+          "technology choice",
+          "architecture",
+          "implementation scope"
+        ],
+        "alternatives": [
+          "Web Application",
+          "Mobile Application (iOS/Android)",
+          "Desktop Application",
+          "Command Line Tool (CLI)"
+        ],
+        "recommendedOption": "Web Application",
+        "rationale": "Provides broadest cross-platform accessibility with zero client installation.",
+        "authority": "USER",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "HDEC-6ef75679d70c",
+        "title": "Deployment & Hosting Environment Model",
+        "description": "Select the target deployment model for hosting the production system.",
+        "affectedAreas": [
+          "architecture",
+          "operational requirements"
+        ],
+        "alternatives": [
+          "Cloud Hosted (AWS / GCP / Azure)",
+          "Local / Self-Hosted Docker Container"
+        ],
+        "recommendedOption": "Local / Self-Hosted Docker Container",
+        "rationale": "Simplifies initial validation and eliminates cloud billing dependencies during discovery.",
+        "authority": "USER",
+        "status": "PROPOSED"
+      }
+    ],
+    "openQuestions": [
+      {
+        "id": "Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658",
+        "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+        "category": "NON_FUNCTIONAL_REQUIREMENTS",
+        "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+        "whatItAffects": [
+          "operational telemetry"
+        ],
+        "classification": "NON_BLOCKING",
+        "requiredDecision": "Select optional telemetry provider or defer",
+        "dependentSection": "nonFunctionalRequirements",
+        "impact": "Informational for monitoring; does not prevent core business logic construction.",
+        "options": [
+          "OpenTelemetry / Prometheus",
+          "Sentry",
+          "Standard Console / File Logs only",
+          "Other"
+        ],
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-PRODUCT_SCOPE-913a6ec242f9",
+        "question": "What are the primary end-to-end user workflows or core interactions?",
+        "category": "PRODUCT_SCOPE",
+        "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+        "whatItAffects": [
+          "implementation scope",
+          "acceptance criteria"
+        ],
+        "classification": "BLOCKING",
+        "requiredDecision": "Define primary workflows",
+        "dependentSection": "productScope",
+        "impact": "Tasks and test specifications cannot be formulated without workflows.",
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-PROJECT_IDENTITY-f65f183a26b7",
+        "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+        "category": "PROJECT_IDENTITY",
+        "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+        "whatItAffects": [
+          "documentation files"
+        ],
+        "classification": "INFORMATIONAL",
+        "requiredDecision": "Select documentation format preference",
+        "dependentSection": "projectIdentity",
+        "impact": "Zero execution impact.",
+        "options": [
+          "Markdown Documentation in docs/",
+          "OpenAPI / Swagger JSON & YAML",
+          "Other"
+        ],
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-TECHNOLOGY-add08684cc9c",
+        "question": "Which primary programming language and framework ecosystem should be used?",
+        "category": "TECHNOLOGY",
+        "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+        "whatItAffects": [
+          "technology choice",
+          "architecture"
+        ],
+        "classification": "BLOCKING",
+        "requiredDecision": "Select programming language and framework",
+        "dependentSection": "technology",
+        "impact": "Implementation cannot begin without selected language and toolchain.",
+        "options": [
+          "TypeScript / Node.js",
+          "Python",
+          "Go",
+          "Rust",
+          "Other"
+        ],
+        "status": "OPEN"
+      },
+      {
+        "id": "Q-TECHNOLOGY-e528ff49e352",
+        "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+        "category": "TECHNOLOGY",
+        "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+        "whatItAffects": [
+          "technology choice",
+          "architecture",
+          "implementation scope"
+        ],
+        "classification": "BLOCKING",
+        "requiredDecision": "Select target platform",
+        "dependentSection": "technology",
+        "impact": "Cannot determine client stack or test targets without platform specification.",
+        "options": [
+          "Web Application",
+          "Mobile Application (iOS/Android)",
+          "Desktop Application",
+          "Command Line Tool (CLI)",
+          "Other"
+        ],
+        "status": "OPEN"
+      }
+    ]
+  },
+  "requirements": [
+    {
+      "id": "FREQ-da14abb226aa",
+      "title": "Core Functionality",
+      "description": "OtonomMCP harici kimlik sağlayıcısı ve gerçek insan onayı gereksinimlerini karşılamak üzere External IdP projesi.",
+      "behavior": "System executes core functional capabilities requested by Product Owner.",
+      "businessRules": [],
+      "source": "PRODUCT_OWNER_DISCOVERY"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "HDEC-03a573c86006",
+      "title": "Target Platform & Interface Selection",
+      "description": "Choose the primary target runtime platform and application interface.",
+      "affectedAreas": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "alternatives": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)"
+      ],
+      "recommendedOption": "Web Application",
+      "rationale": "Provides broadest cross-platform accessibility with zero client installation.",
+      "authority": "USER",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "HDEC-6ef75679d70c",
+      "title": "Deployment & Hosting Environment Model",
+      "description": "Select the target deployment model for hosting the production system.",
+      "affectedAreas": [
+        "architecture",
+        "operational requirements"
+      ],
+      "alternatives": [
+        "Cloud Hosted (AWS / GCP / Azure)",
+        "Local / Self-Hosted Docker Container"
+      ],
+      "recommendedOption": "Local / Self-Hosted Docker Container",
+      "rationale": "Simplifies initial validation and eliminates cloud billing dependencies during discovery.",
+      "authority": "USER",
+      "status": "PROPOSED"
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "Q-NON_FUNCTIONAL_REQUIREMENTS-128799943658",
+      "question": "Are there specific external telemetry, metrics, or error tracking integrations required?",
+      "category": "NON_FUNCTIONAL_REQUIREMENTS",
+      "whyItMatters": "Can be configured as an integration without blocking core domain development.",
+      "whatItAffects": [
+        "operational telemetry"
+      ],
+      "classification": "NON_BLOCKING",
+      "requiredDecision": "Select optional telemetry provider or defer",
+      "dependentSection": "nonFunctionalRequirements",
+      "impact": "Informational for monitoring; does not prevent core business logic construction.",
+      "options": [
+        "OpenTelemetry / Prometheus",
+        "Sentry",
+        "Standard Console / File Logs only",
+        "Other"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-PRODUCT_SCOPE-913a6ec242f9",
+      "question": "What are the primary end-to-end user workflows or core interactions?",
+      "category": "PRODUCT_SCOPE",
+      "whyItMatters": "Workflows define the required sequence of capabilities and acceptance scenarios.",
+      "whatItAffects": [
+        "implementation scope",
+        "acceptance criteria"
+      ],
+      "classification": "BLOCKING",
+      "requiredDecision": "Define primary workflows",
+      "dependentSection": "productScope",
+      "impact": "Tasks and test specifications cannot be formulated without workflows.",
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-PROJECT_IDENTITY-f65f183a26b7",
+      "question": "What is the preferred documentation output format (Markdown docs vs OpenAPI spec)?",
+      "category": "PROJECT_IDENTITY",
+      "whyItMatters": "Cosmetic and developer documentation preference with zero runtime consequence.",
+      "whatItAffects": [
+        "documentation files"
+      ],
+      "classification": "INFORMATIONAL",
+      "requiredDecision": "Select documentation format preference",
+      "dependentSection": "projectIdentity",
+      "impact": "Zero execution impact.",
+      "options": [
+        "Markdown Documentation in docs/",
+        "OpenAPI / Swagger JSON & YAML",
+        "Other"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-TECHNOLOGY-add08684cc9c",
+      "question": "Which primary programming language and framework ecosystem should be used?",
+      "category": "TECHNOLOGY",
+      "whyItMatters": "Ecosystem dictates package dependencies, tooling, CI/CD, and runtime constraints.",
+      "whatItAffects": [
+        "technology choice",
+        "architecture"
+      ],
+      "classification": "BLOCKING",
+      "requiredDecision": "Select programming language and framework",
+      "dependentSection": "technology",
+      "impact": "Implementation cannot begin without selected language and toolchain.",
+      "options": [
+        "TypeScript / Node.js",
+        "Python",
+        "Go",
+        "Rust",
+        "Other"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "Q-TECHNOLOGY-e528ff49e352",
+      "question": "What is the primary target runtime platform (e.g. Web, Mobile, Desktop, CLI)?",
+      "category": "TECHNOLOGY",
+      "whyItMatters": "Platform constraints determine client architecture, UI framework, and build pipeline.",
+      "whatItAffects": [
+        "technology choice",
+        "architecture",
+        "implementation scope"
+      ],
+      "classification": "BLOCKING",
+      "requiredDecision": "Select target platform",
+      "dependentSection": "technology",
+      "impact": "Cannot determine client stack or test targets without platform specification.",
+      "options": [
+        "Web Application",
+        "Mobile Application (iOS/Android)",
+        "Desktop Application",
+        "Command Line Tool (CLI)",
+        "Other"
+      ],
+      "status": "OPEN"
+    }
+  ],
+  "risks": [],
+  "completeness": {
+    "isComplete": false,
+    "hasBlockingQuestions": true,
+    "blockingQuestionsCount": 3,
+    "totalQuestionsCount": 5,
+    "resolvedQuestionsCount": 0,
+    "pendingHumanDecisionsCount": 2,
+    "sectionsEvaluatedCount": 10,
+    "missingMaterialSections": [
+      "technology.platformConstraints"
+    ]
+  },
+  "fingerprint": "b799a038fa41c64c90673c63e29e0bb238ff909c758aef2326d73dcdb356742f"
+}
