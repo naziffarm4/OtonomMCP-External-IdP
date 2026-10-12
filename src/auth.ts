@@ -13,7 +13,8 @@ import { audit, deleteMeta, getMeta, setMeta, transaction, type Db } from './db'
 import { safeEqual, sha256Hex } from './keys';
 import { HttpError, bad } from './validation';
 
-export type ChallengePurpose = 'setup' | 'register' | 'login' | 'approve' | 'decide';
+export type ChallengePurpose = 'setup' | 'register' | 'login' | 'approve' | 'decide' | 'instruct';
+export type StepUpPurpose = 'approve' | 'decide' | 'instruct';
 
 export interface User {
   id: string;
@@ -251,7 +252,7 @@ export class AuthService {
   }
 
   /** Step-up options for approving/answering one specific request (challenge bound to session + target). */
-  async stepUpOptions(sessionHash: string, user: User, purpose: 'approve' | 'decide', targetId: string) {
+  async stepUpOptions(sessionHash: string, user: User, purpose: StepUpPurpose, targetId: string, payload?: unknown) {
     const creds = this.credentialsFor(user.id);
     if (creds.length === 0) throw new HttpError(403, 'NO_PASSKEY', 'No passkey registered');
     const options = await generateAuthenticationOptions({
@@ -260,19 +261,24 @@ export class AuthService {
       allowCredentials: creds.map((c) => ({ id: c.id, transports: this.transports(c) })),
       timeout: this.cfg.challengeTtlSeconds * 1000,
     });
-    this.storeChallenge(options.challenge, purpose, sessionHash, { userId: user.id, targetId });
+    this.storeChallenge(options.challenge, purpose, sessionHash, { userId: user.id, targetId, payload });
     return options;
   }
 
   /** Verifies a fresh UV assertion bound to (session, user, purpose, target). Returns the credential id used. */
-  async stepUpVerify(sessionHash: string, user: User, purpose: 'approve' | 'decide', targetId: string, response: unknown): Promise<string> {
+  async stepUpVerify(sessionHash: string, user: User, purpose: StepUpPurpose, targetId: string, response: unknown): Promise<string> {
+    return (await this.stepUpVerifyWithPayload(sessionHash, user, purpose, targetId, response)).credentialId;
+  }
+
+  /** Like stepUpVerify, also returns the payload that was bound to the challenge when the options were issued. */
+  async stepUpVerifyWithPayload(sessionHash: string, user: User, purpose: StepUpPurpose, targetId: string, response: unknown): Promise<{ credentialId: string; payload: unknown }> {
     if (!response || typeof response !== 'object') throw new HttpError(401, 'ASSERTION_REQUIRED', 'A fresh passkey assertion is required');
     const resp = response as AuthenticationResponseJSON;
     const ch = this.consumeChallenge(challengeFromResponse(resp), purpose, sessionHash, targetId, user.id);
     const cred = this.credentialById(resp.id);
     if (cred.user_id !== user.id) throw authFail('Passkey belongs to another user');
     await this.verifyAssertion(cred, resp, ch.challenge);
-    return cred.id;
+    return { credentialId: cred.id, payload: ch.payload ? JSON.parse(ch.payload) : undefined };
   }
 
   private async verifyAssertion(cred: CredentialRow, response: AuthenticationResponseJSON, challenge: string): Promise<void> {

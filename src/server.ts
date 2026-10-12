@@ -10,6 +10,8 @@ import { RateLimiter, SECURITY_HEADERS, cookie, parseCookies, readJson, sendErro
 import { loadOrCreateClientToken, loadOrCreateSigningKey, safeEqual, sha256Hex, type SigningKey } from './keys';
 import { RequestService } from './requests';
 import { RunMonitorService } from './runs';
+import { InstructionService } from './instructions';
+import * as nodeCrypto from 'node:crypto';
 import { HttpError, asObject } from './validation';
 
 export const VERSION = '2.0.0';
@@ -47,6 +49,7 @@ export interface Idp {
   auth: AuthService;
   requests: RequestService;
   runs: RunMonitorService;
+  instructions: InstructionService;
   clientToken: string;
   /** Setup code generated on this start (undefined if already set up or provided by env). */
   setupCode?: string;
@@ -62,6 +65,7 @@ export function createIdp(cfg: IdpConfig): Idp {
   const auth = new AuthService(db, cfg);
   const requests = new RequestService(db, cfg, key);
   const runs = new RunMonitorService(db, cfg);
+  const instructions = new InstructionService(db, cfg, key);
   const setupCode = auth.ensureSetupCode();
   const statics = loadStatic();
   const limiter = new RateLimiter(cfg.now);
@@ -205,6 +209,24 @@ export function createIdp(cfg: IdpConfig): Idp {
       return sendJson(res, 200, requests.decisionStatus(m[1]));
     }
 
+    // ---------- live instructions: machine side (bearer) ----------
+    if ((m = /^\/api\/runs\/([^/]+)\/instruction-channel$/.exec(p))) {
+      requireBearer(req);
+      if (method === 'PUT') return sendJson(res, 200, instructions.putChannel(m[1], await readJson(req, cfg.maxBodyBytes)));
+      if (method === 'DELETE') return sendJson(res, 200, instructions.closeChannel(m[1]));
+      throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
+    }
+    if ((m = /^\/api\/runs\/([^/]+)\/instructions$/.exec(p))) {
+      requireBearer(req);
+      if (method === 'GET') return sendJson(res, 200, instructions.pending(m[1], url.searchParams.get('status')));
+      throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
+    }
+    if ((m = /^\/api\/runs\/([^/]+)\/instructions\/([^/]+)\/ack$/.exec(p))) {
+      requireBearer(req);
+      if (method === 'POST') return sendJson(res, 200, instructions.ack(m[1], m[2], await readJson(req, cfg.maxBodyBytes)));
+      throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
+    }
+
     // ---------- run monitor (OtonomMCP -> IdP, informational only) ----------
     if ((m = /^\/api\/runs\/([^/]+)(\/events)?$/.exec(p))) {
       requireBearer(req);
@@ -275,7 +297,27 @@ export function createIdp(cfg: IdpConfig): Idp {
     }
     if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'GET') {
       requireSession(req, false);
-      return sendJson(res, 200, runs.detail(m[1], url.searchParams.get('sinceSeq')));
+      return sendJson(res, 200, { ...runs.detail(m[1], url.searchParams.get('sinceSeq')), ...instructions.viewForRun(m[1]) });
+    }
+    // Live instruction: 1) options (validates the form, binds it to a new instructionId + passkey challenge)
+    if ((m = /^\/api\/ui\/runs\/([^/]+)\/instructions\/options$/.exec(p)) && method === 'POST') {
+      rateLimit(req, 'auth', cfg.authRateLimitPerMinute);
+      const s = requireSession(req, true);
+      const draft = instructions.validateDraft(m[1], await readJson(req, cfg.maxBodyBytes));
+      const instructionId = nodeCrypto.randomUUID();
+      const options = await auth.stepUpOptions(s.idHash, s.user, 'instruct', instructionId, draft);
+      return sendJson(res, 200, { instructionId, options });
+    }
+    // 2) submit: the signed content is the draft stored with the challenge, not anything sent now
+    if ((m = /^\/api\/ui\/runs\/([^/]+)\/instructions\/([0-9a-fA-F-]{36})$/.exec(p)) && method === 'POST') {
+      rateLimit(req, 'auth', cfg.authRateLimitPerMinute);
+      const s = requireSession(req, true);
+      const b = asObject(await readJson(req, cfg.maxBodyBytes));
+      const instructionId = m[2].toLowerCase();
+      const { credentialId, payload } = await auth.stepUpVerifyWithPayload(s.idHash, s.user, 'instruct', instructionId, b.assertion);
+      const draft = payload as { runId: string; mode: 'NOTE' | 'PAUSE_AND_APPLY' | 'STOP'; text: string; taskId: string | null };
+      if (!draft || draft.runId !== m[1]) throw new HttpError(401, 'WEBAUTHN_FAILED', 'Challenge bound to a different run');
+      return sendJson(res, 200, instructions.create(instructionId, draft, s.user, credentialId));
     }
     if (p === '/api/ui/pending' && method === 'GET') {
       requireSession(req, false);
@@ -341,6 +383,7 @@ export function createIdp(cfg: IdpConfig): Idp {
     auth,
     requests,
     runs,
+    instructions,
     clientToken,
     setupCode,
     startedAt,

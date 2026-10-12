@@ -173,6 +173,60 @@ export const MIGRATIONS: readonly Migration[] = [
       );
     `,
   },
+  {
+    version: 4,
+    name: 'live instructions: instruction_channels + instructions; challenge purpose instruct',
+    sql: `
+      -- webauthn_challenges only holds short-lived (5 min) single-use challenges: rebuilt to extend the CHECK.
+      DROP TABLE webauthn_challenges;
+      CREATE TABLE webauthn_challenges (
+        id TEXT PRIMARY KEY,
+        challenge TEXT NOT NULL UNIQUE,
+        purpose TEXT NOT NULL CHECK (purpose IN ('setup','register','login','approve','decide','instruct')),
+        binding_hash TEXT NOT NULL,
+        user_id TEXT,
+        target_id TEXT,
+        payload TEXT,
+        created_at INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL,
+        used_at INTEGER
+      );
+      CREATE TABLE instruction_channels (
+        run_id TEXT PRIMARY KEY,
+        project_id TEXT NOT NULL,
+        package_id TEXT NOT NULL,
+        revision INTEGER NOT NULL,
+        context_fingerprint TEXT NOT NULL,
+        opened_at INTEGER NOT NULL,
+        open INTEGER NOT NULL DEFAULT 1,
+        updated_at INTEGER NOT NULL,
+        closed_at INTEGER
+      );
+      CREATE TABLE instructions (
+        instruction_id TEXT PRIMARY KEY,
+        run_id TEXT NOT NULL,
+        user_id TEXT NOT NULL REFERENCES users(id),
+        credential_id TEXT NOT NULL,
+        mode TEXT NOT NULL CHECK (mode IN ('NOTE','PAUSE_AND_APPLY','STOP')),
+        text TEXT NOT NULL,
+        task_id TEXT,
+        project_id TEXT NOT NULL,
+        package_id TEXT NOT NULL,
+        revision INTEGER NOT NULL,
+        context_fingerprint TEXT NOT NULL,
+        nonce TEXT NOT NULL UNIQUE,
+        token TEXT NOT NULL,
+        token_jti TEXT NOT NULL UNIQUE,
+        token_expires_at INTEGER NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('PENDING_DELIVERY','RECEIVED','APPLIED','REJECTED','EXPIRED')),
+        note TEXT,
+        created_at INTEGER NOT NULL,
+        received_at INTEGER,
+        finished_at INTEGER
+      );
+      CREATE INDEX idx_instr_run ON instructions(run_id, created_at);
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {
