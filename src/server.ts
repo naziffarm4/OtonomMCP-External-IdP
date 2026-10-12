@@ -9,6 +9,7 @@ import { openDatabase, type Db } from './db';
 import { RateLimiter, SECURITY_HEADERS, cookie, parseCookies, readJson, sendError, sendJson } from './http-util';
 import { loadOrCreateClientToken, loadOrCreateSigningKey, safeEqual, sha256Hex, type SigningKey } from './keys';
 import { RequestService } from './requests';
+import { RunMonitorService } from './runs';
 import { HttpError, asObject } from './validation';
 
 export const VERSION = '2.0.0';
@@ -45,6 +46,7 @@ export interface Idp {
   key: SigningKey;
   auth: AuthService;
   requests: RequestService;
+  runs: RunMonitorService;
   clientToken: string;
   /** Setup code generated on this start (undefined if already set up or provided by env). */
   setupCode?: string;
@@ -59,6 +61,7 @@ export function createIdp(cfg: IdpConfig): Idp {
   const clientToken = loadOrCreateClientToken(cfg.dataDir, cfg.clientToken, cfg.log);
   const auth = new AuthService(db, cfg);
   const requests = new RequestService(db, cfg, key);
+  const runs = new RunMonitorService(db, cfg);
   const setupCode = auth.ensureSetupCode();
   const statics = loadStatic();
   const limiter = new RateLimiter(cfg.now);
@@ -202,6 +205,15 @@ export function createIdp(cfg: IdpConfig): Idp {
       return sendJson(res, 200, requests.decisionStatus(m[1]));
     }
 
+    // ---------- run monitor (OtonomMCP -> IdP, informational only) ----------
+    if ((m = /^\/api\/runs\/([^/]+)(\/events)?$/.exec(p))) {
+      requireBearer(req);
+      const runId = m[1];
+      if (!m[2] && method === 'PUT') return sendJson(res, 200, runs.putSnapshot(runId, await readJson(req, cfg.maxBodyBytes)));
+      if (m[2] && method === 'POST') return sendJson(res, 200, runs.appendEvents(runId, await readJson(req, cfg.maxBodyBytes)));
+      throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
+    }
+
     // ---------- browser UI API ----------
     if (p === '/api/ui/state' && method === 'GET') {
       flowHash(req, res);
@@ -256,6 +268,14 @@ export function createIdp(cfg: IdpConfig): Idp {
       const s = requireSession(req, true);
       const b = asObject(await readJson(req, cfg.maxBodyBytes));
       return sendJson(res, 200, { ok: true, credentialId: await auth.registrationVerify(s.idHash, s.user, b.response as never) });
+    }
+    if (p === '/api/ui/runs' && method === 'GET') {
+      requireSession(req, false);
+      return sendJson(res, 200, runs.list(url.searchParams.get('active') === '1'));
+    }
+    if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'GET') {
+      requireSession(req, false);
+      return sendJson(res, 200, runs.detail(m[1], url.searchParams.get('sinceSeq')));
     }
     if (p === '/api/ui/pending' && method === 'GET') {
       requireSession(req, false);
@@ -320,6 +340,7 @@ export function createIdp(cfg: IdpConfig): Idp {
     key,
     auth,
     requests,
+    runs,
     clientToken,
     setupCode,
     startedAt,

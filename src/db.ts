@@ -144,6 +144,35 @@ export const MIGRATIONS: readonly Migration[] = [
       ALTER TABLE decision_requests ADD COLUMN operation TEXT;
     `,
   },
+  {
+    version: 3,
+    name: 'run monitor: runs + run_events (informational only)',
+    sql: `
+      CREATE TABLE runs (
+        run_id TEXT PRIMARY KEY,
+        seq INTEGER NOT NULL,               -- -1 = minimal row created by an events POST
+        has_snapshot INTEGER NOT NULL DEFAULT 0,
+        project_id TEXT,
+        project_name TEXT,
+        status TEXT NOT NULL,
+        snapshot TEXT,                      -- validated JSON snapshot
+        updated_at INTEGER NOT NULL,        -- snapshot updatedAt (ms)
+        received_at INTEGER NOT NULL        -- IdP clock (ms), used for staleness
+      );
+      CREATE INDEX idx_runs_received ON runs(received_at);
+      CREATE TABLE run_events (
+        run_id TEXT NOT NULL REFERENCES runs(run_id) ON DELETE CASCADE,
+        seq INTEGER NOT NULL,
+        at INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        level TEXT NOT NULL,
+        task_id TEXT,
+        message TEXT NOT NULL,
+        received_at INTEGER NOT NULL,
+        PRIMARY KEY (run_id, seq)
+      );
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {
