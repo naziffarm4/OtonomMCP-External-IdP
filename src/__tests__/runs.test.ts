@@ -212,13 +212,13 @@ describe('migration 3 upgrades a live v2 database in place', () => {
     await h1.close();
     // Turn it into an exact v2 database (as on Nazif-PC): drop the v3 objects and its migration row.
     const raw = new DatabaseSync(`${dir}/idp.sqlite`);
-    raw.exec('DROP TABLE run_events; DROP TABLE runs; DELETE FROM schema_migrations WHERE version = 3;');
+    raw.exec('DROP TABLE IF EXISTS instructions; DROP TABLE IF EXISTS instruction_channels; DROP TABLE run_events; DROP TABLE runs; DELETE FROM schema_migrations WHERE version >= 3;');
     expect((raw.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(2);
     raw.close();
 
     const h2 = await startHarness({ dataDir: dir });
     try {
-      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(3);
+      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBeGreaterThanOrEqual(3);
       expect(h2.idp.setupCode).toBeUndefined();
       expect(h2.idp.key.kid).toBe(kid);
       expect(h2.idp.clientToken).toBe(token);

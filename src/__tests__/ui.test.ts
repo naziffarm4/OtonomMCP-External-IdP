@@ -172,5 +172,32 @@ describe('approval UI', () => {
     expect(links).toEqual(['#/runs/r%3A1.x', '#/runs']);
     expect(ui.renderRunsList(fakeDoc, { serverTime, runs: [] }).textContent).toContain('Henüz çalıştırma yok');
   });
+
+  test('instructions: form only when channel open, list rendered as text, send collects draft', () => {
+    let sent: any = null;
+    const data = {
+      ...detail('2026-10-12T15:59:57.000Z'),
+      instructionChannel: { open: true, canInstruct: true, revision: 1 },
+      instructions: [{ instructionId: 'i1', mode: 'PAUSE_AND_APPLY', text: XSS, taskId: XSS, status: 'REJECTED', note: XSS, createdAt: serverTime }],
+    };
+    const handlers = { draft: null as any, send: (d: any) => { sent = d; } };
+    const node = ui.renderRunDetail(fakeDoc, data, handlers);
+    const text = node.textContent;
+    expect(text).toContain("Director'a talimat ver");
+    for (const t of ['Sadece not', 'Duraklat ve uygula', 'Durdur', 'Windows Hello ile GÖNDER', 'Reddedildi', 'Not: ' + XSS]) expect(text).toContain(t);
+    expect(node.all().some((n: FakeNode) => n.tagName === 'img' || n.tagName === 'script')).toBe(false);
+    const opts = node.all().filter((n: FakeNode) => n.tagName === 'option').map((o: FakeNode) => o.value);
+    expect(opts).toEqual(['', 'T1', 'T2']);
+    const ta = node.all().find((n: FakeNode) => n.id === 'instr-text');
+    expect(ta.maxLength).toBe(2000);
+    ta.value = 'dur, şu özelliği ekle';
+    node.all().find((n: FakeNode) => n.id === 'instr-task').value = 'T2';
+    node.all().find((n: FakeNode) => n.tagName === 'input' && n.value === 'STOP').listeners.change[0]();
+    node.all().find((n: FakeNode) => n.id === 'instr-send').listeners.click[0]();
+    expect(sent).toEqual({ mode: 'STOP', text: 'dur, şu özelliği ekle', taskId: 'T2' });
+    const closed = ui.renderRunDetail(fakeDoc, { ...data, instructionChannel: { open: false, canInstruct: false } }, handlers);
+    expect(closed.all().some((n: FakeNode) => n.id === 'instr-send')).toBe(false);
+    expect(closed.textContent).toContain('talimat kabul etmiyor');
+  });
 });
 
