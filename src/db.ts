@@ -227,6 +227,14 @@ export const MIGRATIONS: readonly Migration[] = [
       CREATE INDEX idx_instr_run ON instructions(run_id, created_at);
     `,
   },
+  {
+    version: 5,
+    name: 'spec clarification: multi-question decision packages (contract v1.2)',
+    sql: `
+      ALTER TABLE decision_requests ADD COLUMN questions TEXT;
+      ALTER TABLE decision_answers ADD COLUMN answers TEXT;
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {

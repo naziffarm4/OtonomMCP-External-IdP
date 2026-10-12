@@ -170,4 +170,66 @@ describe('decision requests (Director asks the user to choose)', () => {
     expect((await h.bearer('GET', `/api/decision-requests/${crypto.randomUUID()}`, undefined, 'x'.repeat(40))).status).toBe(401);
     expect((await h.bearer('GET', `/api/decision-requests/${crypto.randomUUID()}`)).status).toBe(404);
   });
+
+  describe('SPEC_CLARIFICATION (contract v1.2: multi-question package)', () => {
+    const questions = [
+      { id: 'nav', question: 'Ortak menü nasıl eklensin?', reason: 'Spec belirtmiyor', allowFreeText: true, recommendedOptionId: 'js',
+        options: [{ id: 'js', label: 'JS ile nav.html', criteria: ['Her .html sayfası nav.html yükler'] }, { id: 'copy', label: 'Her sayfaya kopyala' }] },
+      { id: 'css', kind: 'IMPROVEMENT', question: 'CSS tek dosya mı?', allowFreeText: false, recommendedOptionId: 'one',
+        options: [{ id: 'one', label: 'Tek style.css' }, { id: 'per', label: 'Sayfa başına' }, { id: 'none', label: 'Inline' }] },
+    ];
+    const clar = (over: Record<string, unknown> = {}) =>
+      decisionBody(h, { operation: 'SPEC_CLARIFICATION', taskId: 'SPEC-CLARIFY', question: 'Spec netleştirme', options: undefined, recommendedOptionId: undefined, questions, ...over });
+
+    test('create, view, answer all questions -> token carries answers[]', async () => {
+      const { browser, auth } = await enroll(h);
+      const body = clar();
+      expect((await h.bearer('POST', '/api/decision-requests', body)).status).toBe(201);
+      const view = await browser.req('GET', `/api/ui/decisions/${body.decisionId}`);
+      expect(view.json.questions).toEqual(questions);
+      const pend = await browser.req('GET', '/api/ui/pending');
+      if (pend.status === 200) expect(JSON.stringify(pend.json)).toContain('SPEC_CLARIFICATION');
+      const r = await answer(browser, auth, body.decisionId, { answers: [{ questionId: 'css', selectedOptionId: 'per' }, { questionId: 'nav', freeText: 'Web component olsun' }] });
+      expect(r.status).toBe(200);
+      const st = await h.bearer('GET', `/api/decision-requests/${body.decisionId}`);
+      const { payload } = decodeJwt(st.json.token);
+      expect(payload).toMatchObject({ operation: 'SPEC_CLARIFICATION', taskId: 'SPEC-CLARIFY', packageId: body.packageId, revision: 1, decisionId: body.decisionId,
+        answers: [{ questionId: 'nav', freeText: 'Web component olsun' }, { questionId: 'css', selectedOptionId: 'per' }] });
+      expect(payload).not.toHaveProperty('selectedOptionId');
+      const v2 = await browser.req('GET', `/api/ui/decisions/${body.decisionId}`);
+      expect(v2.json.answer.answers).toHaveLength(2);
+    });
+
+    test('every question must be answered; bad option / free text where not allowed rejected without burning the challenge', async () => {
+      const { browser, auth } = await enroll(h);
+      const body = clar();
+      await h.bearer('POST', '/api/decision-requests', body);
+      for (const answers of [
+        [{ questionId: 'nav', selectedOptionId: 'js' }],
+        [{ questionId: 'nav', selectedOptionId: 'js' }, { questionId: 'css', selectedOptionId: 'zzz' }],
+        [{ questionId: 'nav', selectedOptionId: 'js' }, { questionId: 'css', freeText: 'x' }],
+        [{ questionId: 'nav', selectedOptionId: 'js' }, { questionId: 'nav', selectedOptionId: 'copy' }],
+        [{ questionId: 'nope', selectedOptionId: 'js' }, { questionId: 'css', selectedOptionId: 'one' }],
+      ]) {
+        const opts = await browser.req('POST', `/api/ui/decisions/${body.decisionId}/options`, {});
+        const r = await browser.req('POST', `/api/ui/decisions/${body.decisionId}/answer`, { answers, assertion: auth.authenticate(opts.json) });
+        expect(r.status).toBe(400);
+      }
+      const ok = await answer(browser, auth, body.decisionId, { answers: [{ questionId: 'nav', selectedOptionId: 'js' }, { questionId: 'css', selectedOptionId: 'one' }] });
+      expect(ok.status).toBe(200);
+    });
+
+    test('request validation: questions only with SPEC_CLARIFICATION; 2-4 options; unique ids; recommended must exist', async () => {
+      const bad = async (over: Record<string, unknown>) => expect((await h.bearer('POST', '/api/decision-requests', clar(over))).status).toBe(400);
+      await bad({ questions: [] });
+      await bad({ questions: [{ ...questions[0], options: [questions[0].options[0]] }] });
+      await bad({ questions: [{ ...questions[1], options: [...questions[1].options, { id: 'x', label: 'x' }, { id: 'y', label: 'y' }] }] });
+      await bad({ questions: [questions[0], questions[0]] });
+      await bad({ questions: [{ ...questions[0], recommendedOptionId: 'zzz' }] });
+      await bad({ options: [{ id: 'a', label: 'a' }, { id: 'b', label: 'b' }] });
+      await bad({ operation: 'OTHER' });
+      await bad({ questions: [{ ...questions[0], kind: 'WHATEVER' }] });
+      expect((await h.bearer('POST', '/api/decision-requests', decisionBody(h, { questions }))).status).toBe(400);
+    });
+  });
 });

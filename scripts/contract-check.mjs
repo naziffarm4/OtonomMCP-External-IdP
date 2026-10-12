@@ -156,6 +156,39 @@ try {
     fs.rmSync(projectRoot, { recursive: true, force: true });
   }
 
+  // ---------- SPEC_CLARIFICATION (v1.2) through OtonomMCP's real IdpClarificationResolver (POST -> poll -> verify) ----------
+  if (!oAuto.IdpClarificationResolver || !oAuto.buildClarificationRequest) {
+    console.log('SKIP  clarification checks: OtonomMCP build has no IdpClarificationResolver');
+  } else {
+    const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'idp-contract-clar-'));
+    const questions = oAuto.normalizeClarificationProposal({ questions: [
+      { id: 'nav', kind: 'CLARIFICATION', question: 'Ortak menü nasıl eklensin?', reason: 'Spec belirtmiyor', recommendedOptionId: 'js',
+        options: [{ id: 'js', label: 'JS ile nav.html yükle', criteria: ['Her sayfa nav.html yükler'] }, { id: 'copy', label: 'Her sayfaya kopyala' }] },
+      { id: 'css', kind: 'IMPROVEMENT', question: 'Tek bir stil dosyası kullanalım mı?', reason: 'Bakımı kolaylaşır', allowFreeText: false,
+        options: [{ id: 'evet', label: 'Evet, tek style.css' }, { id: 'hayir', label: 'Hayır' }] },
+    ] }, []).questions;
+    const req = oAuto.buildClarificationRequest({ projectRoot, projectId: binding.projectId, runId: 'run-contract', packageId: binding.packageId,
+      revision: binding.revision, summary: 'Plan özeti', questions });
+    const provider = oAuthz.createTrustedIdentityProvider({ env: oEnv, nonceStore: new oAuthz.NonceStore({ baseDir: projectRoot }) });
+    let answered = false;
+    const resolver = new oAuto.IdpClarificationResolver({ env: oEnv, provider, pollIntervalMs: 50, sleep: async (ms) => {
+      if (!answered) {
+        answered = true;
+        const view = await b.req('GET', `/api/ui/decisions/${req.decisionId}`);
+        check('IdP view shows 2 questions with kinds + criteria', view.json.questions?.length === 2 && view.json.questions[1].kind === 'IMPROVEMENT'
+          && view.json.questions[0].options[0].criteria?.[0] === 'Her sayfa nav.html yükler', JSON.stringify(view.json.questions));
+        const o = await b.req('POST', `/api/ui/decisions/${req.decisionId}/options`, {});
+        const a = await b.req('POST', `/api/ui/decisions/${req.decisionId}/answer`, { answers: [{ questionId: 'nav', selectedOptionId: 'copy', freeText: 'basit tut' }, { questionId: 'css', selectedOptionId: 'evet' }], assertion: auth.authenticate(o.json) });
+        check('WebAuthn step-up clarification answer (all questions at once)', a.status === 200, JSON.stringify(a.json));
+      }
+      await new Promise((r) => setTimeout(r, ms));
+    } });
+    const out = await resolver.resolve(req);
+    check('OtonomMCP IdpClarificationResolver ACCEPTS SPEC_CLARIFICATION token', out.status === 'ANSWERED' && out.answers?.[0]?.selectedOptionId === 'copy'
+      && out.answers?.[1]?.selectedOptionId === 'evet', JSON.stringify(out));
+    fs.rmSync(projectRoot, { recursive: true, force: true });
+  }
+
   // ---------- INSTRUCTION token through OtonomMCP's real InstructionChannel (poll -> verifyIdpToken -> ack) ----------
   const oInstr = await tryImport('autonomous/instruction-channel.js');
   if (oInstr.__error || !oInstr.InstructionChannel) {

@@ -88,6 +88,16 @@ Anahtarı JWKS üzerinden almak yerine **dosyayla sabitlemek (pin)** önerilir.
 Her istek **bir kez** karara bağlanabilir; süresi dolan (en fazla 15 dk) istekler onaylanamaz.
 Token ömrü en fazla 5 dakikadır; OtonomMCP `GET /api/approval-requests/:id` ile token'ı alır.
 
+## Spec netleştirme soruları (çoklu soru paketi)
+
+Otonom çalışma onaylandıktan sonra, kod yazılmadan önce Director spec'i inceler ve gerekirse tek bir
+"Spec netleştirme" isteği gönderir (`operation: SPEC_CLARIFICATION`, sözleşme v1.2). Bekleyenler listesinde
+"Spec netleştirme: …" olarak görünür. Sayfada "Netleştirilecek noktalar" ve "Önerilen iyileştirmeler"
+bölümleri vardır; her sorunun "Neden soruyorum" açıklaması, önerilen seçeneği (önceden işaretli) ve her
+seçeneğin altında görevlere eklenecek kabul kriterleri yazar. Seçimlerini yapıp **Tümünü Windows Hello ile
+GÖNDER** dersin; tek passkey onayı tüm cevapları imzalar (token'da `answers[]`). Veritabanı migration 5 ile
+iki sütun eklenir; mevcut passkey ve kayıtlar korunur.
+
 ## Canlı çalıştırma izleme
 
 OtonomMCP otonom çalıştırmaların durumunu (yalnızca bilgi amaçlı, tek yönlü) IdP'ye gönderir:

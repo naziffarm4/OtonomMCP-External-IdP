@@ -47,12 +47,33 @@ interface DecisionRow {
   expires_at: number;
   received_at: number;
   status: DecisionStatus;
+  questions?: string | null;
 }
 
 export interface DecisionOption {
   id: string;
   label: string;
   description?: string;
+  /** SPEC_CLARIFICATION only: measurable acceptance criteria this option implies (shown to the human). */
+  criteria?: string[];
+}
+
+/** One question of a SPEC_CLARIFICATION package (contract v1.2). */
+export interface ClarificationQuestion {
+  id: string;
+  /** CLARIFICATION (default): an open point of the spec. IMPROVEMENT: a plan change the Director proposes (accept/reject). */
+  kind?: 'CLARIFICATION' | 'IMPROVEMENT';
+  question: string;
+  reason?: string;
+  options: DecisionOption[];
+  recommendedOptionId?: string;
+  allowFreeText: boolean;
+}
+
+export interface ClarificationAnswer {
+  questionId: string;
+  selectedOptionId?: string;
+  freeText?: string;
 }
 
 const APPROVAL_FIELDS = [
@@ -61,11 +82,61 @@ const APPROVAL_FIELDS = [
 ] as const;
 const DECISION_FIELDS = [
   'decisionId', 'projectId', 'runId', 'taskId', 'packageId', 'revision', 'operation', 'contextFingerprint', 'question', 'options', 'allowFreeText',
-  'recommendedOptionId', 'nonce', 'summary', 'requestedAt', 'expiresAt',
+  'recommendedOptionId', 'nonce', 'summary', 'requestedAt', 'expiresAt', 'questions',
 ] as const;
+export const CLARIFICATION_OPERATION = 'SPEC_CLARIFICATION';
+export const MAX_CLARIFICATION_QUESTIONS = 12;
 export const MAX_FREE_TEXT = 2000;
 export const DECISION_OPERATION = 'AUTONOMOUS_DECISION';
 const OPTION_ID_RE = /^[A-Za-z0-9._-]{1,64}$/;
+
+function parseOptions(raw: unknown, what: string, min: number, max: number, withCriteria: boolean): DecisionOption[] {
+  if (!Array.isArray(raw) || raw.length < min || raw.length > max) throw v.bad(`${what} must be an array of ${min}-${max} items`);
+  const options = raw.map((r, i) => {
+    const opt = v.asObject(r, `${what}[${i}]`);
+    v.rejectUnknownKeys(opt, withCriteria ? ['id', 'label', 'description', 'criteria'] : ['id', 'label', 'description'], `${what}[${i}]`);
+    if (typeof opt.id !== 'string' || !OPTION_ID_RE.test(opt.id)) throw v.bad(`${what}[${i}].id must match [A-Za-z0-9._-]{1,64}`);
+    const out: DecisionOption = { id: opt.id, label: v.text(opt, 'label', 200)! };
+    const desc = v.text(opt, 'description', 1000, true);
+    if (desc) out.description = desc;
+    if (withCriteria && opt.criteria !== undefined && opt.criteria !== null) {
+      if (!Array.isArray(opt.criteria) || opt.criteria.length > 8) throw v.bad(`${what}[${i}].criteria must be an array of at most 8 strings`);
+      out.criteria = opt.criteria.map((c, j) => {
+        if (typeof c !== 'string' || !c.trim() || c.length > 300) throw v.bad(`${what}[${i}].criteria[${j}] must be a non-empty string <= 300 chars`);
+        return c;
+      });
+    }
+    return out;
+  });
+  if (new Set(options.map((x) => x.id)).size !== options.length) throw v.bad(`${what}: option ids must be unique`);
+  return options;
+}
+
+function parseQuestions(raw: unknown): ClarificationQuestion[] {
+  if (!Array.isArray(raw) || raw.length < 1 || raw.length > MAX_CLARIFICATION_QUESTIONS) {
+    throw v.bad(`questions must be an array of 1-${MAX_CLARIFICATION_QUESTIONS} items`);
+  }
+  const qs = raw.map((r, i) => {
+    const q = v.asObject(r, `questions[${i}]`);
+    v.rejectUnknownKeys(q, ['id', 'kind', 'question', 'reason', 'options', 'recommendedOptionId', 'allowFreeText'], `questions[${i}]`);
+    if (typeof q.id !== 'string' || !OPTION_ID_RE.test(q.id)) throw v.bad(`questions[${i}].id must match [A-Za-z0-9._-]{1,64}`);
+    const options = parseOptions(q.options, `questions[${i}].options`, 2, 4, true);
+    const out: ClarificationQuestion = { id: q.id, question: v.text(q, 'question', 2000)!, options, allowFreeText: v.bool(q, 'allowFreeText') };
+    const reason = v.text(q, 'reason', 1000, true);
+    if (reason) out.reason = reason;
+    if (q.kind !== undefined && q.kind !== null) {
+      if (q.kind !== 'CLARIFICATION' && q.kind !== 'IMPROVEMENT') throw v.bad(`questions[${i}].kind must be CLARIFICATION or IMPROVEMENT`);
+      out.kind = q.kind;
+    }
+    if (q.recommendedOptionId !== undefined && q.recommendedOptionId !== null) {
+      if (!options.some((o) => o.id === q.recommendedOptionId)) throw v.bad(`questions[${i}].recommendedOptionId must be one of its option ids`);
+      out.recommendedOptionId = q.recommendedOptionId as string;
+    }
+    return out;
+  });
+  if (new Set(qs.map((q) => q.id)).size !== qs.length) throw v.bad('question ids must be unique');
+  return qs;
+}
 const iso = (ms: number) => new Date(ms).toISOString();
 
 export class RequestService {
@@ -256,18 +327,17 @@ export class RequestService {
     const o = v.asObject(body);
     v.rejectUnknownKeys(o, DECISION_FIELDS);
     const now = this.cfg.now();
-    const rawOptions = o.options;
-    if (!Array.isArray(rawOptions) || rawOptions.length < 2 || rawOptions.length > 6) throw v.bad('options must be an array of 2-6 items');
-    const options: DecisionOption[] = rawOptions.map((raw, i) => {
-      const opt = v.asObject(raw, `options[${i}]`);
-      v.rejectUnknownKeys(opt, ['id', 'label', 'description'], `options[${i}]`);
-      if (typeof opt.id !== 'string' || !OPTION_ID_RE.test(opt.id)) throw v.bad(`options[${i}].id must match [A-Za-z0-9._-]{1,64}`);
-      const out: DecisionOption = { id: opt.id, label: v.text(opt, 'label', 200)! };
-      const desc = v.text(opt, 'description', 1000, true);
-      if (desc) out.description = desc;
-      return out;
-    });
-    if (new Set(options.map((x) => x.id)).size !== options.length) throw v.bad('option ids must be unique');
+    const isClarification = o.operation === CLARIFICATION_OPERATION;
+    let questions: ClarificationQuestion[] | undefined;
+    let options: DecisionOption[];
+    if (isClarification) {
+      questions = parseQuestions(o.questions);
+      if (o.options !== undefined && !(Array.isArray(o.options) && o.options.length === 0)) throw v.bad('options must be empty or omitted for SPEC_CLARIFICATION');
+      options = [];
+    } else {
+      if (o.questions !== undefined) throw v.bad(`questions is only allowed with operation '${CLARIFICATION_OPERATION}'`);
+      options = parseOptions(o.options, 'options', 2, 6, false);
+    }
     const rec = {
       decisionId: v.uuid(o, 'decisionId'),
       projectId: v.ident(o, 'projectId')!,
@@ -278,14 +348,17 @@ export class RequestService {
       operation: v.ident(o, 'operation')!,
       contextFingerprint: v.ident(o, 'contextFingerprint')!,
       question: v.text(o, 'question', 2000)!,
-      allowFreeText: v.bool(o, 'allowFreeText'),
+      allowFreeText: isClarification ? (o.allowFreeText === undefined ? true : v.bool(o, 'allowFreeText')) : v.bool(o, 'allowFreeText'),
       recommendedOptionId: o.recommendedOptionId === undefined || o.recommendedOptionId === null ? undefined : o.recommendedOptionId,
       nonce: v.nonce(o),
       summary: v.summary(o, 'summary', true),
       requestedAt: v.isoTime(o, 'requestedAt'),
       expiresAt: v.isoTime(o, 'expiresAt'),
     };
-    if (rec.operation !== DECISION_OPERATION) throw v.bad(`operation must be '${DECISION_OPERATION}'`);
+    if (rec.operation !== DECISION_OPERATION && rec.operation !== CLARIFICATION_OPERATION) {
+      throw v.bad(`operation must be '${DECISION_OPERATION}' or '${CLARIFICATION_OPERATION}'`);
+    }
+    if (isClarification && rec.recommendedOptionId !== undefined) throw v.bad('recommendedOptionId is per question for SPEC_CLARIFICATION');
     if (rec.recommendedOptionId !== undefined && !options.some((x) => x.id === rec.recommendedOptionId)) {
       throw v.bad('recommendedOptionId must be one of the option ids');
     }
@@ -298,13 +371,13 @@ export class RequestService {
       this.db
         .prepare(
           `INSERT INTO decision_requests (decision_id, project_id, run_id, task_id, package_id, revision, operation, context_fingerprint, question, options,
-             allow_free_text, recommended_option_id, nonce, summary, requested_at, expires_at, received_at, status)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
+             allow_free_text, recommended_option_id, nonce, summary, requested_at, expires_at, received_at, status, questions)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)`,
         )
         .run(rec.decisionId, rec.projectId, rec.runId, rec.taskId, rec.packageId, rec.revision, rec.operation, rec.contextFingerprint, rec.question, JSON.stringify(options),
           rec.allowFreeText ? 1 : 0, (rec.recommendedOptionId as string | undefined) ?? null, rec.nonce, rec.summary ?? null,
-          rec.requestedAt, rec.expiresAt, now);
-      audit(this.db, now, 'otonommcp', 'decision.created', rec.decisionId, { projectId: rec.projectId, runId: rec.runId });
+          rec.requestedAt, rec.expiresAt, now, questions ? JSON.stringify(questions) : null);
+      audit(this.db, now, 'otonommcp', 'decision.created', rec.decisionId, { projectId: rec.projectId, runId: rec.runId, operation: rec.operation, questions: questions?.length });
     });
     return { decisionId: rec.decisionId, status: 'PENDING', decisionUrl: `${this.cfg.origin}/#/decisions/${rec.decisionId}`, expiresAt: iso(rec.expiresAt) };
   }
@@ -330,8 +403,8 @@ export class RequestService {
 
   decisionView(id: string) {
     const r = this.decisionRow(id);
-    const a = this.db.prepare('SELECT selected_option_id, free_text, answered_at FROM decision_answers WHERE decision_id = ?').get(r.decision_id) as
-      | { selected_option_id: string | null; free_text: string | null; answered_at: number }
+    const a = this.db.prepare('SELECT selected_option_id, free_text, answers, answered_at FROM decision_answers WHERE decision_id = ?').get(r.decision_id) as
+      | { selected_option_id: string | null; free_text: string | null; answers: string | null; answered_at: number }
       | undefined;
     return {
       kind: 'decision' as const,
@@ -346,6 +419,7 @@ export class RequestService {
       contextFingerprint: r.context_fingerprint,
       question: r.question,
       options: JSON.parse(r.options) as DecisionOption[],
+      questions: r.questions ? (JSON.parse(r.questions) as ClarificationQuestion[]) : undefined,
       allowFreeText: r.allow_free_text === 1,
       maxFreeTextLength: MAX_FREE_TEXT,
       recommendedOptionId: r.recommended_option_id ?? undefined,
@@ -353,14 +427,48 @@ export class RequestService {
       summary: r.summary ? JSON.parse(r.summary) : undefined,
       requestedAt: iso(r.requested_at),
       expiresAt: iso(r.expires_at),
-      answer: a ? { selectedOptionId: a.selected_option_id ?? undefined, freeText: a.free_text ?? undefined, answeredAt: iso(a.answered_at) } : undefined,
+      answer: a
+        ? {
+            selectedOptionId: a.selected_option_id ?? undefined,
+            freeText: a.free_text ?? undefined,
+            answers: a.answers ? (JSON.parse(a.answers) as ClarificationAnswer[]) : undefined,
+            answeredAt: iso(a.answered_at),
+          }
+        : undefined,
     };
   }
 
   /** Validates an answer payload before any WebAuthn step is consumed. */
-  validateAnswer(id: string, input: unknown): { selectedOptionId?: string; freeText?: string } {
+  validateAnswer(id: string, input: unknown): { selectedOptionId?: string; freeText?: string; answers?: ClarificationAnswer[] } {
     const r = this.decisionRow(id);
     const o = v.asObject(input ?? {}, 'answer');
+    if (r.questions) {
+      // SPEC_CLARIFICATION: every question needs an option or (where allowed) free text.
+      const qs = JSON.parse(r.questions) as ClarificationQuestion[];
+      if (!Array.isArray(o.answers)) throw v.bad('answers must be an array (one entry per question)');
+      const given = new Map<string, Record<string, unknown>>();
+      for (const [i, raw] of (o.answers as unknown[]).entries()) {
+        const a = v.asObject(raw, `answers[${i}]`);
+        v.rejectUnknownKeys(a, ['questionId', 'selectedOptionId', 'freeText'], `answers[${i}]`);
+        if (typeof a.questionId !== 'string' || !qs.some((q) => q.id === a.questionId)) throw v.bad(`answers[${i}].questionId is not a question of this request`);
+        if (given.has(a.questionId)) throw v.bad(`duplicate answer for ${a.questionId}`);
+        given.set(a.questionId, a);
+      }
+      return {
+        answers: qs.map((q) => {
+          const a = given.get(q.id) ?? {};
+          const sel = a.selectedOptionId === undefined || a.selectedOptionId === null || a.selectedOptionId === '' ? undefined : a.selectedOptionId;
+          if (sel !== undefined && (typeof sel !== 'string' || !q.options.some((x) => x.id === sel))) throw v.bad(`${q.id}: selectedOptionId must be one of its options`);
+          let freeText: string | undefined;
+          if (a.freeText !== undefined && a.freeText !== null && a.freeText !== '') {
+            if (!q.allowFreeText) throw v.bad(`${q.id}: free text is not allowed`);
+            freeText = v.text(a, 'freeText', MAX_FREE_TEXT)!;
+          }
+          if (sel === undefined && freeText === undefined) throw v.bad(`${q.id}: choose an option or enter free text`);
+          return { questionId: q.id, ...(sel !== undefined ? { selectedOptionId: sel as string } : {}), ...(freeText !== undefined ? { freeText } : {}) };
+        }),
+      };
+    }
     const sel = o.selectedOptionId === undefined || o.selectedOptionId === null || o.selectedOptionId === '' ? undefined : o.selectedOptionId;
     const options = JSON.parse(r.options) as DecisionOption[];
     if (sel !== undefined && (typeof sel !== 'string' || !options.some((x) => x.id === sel))) throw v.bad('selectedOptionId must be one of the options');
@@ -414,16 +522,17 @@ export class RequestService {
       };
       if (ans.selectedOptionId !== undefined) claims.selectedOptionId = ans.selectedOptionId;
       if (ans.freeText !== undefined) claims.freeText = ans.freeText;
+      if (ans.answers !== undefined) claims.answers = ans.answers;
       const token = signEs256(claims, this.key);
       const upd = this.db.prepare("UPDATE decision_requests SET status = 'ANSWERED' WHERE decision_id = ? AND status = 'PENDING'").run(id);
       if (upd.changes !== 1) throw new HttpError(409, 'ALREADY_ANSWERED', 'decision already answered');
       this.db
         .prepare(
-          `INSERT INTO decision_answers (decision_id, user_id, credential_id, selected_option_id, free_text, token, token_jti, token_expires_at, answered_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO decision_answers (decision_id, user_id, credential_id, selected_option_id, free_text, token, token_jti, token_expires_at, answered_at, answers)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
-        .run(id, user.id, credentialId, ans.selectedOptionId ?? null, ans.freeText ?? null, token, jti, exp * 1000, now);
-      audit(this.db, now, user.id, 'decision.answered', id, { credentialId, jti, selectedOptionId: ans.selectedOptionId });
+        .run(id, user.id, credentialId, ans.selectedOptionId ?? null, ans.freeText ?? null, token, jti, exp * 1000, now, ans.answers ? JSON.stringify(ans.answers) : null);
+      audit(this.db, now, user.id, 'decision.answered', id, { credentialId, jti, selectedOptionId: ans.selectedOptionId, answers: ans.answers?.length });
       return { token, jti };
     });
   }
@@ -436,11 +545,11 @@ export class RequestService {
       .prepare("SELECT request_id, project_id, operation, expires_at, requested_at FROM approval_requests WHERE status = 'PENDING' ORDER BY requested_at")
       .all() as { request_id: string; project_id: string; operation: string; expires_at: number; requested_at: number }[];
     const decisions = this.db
-      .prepare("SELECT decision_id, project_id, question, expires_at, requested_at FROM decision_requests WHERE status = 'PENDING' ORDER BY requested_at")
-      .all() as { decision_id: string; project_id: string; question: string; expires_at: number; requested_at: number }[];
+      .prepare("SELECT decision_id, project_id, question, operation, expires_at, requested_at FROM decision_requests WHERE status = 'PENDING' ORDER BY requested_at")
+      .all() as { decision_id: string; project_id: string; question: string; operation: string | null; expires_at: number; requested_at: number }[];
     return {
       approvals: approvals.map((r) => ({ requestId: r.request_id, projectId: r.project_id, operation: r.operation, requestedAt: iso(r.requested_at), expiresAt: iso(r.expires_at) })),
-      decisions: decisions.map((r) => ({ decisionId: r.decision_id, projectId: r.project_id, question: r.question, requestedAt: iso(r.requested_at), expiresAt: iso(r.expires_at) })),
+      decisions: decisions.map((r) => ({ decisionId: r.decision_id, projectId: r.project_id, question: r.question, operation: r.operation ?? undefined, requestedAt: iso(r.requested_at), expiresAt: iso(r.expires_at) })),
     };
   }
 

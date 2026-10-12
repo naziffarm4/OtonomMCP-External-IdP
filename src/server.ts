@@ -373,7 +373,7 @@ export function createIdp(cfg: IdpConfig): Idp {
       if (view.status !== 'PENDING') throw new HttpError(409, view.status === 'EXPIRED' ? 'EXPIRED' : 'ALREADY_ANSWERED', `decision is ${view.status}`);
       if (action === '/options') return sendJson(res, 200, await auth.stepUpOptions(s.idHash, s.user, 'decide', id));
       const b = asObject(await readJson(req, cfg.maxBodyBytes));
-      const answer = { selectedOptionId: b.selectedOptionId, freeText: b.freeText };
+      const answer = view.questions ? { answers: b.answers } : { selectedOptionId: b.selectedOptionId, freeText: b.freeText };
       requests.validateAnswer(id, answer); // reject bad input before burning the passkey challenge
       const credentialId = await auth.stepUpVerify(s.idHash, s.user, 'decide', id, b.assertion);
       requests.answer(id, s.user, credentialId, answer);

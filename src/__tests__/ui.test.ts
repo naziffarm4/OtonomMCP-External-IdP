@@ -107,6 +107,32 @@ describe('approval UI', () => {
     expect(got).toEqual(['b', 'hello']);
   });
 
+  test('spec clarification: one block per question, criteria listed, recommended preselected, answerAll collects every question', () => {
+    let got: any = null;
+    const node = ui.renderDecisionDetail(fakeDoc, {
+      decisionId: 'd', status: 'PENDING', question: 'Spec netleştirme', projectId: 'p', runId: 'r', taskId: 'SPEC-CLARIFY', packageId: 'pkg', revision: 1,
+      operation: 'SPEC_CLARIFICATION', contextFingerprint: 'c', nonce: 'n', options: [], allowFreeText: true, maxFreeTextLength: 2000,
+      expiresAt: new Date(Date.now() + 60_000).toISOString(), requestedAt: new Date().toISOString(),
+      questions: [
+        { id: 'nav', question: XSS, reason: 'r', allowFreeText: true, recommendedOptionId: 'js', options: [
+          { id: 'js', label: 'JS include', criteria: ['Her sayfa nav.html içerir', XSS] }, { id: 'copy', label: 'Kopyala' }] },
+        { id: 'css', kind: 'IMPROVEMENT', question: 'CSS?', allowFreeText: false, options: [{ id: 'one', label: 'Tek dosya' }, { id: 'per', label: 'Sayfa başına' }] },
+      ],
+    }, { answerAll: (a: any) => { got = a; } });
+    const radios = node.all().filter((n: FakeNode) => n.tagName === 'input' && n.type === 'radio');
+    expect(radios.map((r: FakeNode) => `${r.name}:${r.value}:${!!r.checked}`)).toEqual(['q-0:js:true', 'q-0:copy:false', 'q-1:one:false', 'q-1:per:false']);
+    expect(node.textContent).toContain('Her sayfa nav.html içerir');
+    expect(node.textContent).toContain('Önerilen iyileştirmeler');
+    expect(node.textContent).toContain('Neden soruyorum: r');
+    expect(node.textContent).toContain(XSS);
+    expect(node.all().some((n: FakeNode) => n.tagName === 'img')).toBe(false);
+    expect(node.all().filter((n: FakeNode) => n.tagName === 'textarea').length).toBe(1);
+    radios[3].checked = true;
+    node.all().find((n: FakeNode) => n.tagName === 'textarea').value = 'not';
+    node.all().find((n: FakeNode) => n.id === 'answer-btn').listeners.click[0]();
+    expect(got).toEqual([{ questionId: 'nav', selectedOptionId: 'js', freeText: 'not' }, { questionId: 'css', selectedOptionId: 'per' }]);
+  });
+
   test('pending list links only to in-app hashes and escapes questions', () => {
     const node = ui.renderPending(fakeDoc, {
       approvals: [{ requestId: 'r1', projectId: XSS, operation: 'op', expiresAt: new Date(Date.now() + 1000).toISOString() }],

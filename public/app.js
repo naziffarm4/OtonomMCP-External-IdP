@@ -109,6 +109,7 @@
         ['contextFingerprint', v.contextFingerprint], ['nonce', v.nonce],
         ['Son geçerlilik', fmtTime(v.expiresAt) + ' (' + remaining(v.expiresAt) + ')'],
       ]));
+    if (v.questions && v.questions.length) return renderClarification(doc, v, card, handlers);
     var form = el(doc, 'div', { className: 'options' });
     (v.options || []).forEach(function (o) {
       var input = el(doc, 'input', { type: 'radio', name: 'decision-option', value: o.id, disabled: v.status !== 'PENDING' });
@@ -139,6 +140,68 @@
     return card;
   }
 
+  /** SPEC_CLARIFICATION: several questions, each with 2-4 options (+ the acceptance criteria each implies). */
+  function renderClarification(doc, v, card, handlers) {
+    var pending = v.status === 'PENDING';
+    var given = {};
+    ((v.answer && v.answer.answers) || []).forEach(function (a) { given[a.questionId] = a; });
+    card.appendChild(el(doc, 'p', { className: 'msg info' },
+      'Director spec\'i inceledi ve uygulamaya başlamadan önce bu noktaların netleşmesini istiyor. Önerilen seçenekler işaretli; ' +
+      'her seçeneğin altındaki maddeler, o seçenekle görevlere eklenecek ölçülebilir kabul kriterleridir. Hepsini tek seferde Windows Hello ile gönderirsin.'));
+    var blocks = [];
+    var ordered = v.questions.map(function (q, qi) { return { q: q, qi: qi }; });
+    var clar = ordered.filter(function (x) { return x.q.kind !== 'IMPROVEMENT'; });
+    var impr = ordered.filter(function (x) { return x.q.kind === 'IMPROVEMENT'; });
+    var n = 0;
+    [[clar, 'Netleştirilecek noktalar'], [impr, 'Önerilen iyileştirmeler']].forEach(function (sec) {
+      if (!sec[0].length) return;
+      card.appendChild(el(doc, 'h2', null, sec[1]));
+      sec[0].forEach(function (x) { addQuestion(x.q, x.qi, ++n); });
+    });
+    function addQuestion(q, qi, num) {
+      var box = el(doc, 'fieldset', { className: 'card question-block' });
+      box.appendChild(el(doc, 'legend', null, num + '. ' + q.question));
+      if (q.reason) box.appendChild(el(doc, 'p', { className: 'desc' }, 'Neden soruyorum: ' + q.reason));
+      var name = 'q-' + qi;
+      q.options.forEach(function (o) {
+        var checked = given[q.id] ? given[q.id].selectedOptionId === o.id : (pending && o.id === q.recommendedOptionId);
+        var input = el(doc, 'input', { type: 'radio', name: name, value: o.id, disabled: !pending, checked: !!checked });
+        var crit = null;
+        if (o.criteria && o.criteria.length) {
+          crit = el(doc, 'ul', { className: 'criteria' });
+          o.criteria.forEach(function (c) { crit.appendChild(el(doc, 'li', null, c)); });
+        }
+        box.appendChild(el(doc, 'label', { className: 'opt' }, input, ' ', o.label,
+          o.id === q.recommendedOptionId ? el(doc, 'span', { className: 'badge' }, 'Önerilen') : null,
+          o.description ? el(doc, 'span', { className: 'desc' }, o.description) : null, crit));
+      });
+      var free = null;
+      if (q.allowFreeText) {
+        free = el(doc, 'textarea', { maxLength: v.maxFreeTextLength || 2000, placeholder: 'İsteğe bağlı not / farklı bir cevap', disabled: !pending, rows: 2 });
+        if (given[q.id] && given[q.id].freeText) free.value = given[q.id].freeText;
+        box.appendChild(free);
+      }
+      blocks.push({ q: q, box: box, name: name, free: free });
+      card.appendChild(box);
+    }
+    if (v.answer) card.appendChild(el(doc, 'div', { className: 'msg info' }, 'Cevaplandı (' + fmtTime(v.answer.answeredAt) + ')'));
+    if (pending && handlers) {
+      card.appendChild(el(doc, 'button', { className: 'ok', type: 'button', id: 'answer-btn', onclick: function () {
+        var answers = blocks.map(function (b) {
+          var sel = null;
+          var radios = b.box.querySelectorAll ? b.box.querySelectorAll('input[name="' + b.name + '"]') : [];
+          for (var i = 0; i < radios.length; i++) if (radios[i].checked) sel = radios[i].value;
+          var a = { questionId: b.q.id };
+          if (sel) a.selectedOptionId = sel;
+          if (b.free && b.free.value) a.freeText = b.free.value;
+          return a;
+        });
+        handlers.answerAll(answers);
+      } }, 'Tümünü Windows Hello ile GÖNDER'));
+    }
+    return card;
+  }
+
   function renderPending(doc, data) {
     var wrap = el(doc, 'div');
     var a = el(doc, 'ul', { className: 'list' });
@@ -148,7 +211,7 @@
     });
     var d = el(doc, 'ul', { className: 'list' });
     (data.decisions || []).forEach(function (r) {
-      d.appendChild(el(doc, 'li', null, el(doc, 'a', { href: '#/decisions/' + encodeURIComponent(r.decisionId) }, r.question),
+      d.appendChild(el(doc, 'li', null, el(doc, 'a', { href: '#/decisions/' + encodeURIComponent(r.decisionId) }, (r.operation === 'SPEC_CLARIFICATION' ? 'Spec netleştirme: ' : '') + r.question),
         ' · ' + r.projectId + ' · ' + remaining(r.expiresAt)));
     });
     wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Bekleyen onaylar (' + (data.approvals || []).length + ')'),
@@ -435,6 +498,12 @@
           api('POST', base + '/options', {})
             .then(function (opts) { return wa().startAuthentication({ optionsJSON: opts }); })
             .then(function (assertion) { return api('POST', base + '/answer', { selectedOptionId: sel, freeText: freeText, assertion: assertion }); })
+            .then(function () { return showDecision(id); }).catch(showError);
+        },
+        answerAll: function (answers) {
+          api('POST', base + '/options', {})
+            .then(function (opts) { return wa().startAuthentication({ optionsJSON: opts }); })
+            .then(function (assertion) { return api('POST', base + '/answer', { answers: answers, assertion: assertion }); })
             .then(function () { return showDecision(id); }).catch(showError);
         },
       }));

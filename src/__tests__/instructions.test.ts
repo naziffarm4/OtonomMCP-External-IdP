@@ -217,11 +217,12 @@ describe('migration 4 upgrades a live v3 database in place', () => {
       CREATE TABLE webauthn_challenges (id TEXT PRIMARY KEY, challenge TEXT NOT NULL UNIQUE,
         purpose TEXT NOT NULL CHECK (purpose IN ('setup','register','login','approve','decide')), binding_hash TEXT NOT NULL,
         user_id TEXT, target_id TEXT, payload TEXT, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, used_at INTEGER);
-      DELETE FROM schema_migrations WHERE version = 4;`);
+      ALTER TABLE decision_requests DROP COLUMN questions; ALTER TABLE decision_answers DROP COLUMN answers;
+      DELETE FROM schema_migrations WHERE version >= 4;`);
     raw.close();
     const h2 = await startHarness({ dataDir: dir });
     try {
-      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(4);
+      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(5);
       expect(h2.idp.runs.detail(RUN, null).run.status).toBe('RUNNING');
       const b = h2.browser();
       await b.req('GET', '/api/ui/state');
