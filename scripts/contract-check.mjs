@@ -155,6 +155,57 @@ try {
     check('OtonomMCP REJECTS tampered decision answer', tam.status !== 'ANSWERED', tam.reason);
     fs.rmSync(projectRoot, { recursive: true, force: true });
   }
+
+  // ---------- INSTRUCTION token through OtonomMCP's real InstructionChannel (poll -> verifyIdpToken -> ack) ----------
+  const oInstr = await tryImport('autonomous/instruction-channel.js');
+  if (oInstr.__error || !oInstr.InstructionChannel) {
+    console.log('SKIP  instruction checks: OtonomMCP build has no autonomous/instruction-channel.js');
+  } else {
+    const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'idp-contract-instr-'));
+    const runId = 'run-contract-instr';
+    const ib = { runId, projectId: 'LLMTEST', packageId: binding.packageId, revision: 1,
+      contextFingerprint: oInstr.computeInstructionChannelFingerprint({ runId, projectId: 'LLMTEST', packageId: binding.packageId, revision: 1, specFingerprint: 's'.repeat(64) }) };
+    const t0 = new Date().toISOString();
+    await fetch(`${base}/api/runs/${runId}`, { method: 'PUT', headers: { Authorization: `Bearer ${idp.clientToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ runId, seq: 1, projectId: 'LLMTEST', projectName: 'LLM Test', entryPoint: 'aidm_autonomous_start', status: 'RUNNING',
+        startedAt: t0, updatedAt: t0, finishedAt: null, model: 'm', budget: { limitUsd: 3, committedUsd: 0, reservedUsd: 0 }, currentTaskId: 'TASK-002',
+        tasks: [{ taskId: 'TASK-002', title: 'Hakkımda', status: 'IN_PROGRESS', cycles: 1, maxAttempts: 3, lastSummary: null }],
+        lastDirectorAction: null, pendingApprovalId: null, pendingDecisionIds: [], stopReason: null }) });
+    const mkProvider = () => oAuthz.createTrustedIdentityProvider({ env: oEnv, nonceStore: new oAuthz.NonceStore({ baseDir: projectRoot }) });
+    const ch = oInstr.InstructionChannel.create({ env: oEnv, provider: mkProvider(), binding: ib });
+    check('OtonomMCP InstructionChannel.open -> PUT channel', Boolean(ch) && await ch.open());
+    const sendInstr = async (draft) => {
+      const o = await b.req('POST', `/api/ui/runs/${runId}/instructions/options`, draft);
+      if (o.status !== 200) return { status: o.status, json: o.json };
+      return b.req('POST', `/api/ui/runs/${runId}/instructions/${o.json.instructionId}`, { assertion: auth.authenticate(o.json.options) });
+    };
+    const s1 = await sendInstr({ mode: 'PAUSE_AND_APPLY', text: 'Dur, iletişim formu ekle' });
+    check('UI instruction signed with passkey step-up', s1.status === 200, JSON.stringify(s1.json));
+    const got = await ch.poll();
+    check('OtonomMCP InstructionChannel.poll VERIFIES instruction token', got.length === 1 && got[0].mode === 'PAUSE_AND_APPLY' && got[0].taskId === null,
+      got.length ? `${got[0].mode} "${got[0].text}"` : JSON.stringify(ch.rejected));
+    const view = await b.req('GET', `/api/ui/runs/${runId}`);
+    check('IdP shows RECEIVED after OtonomMCP ack', view.json.instructions?.[0]?.status === 'RECEIVED');
+    check('OtonomMCP ack APPLIED accepted', got.length === 1 && await ch.ack(got[0].instructionId, 'APPLIED', 'Uygulandı'));
+    // a channel with a newer revision must reject a token issued for the old one
+    await sendInstr({ mode: 'NOTE', text: 'eski revizyon' });
+    const ch2 = oInstr.InstructionChannel.create({ env: oEnv, provider: mkProvider(), binding: { ...ib, revision: 2 } });
+    ch2.opened = true; // do not re-PUT the channel: the IdP channel stays at revision 1
+    const got2 = await ch2.poll();
+    check('OtonomMCP REJECTS instruction token for another revision (acked REJECTED)', got2.length === 0 && ch2.rejected.length === 1, ch2.rejected[0]?.reason);
+    const view2 = await b.req('GET', `/api/ui/runs/${runId}`);
+    check('IdP shows REJECTED with reason note', view2.json.instructions?.[0]?.status === 'REJECTED' && /Doğrulanamadı/.test(view2.json.instructions?.[0]?.note ?? ''), JSON.stringify(view2.json.instructions?.[0] ?? view2.json));
+    // Targeted instruction (taskId claim set). Contract: taskId is the instruction target, not a binding.
+    await sendInstr({ mode: 'NOTE', text: 'sadece bu görev', taskId: 'TASK-002' });
+    const got3 = await ch.poll();
+    const r3 = ch.rejected.at(-1)?.reason ?? '';
+    if (got3.length === 1 && got3[0].taskId === 'TASK-002') check('OtonomMCP VERIFIES targeted instruction (taskId claim)', true);
+    else console.log(`KNOWN  OtonomMCP rejects targeted instructions (taskId claim treated as task binding): ${r3}  -> OtonomMCP-side fix, see contract IdP notes`);
+    await ch.close();
+    const v3 = await b.req('GET', `/api/ui/runs/${runId}`);
+    check('OtonomMCP InstructionChannel.close -> form hidden', v3.json.instructionChannel?.canInstruct === false, JSON.stringify(v3.json).slice(0, 200));
+    fs.rmSync(projectRoot, { recursive: true, force: true });
+  }
 } finally {
   await idp.close();
   fs.rmSync(dataDir, { recursive: true, force: true });

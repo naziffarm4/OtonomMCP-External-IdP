@@ -196,3 +196,20 @@ böylece `@simplewebauthn/server`'ın gerçek doğrulaması test edilir. Sunucu 
 - **localhost açılmıyor**: bazı sistemlerde `localhost` önce `::1`'e çözülür; `IDP_HOST=localhost` ile başlatmayı dene.
 - **Token OtonomMCP'de SIGNATURE_INVALID**: OtonomMCP dalı ES256 raw R‖S düzeltmesini içermeli ve yeniden derlenmeli;
   `AIDM_IDP_PUBLIC_KEY_FILE` güncel `data\public-key.pem`'i göstermeli.
+
+## Director'a canlı talimat (Windows Hello imzalı)
+
+Çalışan bir koşunun detay sayfasında (`#/runs/:runId`) **"Director'a talimat ver"** formu vardır; yalnızca OtonomMCP bir talimat kanalı açtıysa ve koşu bitmemişse görünür.
+
+- Mod: **Sadece not** (NOTE), **Duraklat ve uygula** (PAUSE_AND_APPLY), **Durdur** (STOP); metin 1–2000 karakter (Durdur için isteğe bağlı); isteğe bağlı hedef görev.
+- **Windows Hello ile GÖNDER**: form önce sunucuda doğrulanır ve yeni bir `instructionId`'ye bağlı passkey challenge'ı üretilir; imzalanan içerik bu andaki içeriktir (gönderim isteği içeriği değiştiremez). UV zorunludur.
+- IdP, ES256 bir talimat token'ı (`operation: AUTONOMOUS_INSTRUCTION`, ömür 15 dk) üretir; OtonomMCP alıp doğrular ve durumu bildirir: İletilmeyi bekliyor → Alındı → Uygulandı / Reddedildi; 15 dk içinde alınmazsa **Süresi doldu**.
+- Talimat yetki yükseltmez: mühürlü yetkinin dışındaki işler için OtonomMCP ayrıca onay ister.
+
+| Uç nokta | Kimlik | Açıklama |
+|---|---|---|
+| `PUT/DELETE /api/runs/:runId/instruction-channel` | Bearer | Kanalı aç/güncelle / kapat |
+| `GET /api/runs/:runId/instructions?status=PENDING_DELIVERY` | Bearer | Bekleyen talimatlar (en eski önce, en fazla 20) |
+| `POST /api/runs/:runId/instructions/:instructionId/ack` | Bearer | `RECEIVED` / `APPLIED` / `REJECTED` (+ `note`) |
+| `POST /api/ui/runs/:runId/instructions/options` | Oturum + CSRF | Form doğrulama + passkey challenge |
+| `POST /api/ui/runs/:runId/instructions/:instructionId` | Oturum + CSRF + passkey | Talimatı oluşturur |
