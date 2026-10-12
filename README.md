@@ -96,7 +96,7 @@ Tüm `/api/*` makine uçları `Authorization: Bearer <AIDM_IDP_CLIENT_TOKEN>` is
 |---|---|
 | `POST /api/approval-requests` | `{ requestId(uuid), projectId, packageId, revision, contextFingerprint, specFingerprint, directorSessionId?, taskId?, operation, nonce(>=16), summary, requestedAt, expiresAt(<=15dk) }` → `201 { requestId, status:'PENDING', approvalUrl, expiresAt }` |
 | `GET /api/approval-requests/:id` | `{ requestId, status: PENDING\|APPROVED\|REJECTED\|EXPIRED, token? (yalnız APPROVED), reason? }` |
-| `POST /api/decision-requests` | `{ decisionId(uuid), projectId, runId, taskId, contextFingerprint, question, options[2..6]{id,label,description?}, allowFreeText, recommendedOptionId?, nonce, summary?, requestedAt, expiresAt }` → `201 { decisionId, status:'PENDING', decisionUrl, expiresAt }` |
+| `POST /api/decision-requests` | `{ decisionId(uuid), projectId, runId, taskId, packageId, revision, operation:'AUTONOMOUS_DECISION', contextFingerprint, question, options[2..6]{id,label,description?}, allowFreeText, recommendedOptionId?, nonce, summary?, requestedAt, expiresAt }` → `201 { decisionId, status:'PENDING', decisionUrl, expiresAt }` |
 | `GET /api/decision-requests/:id` | `{ decisionId, status: PENDING\|ANSWERED\|EXPIRED, token? }` |
 | `GET /api/status` | heartbeat: sürüm, uptime, kid, issuer/audience, bekleyen sayıları |
 | `GET /healthz` | (auth yok) sağlık kontrolü |
@@ -110,7 +110,8 @@ requestId, decision:'APPROVED', amr:['webauthn'], uv:true, projectId, packageId,
 specFingerprint, operation, directorSessionId?, taskId?`
 
 **Karar token'ı**: `iss, aud, sub, preferred_username, actorRole, nonce, jti, iat, nbf, exp, decisionId, selectedOptionId?, freeText?,
-projectId, runId, taskId, contextFingerprint, amr:['webauthn'], uv:true` (packageId/operation içermez).
+projectId, runId, taskId, packageId, revision, operation:'AUTONOMOUS_DECISION', contextFingerprint, amr:['webauthn'], uv:true`
+(sözleşme v1.1: OtonomMCP doğrulayıcısı packageId/revision olmayan token'ı reddettiği için bu alanlar zorunludur).
 
 ## Ortam değişkenleri
 
@@ -156,6 +157,19 @@ cd "D:\ÇALIŞMALAR-D\OtonomMCP"; npm run build
 cd "D:\ÇALIŞMALAR-D\OtonomMCP-External-IdP"
 $env:OTONOMMCP_DIR = "D:\ÇALIŞMALAR-D\OtonomMCP"; npm run contract-check
 ```
+
+`contract-check` hem **onay** token'ını (adapter + `verifyIdpToken`) hem de **karar** token'ını
+(OtonomMCP'nin `buildDecisionRecord` + `IdpDecisionResolver.verify` yolu) doğrular.
+
+Uçtan uca (gerçek IdP süreci ⇄ gerçek OtonomMCP, LLM ve AGY mock):
+
+```powershell
+$env:OTONOMMCP_CORE = "D:\ÇALIŞMALAR-D\OtonomMCP\packages\core"; npm run e2e
+```
+
+Bu, IdP'yi ayrı süreç olarak başlatır; OtonomMCP `aidm_autonomous_start` ile onay isteği açar, yazılım
+authenticator passkey ile onaylar, `aidm_autonomous_resume` token'ı doğrulayıp çalıştırmayı yürütür, Director'ın
+sorduğu karar IdP'de passkey ile cevaplanır ve çalıştırma tamamlanır; ret yolu da denenir.
 
 Yazılım authenticator (`src/testing/soft-authenticator.ts`) gerçek WebAuthn biçiminde cevap üretir
 (CBOR `attestationObject` fmt `none`, UP+UV bayraklı authenticatorData, origin/challenge'lı clientDataJSON),

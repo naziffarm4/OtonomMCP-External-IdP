@@ -5,6 +5,9 @@
  * software authenticator, then verifies it with OtonomMCP's actual
  * OidcIdentityProviderAdapter (pinned public key PEM).
  *
+ * It then does the same for a DECISION answer token through OtonomMCP's real decision path
+ * (buildDecisionRecord + IdpDecisionResolver.verify -> verifyIdpToken -> adapter + contract claims).
+ *
  * Usage:
  *   npm run contract-check                                  # OtonomMCP at ../OtonomMCP
  *   OTONOMMCP_DIR=D:\ÇALIŞMALAR-D\OtonomMCP npm run contract-check
@@ -32,6 +35,10 @@ if (!fs.existsSync(adapterPath)) {
   process.exit(2);
 }
 const { OidcIdentityProviderAdapter } = await import(pathToFileURL(adapterPath).href);
+const coreDist = path.dirname(path.dirname(adapterPath));
+const tryImport = async (rel) => { try { return await import(pathToFileURL(path.join(coreDist, rel)).href); } catch (e) { return { __error: e }; } };
+const oAuthz = await tryImport('authorization/index.js');
+const oAuto = await tryImport('autonomous/index.js');
 
 const ORIGIN = 'http://localhost:7443';
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'idp-contract-'));
@@ -91,6 +98,63 @@ try {
   const wrongKey = new OidcIdentityProviderAdapter({ issuer: 'otonommcp-external-idp', audience: 'otonommcp', publicKeyPem: otherPem });
   const t5 = await wrongKey.verifyAssertion({ token: st.token, binding }, binding, { dryRun: true });
   check('adapter REJECTS token under a different pinned key', !t5.isValid && t5.status === 'SIGNATURE_INVALID', t5.status);
+
+  // ---------- OtonomMCP real approval path (env factory + verifyIdpToken contract claims) ----------
+  const pemFile = path.join(dataDir, 'public-key.pem');
+  const oEnv = { AIDM_IDP_URL: base, AIDM_IDP_CLIENT_TOKEN: idp.clientToken, AIDM_IDP_PUBLIC_KEY_FILE: pemFile };
+  const idpClientMod = await tryImport('autonomous/idp-client.js');
+  if (oAuthz.__error || idpClientMod.__error || !oAuthz.createTrustedIdentityProvider) {
+    check('OtonomMCP createTrustedIdentityProvider / verifyIdpToken available', false, String(oAuthz.__error ?? idpClientMod.__error ?? 'missing export'));
+  } else {
+    const provider = oAuthz.createTrustedIdentityProvider({ env: oEnv });
+    const v = await idpClientMod.verifyIdpToken(provider, st.token, binding, { requestId, nonce, decision: 'APPROVED' }, { consumeNonce: false });
+    check('OtonomMCP verifyIdpToken ACCEPTS approval token (pinned key file from data dir)', v.ok, v.ok ? v.status : `${v.status}: ${v.reason}`);
+    const v2 = await idpClientMod.verifyIdpToken(provider, st.token, binding, { requestId: crypto.randomUUID(), nonce }, { consumeNonce: false });
+    check('OtonomMCP verifyIdpToken REJECTS approval token for another requestId', !v2.ok, v2.status);
+  }
+
+  // ---------- DECISION answer token through OtonomMCP's real decision verification ----------
+  if (oAuto.__error || !oAuto.buildDecisionRecord || !oAuto.IdpDecisionResolver) {
+    check('OtonomMCP buildDecisionRecord / IdpDecisionResolver available', false, String(oAuto.__error ?? 'missing export'));
+  } else {
+    const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'idp-contract-proj-'));
+    const rec = oAuto.buildDecisionRecord({
+      projectRoot, projectId: binding.projectId, runId: 'run-contract', taskId: 'TASK-002', packageId: binding.packageId, revision: binding.revision,
+      question: 'Yuvarlama kuralı?', reason: 'Spec belirtmiyor', options: [{ id: 'bankers', label: 'Banker' }, { id: 'half-up', label: 'Yukarı' }],
+      recommendation: 'bankers', allowFreeText: true,
+    });
+    const created2 = await fetch(`${base}/api/decision-requests`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${idp.clientToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ decisionId: rec.decisionId, projectId: rec.projectId, runId: rec.runId, taskId: rec.taskId, packageId: rec.packageId,
+        revision: rec.revision, operation: 'AUTONOMOUS_DECISION', contextFingerprint: rec.contextFingerprint, question: rec.question,
+        summary: rec.reason, options: rec.options, allowFreeText: rec.allowFreeText, recommendedOptionId: rec.recommendedOptionId ?? null,
+        nonce: rec.nonce, requestedAt: rec.requestedAt, expiresAt: rec.expiresAt }),
+    });
+    check('POST /api/decision-requests (OtonomMCP-built record) -> 201', created2.status === 201, String(created2.status));
+    const dOpts = await b.req('POST', `/api/ui/decisions/${rec.decisionId}/options`, {});
+    const ans = await b.req('POST', `/api/ui/decisions/${rec.decisionId}/answer`, { selectedOptionId: 'bankers', freeText: 'Finans standardı', assertion: auth.authenticate(dOpts.json) });
+    check('WebAuthn step-up decision answer', ans.status === 200, JSON.stringify(ans.json));
+    const dst = await (await fetch(`${base}/api/decision-requests/${rec.decisionId}`, { headers: { Authorization: `Bearer ${idp.clientToken}` } })).json();
+    check('GET decision -> ANSWERED with token', dst.status === 'ANSWERED' && typeof dst.token === 'string');
+    const { NonceStore } = oAuthz;
+    const provider = oAuthz.createTrustedIdentityProvider({ env: oEnv, nonceStore: new NonceStore({ baseDir: projectRoot }) });
+    const resolver = new oAuto.IdpDecisionResolver({ env: oEnv, provider });
+    const out = await resolver.verify(rec, dst.token);
+    check('OtonomMCP IdpDecisionResolver.verify ACCEPTS decision token', out.status === 'ANSWERED' && out.answer?.selectedOptionId === 'bankers',
+      out.status === 'ANSWERED' ? `selected=${out.answer.selectedOptionId} freeText=${out.answer.freeText}` : out.reason);
+    const replay = await resolver.verify(rec, dst.token);
+    check('OtonomMCP REJECTS replay of the consumed decision token', replay.status !== 'ANSWERED', replay.reason);
+    const other = { ...rec, decisionId: crypto.randomUUID(), nonce: rec.nonce + 'x' };
+    const wrong = await new oAuto.IdpDecisionResolver({ env: oEnv, provider: oAuthz.createTrustedIdentityProvider({ env: oEnv }) }).verify(other, dst.token);
+    check('OtonomMCP REJECTS decision token for another decisionId', wrong.status !== 'ANSWERED', wrong.reason);
+    const [dh, dp, ds] = dst.token.split('.');
+    const dpay = JSON.parse(Buffer.from(dp, 'base64url').toString());
+    const forgedD = `${dh}.${Buffer.from(JSON.stringify({ ...dpay, selectedOptionId: 'half-up' })).toString('base64url')}.${ds}`;
+    const tam = await new oAuto.IdpDecisionResolver({ env: oEnv, provider: oAuthz.createTrustedIdentityProvider({ env: oEnv }) }).verify(rec, forgedD);
+    check('OtonomMCP REJECTS tampered decision answer', tam.status !== 'ANSWERED', tam.reason);
+    fs.rmSync(projectRoot, { recursive: true, force: true });
+  }
 } finally {
   await idp.close();
   fs.rmSync(dataDir, { recursive: true, force: true });

@@ -13,7 +13,8 @@
     "dev": "node scripts/dev.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --no-warnings=ExperimentalWarning node_modules/jest/bin/jest.js",
-    "contract-check": "npm run build && node --no-warnings=ExperimentalWarning scripts/contract-check.mjs"
+    "contract-check": "npm run build && node --no-warnings=ExperimentalWarning scripts/contract-check.mjs",
+    "e2e": "npm run build && node --experimental-strip-types --no-warnings scripts/e2e-otonommcp.mts"
   },
   "repository": {
     "type": "git",
