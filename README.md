@@ -88,6 +88,20 @@ Anahtarı JWKS üzerinden almak yerine **dosyayla sabitlemek (pin)** önerilir.
 Her istek **bir kez** karara bağlanabilir; süresi dolan (en fazla 15 dk) istekler onaylanamaz.
 Token ömrü en fazla 5 dakikadır; OtonomMCP `GET /api/approval-requests/:id` ile token'ı alır.
 
+## Canlı çalıştırma izleme
+
+OtonomMCP otonom çalıştırmaların durumunu (yalnızca bilgi amaçlı, tek yönlü) IdP'ye gönderir:
+ana sayfada **aktif çalıştırmalar**, `#/runs` listesinde tüm çalıştırmalar, `#/runs/<runId>` sayfasında durum,
+model, bütçe çubuğu, görev tablosu, son Director kararı, bekleyen onay/karar linkleri ve zaman çizelgesi görünür.
+Sayfa açıkken 3 sn'de bir yenilenir; 2 dakikadan uzun süre güncelleme gelmezse "bağlantı yok / duraklamış olabilir"
+uyarısı çıkar. İzleme verisi onay ve kararları **hiçbir şekilde etkilemez**. Saklama: çalıştırma başına en fazla 2000 olay,
+en fazla 200 çalıştırma (en eski bitmişler silinir).
+
+| Uç | Açıklama |
+|---|---|
+| `PUT /api/runs/:runId` (bearer) | anlık görüntü (seq'e göre en yenisi kazanır) |
+| `POST /api/runs/:runId/events` (bearer) | olay ekleme, (runId, seq) ile idempotent, çağrı başına 1–50 olay |
+
 ## API (OtonomMCP ⇄ IdP sözleşmesi)
 
 Tüm `/api/*` makine uçları `Authorization: Bearer <AIDM_IDP_CLIENT_TOKEN>` ister.

@@ -7,7 +7,7 @@
   var state = { csrf: null, user: null, needsSetup: false };
 
   // ---------- DOM helpers (text-only) ----------
-  var SAFE_ATTRS = { id: 1, className: 1, type: 1, name: 1, value: 1, htmlFor: 1, maxLength: 1, placeholder: 1, checked: 1, disabled: 1, autocomplete: 1, rows: 1 };
+  var SAFE_ATTRS = { max: 1, id: 1, className: 1, type: 1, name: 1, value: 1, htmlFor: 1, maxLength: 1, placeholder: 1, checked: 1, disabled: 1, autocomplete: 1, rows: 1 };
 
   function el(doc, tag, attrs) {
     var node = doc.createElement(tag);
@@ -158,6 +158,104 @@
     return wrap;
   }
 
+  // ---------- run monitor renderers (read-only, informational) ----------
+  var RUN_STATUS_TR = {
+    PENDING_APPROVAL: 'Onay bekliyor', RUNNING: 'Çalışıyor', BLOCKED_ON_HUMAN: 'İnsan bekliyor', WAITING_DECISION: 'Karar bekliyor',
+    COMPLETED: 'Tamamlandı', FAILED: 'Başarısız', STOPPED: 'Durduruldu', CONFIGURATION_ERROR: 'Yapılandırma hatası', REJECTED: 'Reddedildi',
+  };
+  function runBadge(doc, s) { return el(doc, 'span', { className: 'status run-' + String(s).replace(/[^A-Z_]/g, '') }, RUN_STATUS_TR[s] || String(s)); }
+  function usd(n) { return typeof n === 'number' && isFinite(n) ? '$' + n.toFixed(2) : '-'; }
+  function ageSeconds(serverTime, receivedAt) {
+    var d = Math.round((Date.parse(serverTime) - Date.parse(receivedAt)) / 1000);
+    return isFinite(d) && d > 0 ? d : 0;
+  }
+  function ageText(sec) {
+    if (sec < 60) return sec + ' sn önce';
+    if (sec < 3600) return Math.floor(sec / 60) + ' dk ' + (sec % 60) + ' sn önce';
+    return Math.floor(sec / 3600) + ' sa önce';
+  }
+  function isStale(run, serverTime) { return run.status === 'RUNNING' && ageSeconds(serverTime, run.receivedAt) > 120; }
+
+  function budgetBar(doc, b) {
+    if (!b) return el(doc, 'span', null, '-');
+    var used = (b.committedUsd || 0) + (b.reservedUsd || 0);
+    var pct = b.limitUsd > 0 ? Math.min(100, Math.max(0, Math.round((used / b.limitUsd) * 100))) : 0;
+    var bar = el(doc, 'progress', { className: 'budget', max: 100, value: pct });
+    return el(doc, 'span', { className: 'budget-wrap' }, bar, ' ' + usd(b.committedUsd) + ' harcandı + ' + usd(b.reservedUsd) + ' ayrıldı / ' + usd(b.limitUsd) + ' (%' + pct + ')');
+  }
+
+  function renderRunsList(doc, data, opts) {
+    var runs = (data && data.runs) || [];
+    var title = opts && opts.activeOnly ? 'Aktif çalıştırmalar (' + runs.length + ')' : 'Otonom çalıştırmalar (' + runs.length + ')';
+    var card = el(doc, 'section', { className: 'card runs' }, el(doc, 'h2', null, title));
+    if (!runs.length) { card.appendChild(el(doc, 'p', null, opts && opts.activeOnly ? 'Şu an aktif çalıştırma yok.' : 'Henüz çalıştırma yok.')); }
+    else {
+      var t = el(doc, 'table', { className: 'kv' },
+        el(doc, 'tr', null, el(doc, 'td', { className: 'k' }, 'Proje'), el(doc, 'td', { className: 'k' }, 'Durum'), el(doc, 'td', { className: 'k' }, 'Bütçe'),
+          el(doc, 'td', { className: 'k' }, 'Mevcut görev'), el(doc, 'td', { className: 'k' }, 'Son güncelleme')));
+      runs.forEach(function (r) {
+        var b = r.budget;
+        t.appendChild(el(doc, 'tr', null,
+          el(doc, 'td', null, el(doc, 'a', { href: '#/runs/' + encodeURIComponent(r.runId) }, r.projectName || r.projectId || r.runId)),
+          el(doc, 'td', null, runBadge(doc, r.status), isStale(r, data.serverTime) ? el(doc, 'span', { className: 'badge warn' }, 'bağlantı yok?') : null),
+          el(doc, 'td', null, b ? usd((b.committedUsd || 0) + (b.reservedUsd || 0)) + ' / ' + usd(b.limitUsd) : '-'),
+          el(doc, 'td', null, r.currentTaskId || '-'),
+          el(doc, 'td', null, ageText(ageSeconds(data.serverTime, r.receivedAt)))));
+      });
+      card.appendChild(t);
+    }
+    if (opts && opts.activeOnly) card.appendChild(el(doc, 'p', null, el(doc, 'a', { href: '#/runs' }, 'Tüm çalıştırmalar →')));
+    return card;
+  }
+
+  function renderRunDetail(doc, data) {
+    var run = data.run, s = run.snapshot || {};
+    var wrap = el(doc, 'div', { className: 'run-detail' });
+    var age = ageSeconds(data.serverTime, run.receivedAt);
+    var head = el(doc, 'section', { className: 'card' },
+      el(doc, 'h1', null, (run.projectName || run.projectId || run.runId) + ' ', runBadge(doc, run.status)),
+      el(doc, 'p', { className: 'muted', id: 'run-age' }, 'Son güncelleme ' + ageText(age) + ' · bilgi amaçlıdır, onay/karar yerine geçmez'),
+      isStale(run, data.serverTime) ? el(doc, 'div', { className: 'msg err', id: 'run-stale' }, 'Bağlantı yok / duraklamış olabilir: 2 dakikadan uzun süredir güncelleme gelmedi.') : null,
+      kvTable(doc, [
+        ['runId', run.runId], ['Proje', s.projectId || run.projectId], ['Giriş noktası', s.entryPoint], ['Model', s.model],
+        ['Başlangıç', s.startedAt ? fmtTime(s.startedAt) : ''], ['Bitiş', s.finishedAt ? fmtTime(s.finishedAt) : ''],
+        ['Mevcut görev', s.currentTaskId], ['Durma nedeni', s.stopReason],
+      ]),
+      el(doc, 'h2', null, 'Bütçe'), budgetBar(doc, s.budget));
+    wrap.appendChild(head);
+    var links = el(doc, 'div', null);
+    if (s.pendingApprovalId) links.appendChild(el(doc, 'p', null, el(doc, 'a', { href: '#/approvals/' + encodeURIComponent(s.pendingApprovalId) }, 'Bekleyen onaya git →')));
+    (s.pendingDecisionIds || []).forEach(function (id) {
+      links.appendChild(el(doc, 'p', null, el(doc, 'a', { href: '#/decisions/' + encodeURIComponent(id) }, 'Bekleyen karara git →')));
+    });
+    if (links.firstChild) wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Senden beklenenler'), links));
+    var tasks = s.tasks || [];
+    var tt = el(doc, 'table', { className: 'kv tasks' }, el(doc, 'tr', null, el(doc, 'td', { className: 'k' }, 'Görev'), el(doc, 'td', { className: 'k' }, 'Durum'),
+      el(doc, 'td', { className: 'k' }, 'Döngü'), el(doc, 'td', { className: 'k' }, 'Son özet')));
+    tasks.forEach(function (t) {
+      tt.appendChild(el(doc, 'tr', { className: t.taskId === s.currentTaskId ? 'current' : '' },
+        el(doc, 'td', null, t.taskId + ' — ' + t.title), el(doc, 'td', null, t.status),
+        el(doc, 'td', null, String(t.cycles) + (t.maxAttempts !== null && t.maxAttempts !== undefined ? ' / ' + t.maxAttempts : '')),
+        el(doc, 'td', null, t.lastSummary || '')));
+    });
+    wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Görevler (' + tasks.length + ')'), tasks.length ? tt : el(doc, 'p', null, 'Görev bilgisi yok.')));
+    if (s.lastDirectorAction) {
+      var a = s.lastDirectorAction;
+      wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Son Director kararı'),
+        kvTable(doc, [['Eylem', a.actionType], ['Görev', a.taskId], ['Zaman', fmtTime(a.at)]]),
+        el(doc, 'div', { className: 'summary' }, a.rationale)));
+    }
+    var tl = el(doc, 'ul', { className: 'list timeline' });
+    (data.events || []).forEach(function (e) {
+      tl.appendChild(el(doc, 'li', { className: 'ev ' + (e.level === 'error' ? 'error' : e.level === 'warn' ? 'warn' : 'info') },
+        el(doc, 'span', { className: 'muted' }, fmtTime(e.at) + ' · #' + e.seq + ' · '), el(doc, 'strong', null, e.type),
+        e.taskId ? ' [' + e.taskId + ']' : '', ' — ' + e.message));
+    });
+    wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Zaman çizelgesi (en yeni üstte)'),
+      (data.events || []).length ? tl : el(doc, 'p', null, 'Henüz olay yok.')));
+    return wrap;
+  }
+
   // ---------- network ----------
   function api(method, url, body) {
     var headers = { 'Accept': 'application/json' };
@@ -238,8 +336,10 @@
   function showHome() {
     var doc = root.document, v = view();
     return api('GET', '/api/ui/pending').then(function (data) {
+      return api('GET', '/api/ui/runs?active=1').catch(function () { return { runs: [] }; }).then(function (runs) {
       clear(v);
       v.appendChild(renderPending(doc, data));
+      v.appendChild(renderRunsList(doc, runs, { activeOnly: true }));
       v.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Passkey yönetimi'),
         el(doc, 'button', { type: 'button', id: 'add-passkey', onclick: function () {
           api('POST', '/api/passkeys/options', {})
@@ -247,6 +347,7 @@
             .then(function (resp) { return api('POST', '/api/passkeys/verify', { response: resp }); })
             .then(function () { root.alert('Yeni passkey eklendi.'); }).catch(showError);
         } }, 'Yedek passkey ekle')));
+      });
     });
   }
 
@@ -285,17 +386,46 @@
     });
   }
 
+  var pollTimer = null;
+  function stopPolling() { if (pollTimer) { root.clearInterval(pollTimer); pollTimer = null; } }
+  /** Re-render every 3 s while the tab is visible and the route is unchanged. */
+  function startPolling(hash, fn) {
+    stopPolling();
+    pollTimer = root.setInterval(function () {
+      if ((root.location.hash || '#/') !== hash) { stopPolling(); return; }
+      if (root.document.visibilityState && root.document.visibilityState !== 'visible') return;
+      fn().catch(function () { /* keep last view; staleness warning covers it */ });
+    }, 3000);
+  }
+
+  function showRuns() {
+    var doc = root.document, v = view();
+    return api('GET', '/api/ui/runs').then(function (data) { clear(v); v.appendChild(renderRunsList(doc, data)); });
+  }
+  function showRun(id) {
+    var doc = root.document, v = view();
+    return api('GET', '/api/ui/runs/' + encodeURIComponent(id)).then(function (data) { clear(v); v.appendChild(renderRunDetail(doc, data)); });
+  }
+
   function route() {
     var h = root.location.hash || '#/';
     var p;
+    stopPolling();
     if (state.needsSetup) return showSetup();
     if (!state.user) return showLogin();
     if ((p = /^#\/approvals\/([0-9a-fA-F-]{36})$/.exec(h))) return showApproval(p[1]).catch(showError);
     if ((p = /^#\/decisions\/([0-9a-fA-F-]{36})$/.exec(h))) return showDecision(p[1]).catch(showError);
+    if (h === '#/runs') { startPolling(h, showRuns); return showRuns().catch(showError); }
+    if ((p = /^#\/runs\/([A-Za-z0-9._:%-]{1,400})$/.exec(h))) {
+      var rid = decodeURIComponent(p[1]);
+      startPolling(h, function () { return showRun(rid); });
+      return showRun(rid).catch(showError);
+    }
+    startPolling(h, showHome);
     return showHome().catch(showError);
   }
 
-  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining };
+  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail };
   if (typeof module !== 'undefined' && module.exports) module.exports = exported;
 
   if (root.document && !root.__IDP_TEST__) {

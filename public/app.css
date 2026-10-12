@@ -24,3 +24,11 @@ table.kv td.k { color:var(--muted); width:220px; word-break:normal; }
 .summary { white-space:pre-wrap; }
 ul.list { list-style:none; padding:0; } ul.list li { padding:8px 0; border-bottom:1px solid #334155; }
 .foot { text-align:center; color:var(--muted); font-size:13px; padding:20px; }
+.muted { color:var(--muted); font-size:14px; }
+progress.budget { width:220px; height:14px; vertical-align:middle; }
+.badge.warn { background:var(--warn); color:#111; }
+tr.current td { background:#0b2540; }
+.timeline li.error { border-left:3px solid var(--bad); padding-left:8px; } .timeline li.warn { border-left:3px solid var(--warn); padding-left:8px; }
+.status.run-RUNNING { background:var(--acc); } .status.run-COMPLETED { background:var(--ok); }
+.status.run-FAILED,.status.run-STOPPED,.status.run-REJECTED,.status.run-CONFIGURATION_ERROR { background:var(--bad); }
+.status.run-PENDING_APPROVAL,.status.run-WAITING_DECISION,.status.run-BLOCKED_ON_HUMAN { background:var(--warn); color:#111; }
