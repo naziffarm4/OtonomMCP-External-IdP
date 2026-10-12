@@ -32,3 +32,6 @@ tr.current td { background:#0b2540; }
 .status.run-RUNNING { background:var(--acc); } .status.run-COMPLETED { background:var(--ok); }
 .status.run-FAILED,.status.run-STOPPED,.status.run-REJECTED,.status.run-CONFIGURATION_ERROR { background:var(--bad); }
 .status.run-PENDING_APPROVAL,.status.run-WAITING_DECISION,.status.run-BLOCKED_ON_HUMAN { background:var(--warn); color:#111; }
+select { width:100%; padding:8px; border-radius:6px; border:1px solid #334155; background:#0b1222; color:var(--fg); font-size:15px; }
+.status.instr-APPLIED { background:var(--ok); } .status.instr-REJECTED,.status.instr-EXPIRED { background:var(--bad); }
+.status.instr-PENDING_DELIVERY { background:var(--warn); color:#111; } .status.instr-RECEIVED { background:var(--acc); }

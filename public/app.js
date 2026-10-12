@@ -7,7 +7,7 @@
   var state = { csrf: null, user: null, needsSetup: false };
 
   // ---------- DOM helpers (text-only) ----------
-  var SAFE_ATTRS = { max: 1, id: 1, className: 1, type: 1, name: 1, value: 1, htmlFor: 1, maxLength: 1, placeholder: 1, checked: 1, disabled: 1, autocomplete: 1, rows: 1 };
+  var SAFE_ATTRS = { selected: 1, max: 1, id: 1, className: 1, type: 1, name: 1, value: 1, htmlFor: 1, maxLength: 1, placeholder: 1, checked: 1, disabled: 1, autocomplete: 1, rows: 1 };
 
   function el(doc, tag, attrs) {
     var node = doc.createElement(tag);
@@ -208,7 +208,57 @@
     return card;
   }
 
-  function renderRunDetail(doc, data) {
+  var INSTR_STATUS_TR = { PENDING_DELIVERY: 'İletilmeyi bekliyor', RECEIVED: 'Alındı', APPLIED: 'Uygulandı', REJECTED: 'Reddedildi', EXPIRED: 'Süresi doldu' };
+  var MODE_TR = { NOTE: 'Sadece not', PAUSE_AND_APPLY: 'Duraklat ve uygula', STOP: 'Durdur' };
+
+  /** Instruction form + list. handlers: { draft:{mode,text,taskId}, send(draft) }. */
+  function renderInstructions(doc, data, handlers) {
+    var s = (data.run && data.run.snapshot) || {};
+    var ch = data.instructionChannel || { canInstruct: false };
+    var card = el(doc, 'section', { className: 'card instructions' }, el(doc, 'h2', null, "Director'a talimat ver"));
+    if (ch.canInstruct && handlers) {
+      var draft = handlers.draft || (handlers.draft = { mode: 'NOTE', text: '', taskId: '' });
+      var radios = el(doc, 'div', { className: 'modes' });
+      ['NOTE', 'PAUSE_AND_APPLY', 'STOP'].forEach(function (m) {
+        var r = el(doc, 'input', { type: 'radio', name: 'instr-mode', value: m, checked: draft.mode === m,
+          onchange: function () { draft.mode = m; } });
+        radios.appendChild(el(doc, 'label', { className: 'opt' }, r, ' ' + MODE_TR[m]));
+      });
+      var ta = el(doc, 'textarea', { id: 'instr-text', maxLength: 2000, placeholder: 'ör. "dur, iletişim formu ekle" / "başlık rengini düzelt"', value: draft.text });
+      ta.addEventListener('input', function () { draft.text = ta.value; });
+      var sel = el(doc, 'select', { id: 'instr-task', onchange: function () { draft.taskId = sel.value; } },
+        el(doc, 'option', { value: '' }, '(görev seçilmedi — genel talimat)'));
+      (s.tasks || []).forEach(function (t) {
+        var o = el(doc, 'option', { value: t.taskId }, t.taskId + ' — ' + t.title);
+        if (draft.taskId === t.taskId) o.selected = true;
+        sel.appendChild(o);
+      });
+      card.appendChild(el(doc, 'p', { className: 'muted' }, 'Talimat Windows Hello ile imzalanır; mühürlü yetkinin (dosya yolları, bütçe) dışına çıkan işler için ayrıca onay istenir.'));
+      card.appendChild(radios);
+      card.appendChild(el(doc, 'label', { htmlFor: 'instr-text' }, 'Talimat (en fazla 2000 karakter; Durdur için isteğe bağlı)'));
+      card.appendChild(ta);
+      card.appendChild(el(doc, 'label', { htmlFor: 'instr-task' }, 'Hedef görev (isteğe bağlı)'));
+      card.appendChild(sel);
+      card.appendChild(el(doc, 'p', null, el(doc, 'button', { className: 'ok', type: 'button', id: 'instr-send', onclick: function () {
+        handlers.send({ mode: draft.mode, text: ta.value, taskId: sel.value || null });
+      } }, 'Windows Hello ile GÖNDER')));
+    } else {
+      card.appendChild(el(doc, 'p', { className: 'muted' }, 'Bu çalıştırma şu an talimat kabul etmiyor (kanal kapalı veya çalıştırma bitti).'));
+    }
+    var list = el(doc, 'ul', { className: 'list instr-list' });
+    (data.instructions || []).forEach(function (i) {
+      list.appendChild(el(doc, 'li', null,
+        el(doc, 'span', { className: 'status instr-' + String(i.status).replace(/[^A-Z_]/g, '') }, INSTR_STATUS_TR[i.status] || i.status), ' ',
+        el(doc, 'strong', null, MODE_TR[i.mode] || i.mode), i.taskId ? ' [' + i.taskId + ']' : '', ' · ' + fmtTime(i.createdAt),
+        i.text ? el(doc, 'div', { className: 'summary' }, i.text) : null,
+        i.note ? el(doc, 'div', { className: 'muted' }, 'Not: ' + i.note) : null));
+    });
+    card.appendChild(el(doc, 'h2', null, 'Gönderilen talimatlar (' + (data.instructions || []).length + ')'));
+    card.appendChild((data.instructions || []).length ? list : el(doc, 'p', null, 'Henüz talimat yok.'));
+    return card;
+  }
+
+  function renderRunDetail(doc, data, handlers) {
     var run = data.run, s = run.snapshot || {};
     var wrap = el(doc, 'div', { className: 'run-detail' });
     var age = ageSeconds(data.serverTime, run.receivedAt);
@@ -238,6 +288,7 @@
         el(doc, 'td', null, String(t.cycles) + (t.maxAttempts !== null && t.maxAttempts !== undefined ? ' / ' + t.maxAttempts : '')),
         el(doc, 'td', null, t.lastSummary || '')));
     });
+    if (data.instructionChannel || data.instructions) wrap.appendChild(renderInstructions(doc, data, handlers));
     wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Görevler (' + tasks.length + ')'), tasks.length ? tt : el(doc, 'p', null, 'Görev bilgisi yok.')));
     if (s.lastDirectorAction) {
       var a = s.lastDirectorAction;
@@ -402,9 +453,30 @@
     var doc = root.document, v = view();
     return api('GET', '/api/ui/runs').then(function (data) { clear(v); v.appendChild(renderRunsList(doc, data)); });
   }
+  var instrHandlers = null;
   function showRun(id) {
     var doc = root.document, v = view();
-    return api('GET', '/api/ui/runs/' + encodeURIComponent(id)).then(function (data) { clear(v); v.appendChild(renderRunDetail(doc, data)); });
+    if (!instrHandlers || instrHandlers.runId !== id) {
+      instrHandlers = { runId: id, draft: null, busy: false, send: function (d) {
+        if (instrHandlers.busy) return;
+        instrHandlers.busy = true;
+        var base = '/api/ui/runs/' + encodeURIComponent(id) + '/instructions';
+        api('POST', base + '/options', { mode: d.mode, text: d.text, taskId: d.taskId })
+          .then(function (r) {
+            return wa().startAuthentication({ optionsJSON: r.options }).then(function (assertion) {
+              return api('POST', base + '/' + encodeURIComponent(r.instructionId), { assertion: assertion });
+            });
+          })
+          .then(function () { instrHandlers.draft = null; return showRun(id); })
+          .catch(showError)
+          .then(function () { instrHandlers.busy = false; });
+      } };
+    }
+    // Don't re-render under the user's cursor while a passkey prompt is open or the textarea has focus.
+    if (instrHandlers.busy || (doc.activeElement && doc.activeElement.id && /^instr-/.test(doc.activeElement.id) && v.firstChild)) {
+      return Promise.resolve();
+    }
+    return api('GET', '/api/ui/runs/' + encodeURIComponent(id)).then(function (data) { clear(v); v.appendChild(renderRunDetail(doc, data, instrHandlers)); });
   }
 
   function route() {
@@ -425,7 +497,7 @@
     return showHome().catch(showError);
   }
 
-  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail };
+  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail, renderInstructions: renderInstructions };
   if (typeof module !== 'undefined' && module.exports) module.exports = exported;
 
   if (root.document && !root.__IDP_TEST__) {
