@@ -101,6 +101,17 @@ en fazla 200 çalıştırma (en eski bitmişler silinir).
 |---|---|
 | `PUT /api/runs/:runId` (bearer) | anlık görüntü (seq'e göre en yenisi kazanır) |
 | `POST /api/runs/:runId/events` (bearer) | olay ekleme, (runId, seq) ile idempotent, çağrı başına 1–50 olay |
+| `DELETE /api/ui/runs/:runId` (oturum + Origin + CSRF) | çalıştırmayı arayüzden siler |
+| `POST /api/ui/runs/cleanup` (oturum + Origin + CSRF) | silinebilir tüm çalıştırmaları siler |
+
+### Çalıştırma silme
+
+Listede ve detay sayfasında yalnızca **silinebilir** çalıştırmalarda **Sil** düğmesi çıkar (sayfa içi onay kutusu ile).
+Silinebilir = bitmiş (Tamamlandı / Başarısız / Durduruldu / Yapılandırma hatası / Reddedildi) **ya da** bayat
+(IdP'ye `IDP_RUN_STALE_MINUTES` dakikadır, varsayılan 15, ne anlık görüntü ne olay gelmemiş). Canlı bir çalıştırma
+`409 RUN_ACTIVE` döner. Silme; anlık görüntüyü, olayları, talimat kanalını ve o çalıştırmanın tüm talimatlarını
+kaldırır, `audit_log`'a `run.deleted` yazar. Silmek OtonomMCP'deki çalışmayı **durdurmaz**: OtonomMCP aynı runId'ye
+yeniden yazarsa çalıştırma yeniden oluşur (ilk anlık görüntü seq'ten bağımsız saklanır). Şema değişmedi (v4).
 
 ## API (OtonomMCP ⇄ IdP sözleşmesi)
 
@@ -144,6 +155,7 @@ projectId, runId, taskId, packageId, revision, operation:'AUTONOMOUS_DECISION', 
 | `IDP_SESSION_TTL_SECONDS` | `28800` | tarayıcı oturumu |
 | `IDP_AUTH_RATE_LIMIT` | `20` | giriş/WebAuthn uçları, dakika başına IP başına |
 | `IDP_API_RATE_LIMIT` | `300` | makine API, dakika başına |
+| `IDP_RUN_STALE_MINUTES` | `15` | bu süre güncelleme almayan aktif çalıştırma arayüzden silinebilir (1–10080) |
 
 ## Güvenlik özeti
 

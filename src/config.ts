@@ -23,6 +23,8 @@ export interface IdpConfig {
   authRateLimitPerMinute: number;
   apiRateLimitPerMinute: number;
   maxBodyBytes: number;
+  /** A non-terminal run with no snapshot/event for this long may be deleted from the UI (IDP_RUN_STALE_MINUTES, default 15). */
+  runStaleSeconds: number;
   /** Log to console (disabled in tests). */
   log: (msg: string) => void;
   now: () => number;
@@ -58,6 +60,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env, overrides: Part
     authRateLimitPerMinute: intEnv(env, 'IDP_AUTH_RATE_LIMIT', 20, 1, 10000),
     apiRateLimitPerMinute: intEnv(env, 'IDP_API_RATE_LIMIT', 300, 1, 100000),
     maxBodyBytes: 64 * 1024,
+    runStaleSeconds: intEnv(env, 'IDP_RUN_STALE_MINUTES', 15, 1, 7 * 24 * 60) * 60,
     log: (msg: string) => console.log(`[idp] ${msg}`),
     now: () => Date.now(),
     ...overrides,

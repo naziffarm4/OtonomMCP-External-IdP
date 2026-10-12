@@ -295,6 +295,14 @@ export function createIdp(cfg: IdpConfig): Idp {
       requireSession(req, false);
       return sendJson(res, 200, runs.list(url.searchParams.get('active') === '1'));
     }
+    if (p === '/api/ui/runs/cleanup' && method === 'POST') {
+      const s = requireSession(req, true);
+      return sendJson(res, 200, runs.deleteAllDeletable(s.user.id));
+    }
+    if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'DELETE') {
+      const s = requireSession(req, true);
+      return sendJson(res, 200, runs.deleteRun(m[1], s.user.id));
+    }
     if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'GET') {
       requireSession(req, false);
       return sendJson(res, 200, { ...runs.detail(m[1], url.searchParams.get('sinceSeq')), ...instructions.viewForRun(m[1]) });

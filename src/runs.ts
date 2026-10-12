@@ -3,7 +3,7 @@
  * nothing stored here is ever read by the approval/decision code paths.
  */
 import type { IdpConfig } from './config';
-import { transaction, type Db } from './db';
+import { audit, transaction, type Db } from './db';
 import * as v from './validation';
 import { HttpError } from './validation';
 
@@ -240,7 +240,56 @@ export class RunMonitorService {
       updatedAt: iso(r.updated_at),
       receivedAt: iso(r.received_at),
       active: !FINISHED_STATUSES.includes(r.status),
+      ...this.deletability(r),
     };
+  }
+
+  /** Deletable from the UI only when terminal, or when no snapshot/event arrived for cfg.runStaleSeconds. */
+  private deletability(r: { status: string; received_at: number }): { stale: boolean; deletable: boolean } {
+    const terminal = FINISHED_STATUSES.includes(r.status);
+    const stale = !terminal && this.cfg.now() - r.received_at > this.cfg.runStaleSeconds * 1000;
+    return { stale, deletable: terminal || stale };
+  }
+
+  /** Removes run row, events (cascade), instruction channel and all instructions of the run; audited. */
+  private deleteRow(runId: string, actor: string, status: string, reason: string): { events: number; instructions: number } {
+    const events = (this.db.prepare('SELECT COUNT(*) n FROM run_events WHERE run_id = ?').get(runId) as { n: number }).n;
+    this.db.prepare('DELETE FROM run_events WHERE run_id = ?').run(runId);
+    this.db.prepare('DELETE FROM runs WHERE run_id = ?').run(runId);
+    this.db.prepare('DELETE FROM instruction_channels WHERE run_id = ?').run(runId);
+    const instructions = Number(this.db.prepare('DELETE FROM instructions WHERE run_id = ?').run(runId).changes);
+    audit(this.db, this.cfg.now(), actor, 'run.deleted', runId, { status, reason, events, instructions });
+    return { events, instructions };
+  }
+
+  /** UI delete (session + CSRF checked by the caller). Live run -> 409 RUN_ACTIVE. */
+  deleteRun(runIdRaw: string, actor: string): { ok: true; runId: string; deleted: { events: number; instructions: number } } {
+    const runId = validateRunId(runIdRaw);
+    return transaction(this.db, () => {
+      const r = this.db.prepare('SELECT status, received_at FROM runs WHERE run_id = ?').get(runId) as { status: string; received_at: number } | undefined;
+      if (!r) throw new HttpError(404, 'NOT_FOUND', 'run not found');
+      const d = this.deletability(r);
+      if (!d.deletable) {
+        const mins = Math.round(this.cfg.runStaleSeconds / 60);
+        throw new HttpError(409, 'RUN_ACTIVE', `Çalıştırma hâlâ aktif (${r.status}) ve son ${mins} dakika içinde güncelleme aldı; silinemez. Bitmesini bekleyin ya da ${mins} dakika güncelleme gelmezse tekrar deneyin.`);
+      }
+      return { ok: true as const, runId, deleted: this.deleteRow(runId, actor, r.status, d.stale ? 'stale' : 'terminal') };
+    });
+  }
+
+  /** Bulk cleanup: deletes every currently deletable run (terminal or stale). */
+  deleteAllDeletable(actor: string): { ok: true; deleted: string[] } {
+    return transaction(this.db, () => {
+      const rows = this.db.prepare('SELECT run_id, status, received_at FROM runs').all() as { run_id: string; status: string; received_at: number }[];
+      const deleted: string[] = [];
+      for (const r of rows) {
+        const d = this.deletability(r);
+        if (!d.deletable) continue;
+        this.deleteRow(r.run_id, actor, r.status, d.stale ? 'stale' : 'terminal');
+        deleted.push(r.run_id);
+      }
+      return { ok: true as const, deleted };
+    });
   }
 
   list(onlyActive = false) {

@@ -192,7 +192,7 @@
     else {
       var t = el(doc, 'table', { className: 'kv' },
         el(doc, 'tr', null, el(doc, 'td', { className: 'k' }, 'Proje'), el(doc, 'td', { className: 'k' }, 'Durum'), el(doc, 'td', { className: 'k' }, 'Bütçe'),
-          el(doc, 'td', { className: 'k' }, 'Mevcut görev'), el(doc, 'td', { className: 'k' }, 'Son güncelleme')));
+          el(doc, 'td', { className: 'k' }, 'Mevcut görev'), el(doc, 'td', { className: 'k' }, 'Son güncelleme'), el(doc, 'td', { className: 'k' }, '')));
       runs.forEach(function (r) {
         var b = r.budget;
         t.appendChild(el(doc, 'tr', null,
@@ -200,9 +200,12 @@
           el(doc, 'td', null, runBadge(doc, r.status), isStale(r, data.serverTime) ? el(doc, 'span', { className: 'badge warn' }, 'bağlantı yok?') : null),
           el(doc, 'td', null, b ? usd((b.committedUsd || 0) + (b.reservedUsd || 0)) + ' / ' + usd(b.limitUsd) : '-'),
           el(doc, 'td', null, r.currentTaskId || '-'),
-          el(doc, 'td', null, ageText(ageSeconds(data.serverTime, r.receivedAt)))));
+          el(doc, 'td', null, ageText(ageSeconds(data.serverTime, r.receivedAt))),
+          el(doc, 'td', null, r.deletable && opts && opts.onDelete ? el(doc, 'button', { type: 'button', className: 'danger small', id: 'del-' + r.runId, onclick: function () { opts.onDelete(r); } }, 'Sil') : null)));
       });
       card.appendChild(t);
+      var nDel = runs.filter(function (r) { return r.deletable; }).length;
+      if (nDel && opts && opts.onCleanup) card.appendChild(el(doc, 'p', null, el(doc, 'button', { type: 'button', className: 'danger', id: 'runs-cleanup', onclick: function () { opts.onCleanup(nDel); } }, 'Bitmiş ve bayat çalıştırmaları temizle (' + nDel + ')')));
     }
     if (opts && opts.activeOnly) card.appendChild(el(doc, 'p', null, el(doc, 'a', { href: '#/runs' }, 'Tüm çalıştırmalar →')));
     return card;
@@ -266,6 +269,7 @@
       el(doc, 'h1', null, (run.projectName || run.projectId || run.runId) + ' ', runBadge(doc, run.status)),
       el(doc, 'p', { className: 'muted', id: 'run-age' }, 'Son güncelleme ' + ageText(age) + ' · bilgi amaçlıdır, onay/karar yerine geçmez'),
       isStale(run, data.serverTime) ? el(doc, 'div', { className: 'msg err', id: 'run-stale' }, 'Bağlantı yok / duraklamış olabilir: 2 dakikadan uzun süredir güncelleme gelmedi.') : null,
+      run.deletable && handlers && handlers.onDelete ? el(doc, 'p', null, el(doc, 'button', { type: 'button', className: 'danger', id: 'run-delete', onclick: function () { handlers.onDelete(run); } }, 'Bu çalıştırmayı sil')) : null,
       kvTable(doc, [
         ['runId', run.runId], ['Proje', s.projectId || run.projectId], ['Giriş noktası', s.entryPoint], ['Model', s.model],
         ['Başlangıç', s.startedAt ? fmtTime(s.startedAt) : ''], ['Bitiş', s.finishedAt ? fmtTime(s.finishedAt) : ''],
@@ -390,7 +394,7 @@
       return api('GET', '/api/ui/runs?active=1').catch(function () { return { runs: [] }; }).then(function (runs) {
       clear(v);
       v.appendChild(renderPending(doc, data));
-      v.appendChild(renderRunsList(doc, runs, { activeOnly: true }));
+      v.appendChild(renderRunsList(doc, runs, { activeOnly: true, onDelete: runsOpts.onDelete }));
       v.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Passkey yönetimi'),
         el(doc, 'button', { type: 'button', id: 'add-passkey', onclick: function () {
           api('POST', '/api/passkeys/options', {})
@@ -445,13 +449,41 @@
     pollTimer = root.setInterval(function () {
       if ((root.location.hash || '#/') !== hash) { stopPolling(); return; }
       if (root.document.visibilityState && root.document.visibilityState !== 'visible') return;
+      if (confirmOpen) return;
       fn().catch(function () { /* keep last view; staleness warning covers it */ });
     }, 3000);
   }
 
+  /** In-page confirm dialog (no window.confirm). Polling pauses while it is open. */
+  var confirmOpen = false;
+  function askConfirm(title, text, yesLabel, onYes) {
+    var doc = root.document, v = view();
+    var box = el(doc, 'section', { className: 'card confirm', id: 'confirm-box' },
+      el(doc, 'h2', null, title), el(doc, 'p', null, text));
+    function close() { confirmOpen = false; if (box.parentNode) box.parentNode.removeChild(box); }
+    box.appendChild(el(doc, 'p', null,
+      el(doc, 'button', { type: 'button', className: 'danger', id: 'confirm-yes', onclick: function () { close(); onYes(); } }, yesLabel),
+      el(doc, 'button', { type: 'button', className: 'link', id: 'confirm-no', onclick: close }, 'Vazgeç')));
+    confirmOpen = true;
+    if (v.firstChild) v.insertBefore(box, v.firstChild); else v.appendChild(box);
+    if (root.scrollTo) root.scrollTo(0, 0);
+  }
+  function deleteRun(run, after) {
+    var name = run.projectName || run.projectId || run.runId;
+    askConfirm('Çalıştırma silinsin mi?',
+      '"' + name + '" (' + run.runId + ') IdP arayüzünden silinecek; olay geçmişi ve talimatları da silinir. Bu işlem geri alınamaz ve çalışmanın kendisini (OtonomMCP) durdurmaz.',
+      'Evet, sil', function () { api('DELETE', '/api/ui/runs/' + encodeURIComponent(run.runId)).then(after).catch(showError); });
+  }
+  var runsOpts = {
+    onDelete: function (r) { deleteRun(r, function () { return route(); }); },
+    onCleanup: function (n) {
+      askConfirm('Temizlik', n + ' bitmiş/bayat çalıştırma IdP arayüzünden silinecek. Bu işlem geri alınamaz.', 'Evet, temizle',
+        function () { api('POST', '/api/ui/runs/cleanup', {}).then(function () { return route(); }).catch(showError); });
+    },
+  };
   function showRuns() {
     var doc = root.document, v = view();
-    return api('GET', '/api/ui/runs').then(function (data) { clear(v); v.appendChild(renderRunsList(doc, data)); });
+    return api('GET', '/api/ui/runs').then(function (data) { clear(v); v.appendChild(renderRunsList(doc, data, runsOpts)); });
   }
   var instrHandlers = null;
   function showRun(id) {
@@ -470,7 +502,7 @@
           .then(function () { instrHandlers.draft = null; return showRun(id); })
           .catch(showError)
           .then(function () { instrHandlers.busy = false; });
-      } };
+      }, onDelete: function (run) { deleteRun(run, function () { root.location.hash = '#/runs'; }); } };
     }
     // Don't re-render under the user's cursor while a passkey prompt is open or the textarea has focus.
     if (instrHandlers.busy || (doc.activeElement && doc.activeElement.id && /^instr-/.test(doc.activeElement.id) && v.firstChild)) {
@@ -483,6 +515,7 @@
     var h = root.location.hash || '#/';
     var p;
     stopPolling();
+    confirmOpen = false;
     if (state.needsSetup) return showSetup();
     if (!state.user) return showLogin();
     if ((p = /^#\/approvals\/([0-9a-fA-F-]{36})$/.exec(h))) return showApproval(p[1]).catch(showError);

@@ -173,6 +173,30 @@ describe('approval UI', () => {
     expect(ui.renderRunsList(fakeDoc, { serverTime, runs: [] }).textContent).toContain('Henüz çalıştırma yok');
   });
 
+  test('delete buttons only for deletable runs; handlers called with the run', () => {
+    const del: string[] = []; let cleaned = 0;
+    const data = { serverTime, runs: [
+      { runId: 'a', status: 'COMPLETED', receivedAt: serverTime, deletable: true },
+      { runId: 'b', status: 'RUNNING', receivedAt: serverTime, deletable: false },
+    ] };
+    const node = ui.renderRunsList(fakeDoc, data, { onDelete: (r: any) => del.push(r.runId), onCleanup: () => cleaned++ });
+    const btns = node.all().filter((n: FakeNode) => n.tagName === 'button');
+    expect(btns.map((b: FakeNode) => b.id)).toEqual(['del-a', 'runs-cleanup']);
+    btns[0].listeners.click[0]();
+    btns[1].listeners.click[0]();
+    expect(del).toEqual(['a']);
+    expect(cleaned).toBe(1);
+    expect(ui.renderRunsList(fakeDoc, data).all().filter((n: FakeNode) => n.tagName === 'button')).toHaveLength(0);
+    const d: any = detail('2026-10-12T15:59:57.000Z', 'COMPLETED');
+    d.run.deletable = true;
+    let got: any = null;
+    const dn = ui.renderRunDetail(fakeDoc, d, { onDelete: (r: any) => { got = r.runId; } });
+    dn.all().find((n: FakeNode) => n.id === 'run-delete').listeners.click[0]();
+    expect(got).toBe(d.run.runId);
+    d.run.deletable = false;
+    expect(ui.renderRunDetail(fakeDoc, d, { onDelete: () => {} }).all().find((n: FakeNode) => n.id === 'run-delete')).toBeUndefined();
+  });
+
   test('instructions: form only when channel open, list rendered as text, send collects draft', () => {
     let sent: any = null;
     const data = {
