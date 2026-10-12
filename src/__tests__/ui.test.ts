@@ -122,4 +122,55 @@ describe('approval UI', () => {
     expect(() => ui.el(fakeDoc, 'div', { innerHTML: 'x' })).toThrow();
     expect(() => ui.el(fakeDoc, 'img', { src: 'x' })).toThrow();
   });
+
+  const serverTime = '2026-10-12T16:00:00.000Z';
+  const runSnap = {
+    runId: 'run-1', seq: 3, projectId: XSS, projectName: XSS, entryPoint: 'aidm_run_spec', status: 'RUNNING',
+    startedAt: '2026-10-12T15:50:00.000Z', updatedAt: '2026-10-12T15:59:50.000Z', finishedAt: null, model: XSS,
+    budget: { limitUsd: 4, committedUsd: 1, reservedUsd: 1 }, currentTaskId: 'T2',
+    tasks: [{ taskId: 'T1', title: XSS, status: 'ACCEPTED', cycles: 1, maxAttempts: 3, lastSummary: XSS }, { taskId: 'T2', title: 'İki', status: 'IN_PROGRESS', cycles: 2, maxAttempts: null, lastSummary: null }],
+    lastDirectorAction: { actionType: 'IMPLEMENT_TASK', taskId: 'T2', rationale: XSS, at: '2026-10-12T15:59:00.000Z' },
+    pendingApprovalId: '11111111-1111-4111-8111-111111111111', pendingDecisionIds: ['22222222-2222-4222-8222-222222222222'], stopReason: XSS,
+  };
+  const detail = (receivedAt: string, status = 'RUNNING') => ({
+    serverTime, lastSeq: 2,
+    run: { runId: 'run-1', status, projectName: XSS, projectId: XSS, receivedAt, updatedAt: receivedAt, snapshot: { ...runSnap, status } },
+    events: [{ seq: 2, at: serverTime, type: 'AGY_RESULT', level: 'error', taskId: XSS, message: XSS }, { seq: 1, at: serverTime, type: 'RUN_STARTED', level: 'info', taskId: null, message: 'başladı' }],
+  });
+
+  test('run detail renders every server string as text; budget bar, tasks, timeline, links', () => {
+    const node = ui.renderRunDetail(fakeDoc, detail('2026-10-12T15:59:57.000Z'));
+    const text = node.textContent;
+    expect(text).toContain(XSS);
+    expect(node.all().some((n: FakeNode) => n.tagName === 'img' || n.tagName === 'script')).toBe(false);
+    expect(text).toContain('Son güncelleme 3 sn önce');
+    expect(text).not.toContain('Bağlantı yok');
+    const bar = node.all().find((n: FakeNode) => n.tagName === 'progress');
+    expect(bar.value).toBe(50);
+    expect(text).toContain('$1.00 harcandı + $1.00 ayrıldı / $4.00 (%50)');
+    expect(text).toContain('1 / 3');
+    const links = node.all().filter((n: FakeNode) => n.tagName === 'a').map((a: FakeNode) => a.attrs.href);
+    expect(links).toEqual(['#/approvals/11111111-1111-4111-8111-111111111111', '#/decisions/22222222-2222-4222-8222-222222222222']);
+    const evs = node.all().filter((n: FakeNode) => n.tagName === 'li').map((n: FakeNode) => n.textContent);
+    expect(evs[0]).toContain('#2');
+    expect(evs[1]).toContain('#1');
+    expect(text).toContain('Çalışıyor');
+  });
+
+  test('stale warning only for RUNNING runs without updates for > 2 min', () => {
+    expect(ui.renderRunDetail(fakeDoc, detail('2026-10-12T15:57:00.000Z')).textContent).toContain('Bağlantı yok / duraklamış olabilir');
+    expect(ui.renderRunDetail(fakeDoc, detail('2026-10-12T15:57:00.000Z', 'COMPLETED')).textContent).not.toContain('Bağlantı yok');
+  });
+
+  test('runs list: text-only, links to in-app run pages, active-only view links to #/runs', () => {
+    const data = { serverTime, runs: [{ runId: 'r:1.x', status: 'RUNNING', projectName: XSS, receivedAt: '2026-10-12T15:50:00.000Z', currentTaskId: XSS, budget: { limitUsd: 2, committedUsd: 0.5, reservedUsd: 0 } }] };
+    const node = ui.renderRunsList(fakeDoc, data, { activeOnly: true });
+    expect(node.textContent).toContain(XSS);
+    expect(node.textContent).toContain('bağlantı yok?');
+    expect(node.textContent).toContain('$0.50 / $2.00');
+    const links = node.all().filter((n: FakeNode) => n.tagName === 'a').map((a: FakeNode) => a.attrs.href);
+    expect(links).toEqual(['#/runs/r%3A1.x', '#/runs']);
+    expect(ui.renderRunsList(fakeDoc, { serverTime, runs: [] }).textContent).toContain('Henüz çalıştırma yok');
+  });
 });
+

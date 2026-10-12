@@ -30,7 +30,7 @@ describe('SQLite persistence', () => {
     const db = openDatabase(dir);
     const cols = (db.prepare('PRAGMA table_info(decision_requests)').all() as { name: string }[]).map((c) => c.name);
     expect(cols).toEqual(expect.arrayContaining(['package_id', 'revision', 'operation']));
-    expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(2);
+    expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(MIGRATIONS.length);
     db.close();
   });
 
