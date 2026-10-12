@@ -1,22 +1,29 @@
 {
-  "name": "OtonomMCP-External-IdP",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "otonommcp-external-idp",
+  "version": "2.0.0",
+  "description": "Local passkey (WebAuthn) identity provider that issues ES256-signed human approval and decision tokens for OtonomMCP",
+  "private": true,
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
-    "test": "jest"
+    "build": "tsc -p tsconfig.build.json",
+    "start": "npm run build && node --no-warnings=ExperimentalWarning dist/main.js",
+    "dev": "node scripts/dev.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --no-warnings=ExperimentalWarning node_modules/jest/bin/jest.js",
+    "contract-check": "npm run build && node --no-warnings=ExperimentalWarning scripts/contract-check.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/naziffarm4/OtonomMCP-External-IdP.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/naziffarm4/OtonomMCP-External-IdP/issues"
+  "dependencies": {
+    "@simplewebauthn/browser": "^14.0.0",
+    "@simplewebauthn/server": "^14.0.3"
   },
-  "homepage": "https://github.com/naziffarm4/OtonomMCP-External-IdP#readme",
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.5",
