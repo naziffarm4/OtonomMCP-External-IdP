@@ -33,6 +33,9 @@ interface DecisionRow {
   project_id: string;
   run_id: string;
   task_id: string;
+  package_id: string | null;
+  revision: number | null;
+  operation: string | null;
   context_fingerprint: string;
   question: string;
   options: string;
@@ -57,10 +60,11 @@ const APPROVAL_FIELDS = [
   'taskId', 'operation', 'nonce', 'summary', 'requestedAt', 'expiresAt',
 ] as const;
 const DECISION_FIELDS = [
-  'decisionId', 'projectId', 'runId', 'taskId', 'contextFingerprint', 'question', 'options', 'allowFreeText',
+  'decisionId', 'projectId', 'runId', 'taskId', 'packageId', 'revision', 'operation', 'contextFingerprint', 'question', 'options', 'allowFreeText',
   'recommendedOptionId', 'nonce', 'summary', 'requestedAt', 'expiresAt',
 ] as const;
 export const MAX_FREE_TEXT = 2000;
+export const DECISION_OPERATION = 'AUTONOMOUS_DECISION';
 const OPTION_ID_RE = /^[A-Za-z0-9._-]{1,64}$/;
 const iso = (ms: number) => new Date(ms).toISOString();
 
@@ -269,6 +273,9 @@ export class RequestService {
       projectId: v.ident(o, 'projectId')!,
       runId: v.ident(o, 'runId')!,
       taskId: v.ident(o, 'taskId')!,
+      packageId: v.ident(o, 'packageId')!,
+      revision: v.positiveInt(o, 'revision'),
+      operation: v.ident(o, 'operation')!,
       contextFingerprint: v.ident(o, 'contextFingerprint')!,
       question: v.text(o, 'question', 2000)!,
       allowFreeText: v.bool(o, 'allowFreeText'),
@@ -278,6 +285,7 @@ export class RequestService {
       requestedAt: v.isoTime(o, 'requestedAt'),
       expiresAt: v.isoTime(o, 'expiresAt'),
     };
+    if (rec.operation !== DECISION_OPERATION) throw v.bad(`operation must be '${DECISION_OPERATION}'`);
     if (rec.recommendedOptionId !== undefined && !options.some((x) => x.id === rec.recommendedOptionId)) {
       throw v.bad('recommendedOptionId must be one of the option ids');
     }
@@ -289,11 +297,11 @@ export class RequestService {
       this.assertUniqueNonce(rec.nonce);
       this.db
         .prepare(
-          `INSERT INTO decision_requests (decision_id, project_id, run_id, task_id, context_fingerprint, question, options,
+          `INSERT INTO decision_requests (decision_id, project_id, run_id, task_id, package_id, revision, operation, context_fingerprint, question, options,
              allow_free_text, recommended_option_id, nonce, summary, requested_at, expires_at, received_at, status)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
         )
-        .run(rec.decisionId, rec.projectId, rec.runId, rec.taskId, rec.contextFingerprint, rec.question, JSON.stringify(options),
+        .run(rec.decisionId, rec.projectId, rec.runId, rec.taskId, rec.packageId, rec.revision, rec.operation, rec.contextFingerprint, rec.question, JSON.stringify(options),
           rec.allowFreeText ? 1 : 0, (rec.recommendedOptionId as string | undefined) ?? null, rec.nonce, rec.summary ?? null,
           rec.requestedAt, rec.expiresAt, now);
       audit(this.db, now, 'otonommcp', 'decision.created', rec.decisionId, { projectId: rec.projectId, runId: rec.runId });
@@ -332,6 +340,9 @@ export class RequestService {
       projectId: r.project_id,
       runId: r.run_id,
       taskId: r.task_id,
+      packageId: r.package_id ?? undefined,
+      revision: r.revision ?? undefined,
+      operation: r.operation ?? undefined,
       contextFingerprint: r.context_fingerprint,
       question: r.question,
       options: JSON.parse(r.options) as DecisionOption[],
@@ -372,6 +383,10 @@ export class RequestService {
       const now = this.cfg.now();
       if (r.status === 'EXPIRED' || r.expires_at <= now) throw new HttpError(409, 'EXPIRED', 'decision expired');
       if (r.status !== 'PENDING') throw new HttpError(409, 'ALREADY_ANSWERED', 'decision already answered');
+      if (!r.package_id || !r.revision || !r.operation) {
+        // Legacy (pre-v1.1) row: OtonomMCP would refuse a token without the package binding.
+        throw new HttpError(409, 'LEGACY_DECISION', 'decision lacks packageId/revision/operation and cannot be answered');
+      }
       const iat = Math.floor(now / 1000);
       const jti = crypto.randomUUID();
       const exp = iat + this.cfg.tokenTtlSeconds;
@@ -390,6 +405,9 @@ export class RequestService {
         projectId: r.project_id,
         runId: r.run_id,
         taskId: r.task_id,
+        packageId: r.package_id,
+        revision: r.revision,
+        operation: r.operation,
         contextFingerprint: r.context_fingerprint,
         amr: ['webauthn'],
         uv: true,

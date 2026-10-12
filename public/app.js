@@ -105,6 +105,7 @@
       renderSummary(doc, v.summary),
       kvTable(doc, [
         ['decisionId', v.decisionId], ['projectId', v.projectId], ['runId', v.runId], ['taskId', v.taskId],
+        ['packageId', v.packageId], ['revision', v.revision], ['operation', v.operation],
         ['contextFingerprint', v.contextFingerprint], ['nonce', v.nonce],
         ['Son geçerlilik', fmtTime(v.expiresAt) + ' (' + remaining(v.expiresAt) + ')'],
       ]));

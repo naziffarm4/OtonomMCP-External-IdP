@@ -95,6 +95,9 @@ export function decisionBody(h: Harness, over: Record<string, unknown> = {}) {
     projectId: 'proj-LLMTEST',
     runId: 'run-42',
     taskId: 'TASK-007',
+    packageId: 'pkg-autonomous-abc123-def45678',
+    revision: 1,
+    operation: 'AUTONOMOUS_DECISION',
     contextFingerprint: 'sha256:ctx-' + crypto.randomBytes(8).toString('hex'),
     question: 'Veritabanı olarak hangisini kullanalım?',
     options: [

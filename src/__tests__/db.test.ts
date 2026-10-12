@@ -20,6 +20,20 @@ describe('SQLite persistence', () => {
     again.close();
   });
 
+  test('migration 2 upgrades a v1 database in place (decision package binding columns)', () => {
+    const dir = tmpDir();
+    const raw = new DatabaseSync(`${dir}/idp.sqlite`);
+    raw.exec('CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, name TEXT NOT NULL, applied_at INTEGER NOT NULL)');
+    raw.exec(MIGRATIONS[0].sql);
+    raw.prepare('INSERT INTO schema_migrations VALUES (1, ?, 0)').run(MIGRATIONS[0].name);
+    raw.close();
+    const db = openDatabase(dir);
+    const cols = (db.prepare('PRAGMA table_info(decision_requests)').all() as { name: string }[]).map((c) => c.name);
+    expect(cols).toEqual(expect.arrayContaining(['package_id', 'revision', 'operation']));
+    expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(2);
+    db.close();
+  });
+
   test('data survives reopening (real file, not memory)', () => {
     const dir = tmpDir();
     const db = openDatabase(dir);

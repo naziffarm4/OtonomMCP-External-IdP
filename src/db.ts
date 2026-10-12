@@ -135,6 +135,15 @@ export const MIGRATIONS: readonly Migration[] = [
       );
     `,
   },
+  {
+    version: 2,
+    name: 'decision requests carry approval package binding (contract v1.1)',
+    sql: `
+      ALTER TABLE decision_requests ADD COLUMN package_id TEXT;
+      ALTER TABLE decision_requests ADD COLUMN revision INTEGER;
+      ALTER TABLE decision_requests ADD COLUMN operation TEXT;
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {

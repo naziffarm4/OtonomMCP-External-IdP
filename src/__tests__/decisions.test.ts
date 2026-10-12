@@ -37,9 +37,12 @@ describe('decision requests (Director asks the user to choose)', () => {
       iss: 'otonommcp-external-idp', aud: 'otonommcp', actorRole: 'PRODUCT_OWNER', nonce: body.nonce, decisionId: body.decisionId,
       selectedOptionId: 'postgres', freeText: 'Ölçeklenme için.', projectId: body.projectId, runId: body.runId, taskId: body.taskId,
       contextFingerprint: body.contextFingerprint, amr: ['webauthn'], uv: true,
+      packageId: body.packageId, revision: 1, operation: 'AUTONOMOUS_DECISION',
     });
     expect(payload.exp - payload.iat).toBeLessThanOrEqual(300);
     expect(payload).not.toHaveProperty('decision');
+    expect(payload).not.toHaveProperty('requestId');
+    expect(view.json).toMatchObject({ packageId: body.packageId, revision: 1, operation: 'AUTONOMOUS_DECISION' });
     expect(() => verifyEs256(st.json.token, h.idp.key.publicKeyPem, h.idp.key.kid, { issuer: 'otonommcp-external-idp', audience: 'otonommcp', now: h.clock.now })).not.toThrow();
   });
 
@@ -121,6 +124,11 @@ describe('decision requests (Director asks the user to choose)', () => {
     ['recommended not in options', { recommendedOptionId: 'mysql' }],
     ['allowFreeText not boolean', { allowFreeText: 'yes' }],
     ['missing runId', { runId: undefined }],
+    ['missing packageId', { packageId: undefined }],
+    ['missing revision', { revision: undefined }],
+    ['revision not positive int', { revision: 0 }],
+    ['missing operation', { operation: undefined }],
+    ['wrong operation', { operation: 'AUTONOMOUS_SPEC_RUN' }],
     ['short nonce', { nonce: 'short' }],
     ['empty question', { question: '   ' }],
     ['expiry > 15 min', { expiresAt: new Date(Date.now() + 20 * 60_000).toISOString() }],
@@ -141,6 +149,20 @@ describe('decision requests (Director asks the user to choose)', () => {
       operation: 'op', nonce: body.nonce, summary: 'x', requestedAt: new Date(h.clock.now).toISOString(), expiresAt: new Date(h.clock.now + 60_000).toISOString(),
     });
     expect(appr.status).toBe(409);
+  });
+
+  test('OtonomMCP request shape (null recommendedOptionId, summary string) accepted', async () => {
+    const r = await h.bearer('POST', '/api/decision-requests', decisionBody(h, { recommendedOptionId: null, contextFingerprint: 'f'.repeat(64) }));
+    expect(r.status).toBe(201);
+  });
+
+  test('legacy decision rows without package binding cannot be answered', async () => {
+    const { browser, auth } = await enroll(h);
+    const body = await create();
+    h.idp.db.prepare('UPDATE decision_requests SET package_id = NULL WHERE decision_id = ?').run(body.decisionId);
+    const r = await answer(browser, auth, body.decisionId, { selectedOptionId: 'sqlite' });
+    expect(r.status).toBe(409);
+    expect(r.json.error).toBe('LEGACY_DECISION');
   });
 
   test('decision endpoints require the bearer token', async () => {

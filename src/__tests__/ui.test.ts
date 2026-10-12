@@ -90,13 +90,14 @@ describe('approval UI', () => {
   test('decision detail: radios, recommended marker, length-limited free text, answer collects selection', () => {
     let got: any[] = [];
     const node = ui.renderDecisionDetail(fakeDoc, {
-      decisionId: 'd', status: 'PENDING', question: XSS, projectId: 'p', runId: 'r', taskId: 't', contextFingerprint: 'c', nonce: 'n',
+      decisionId: 'd', status: 'PENDING', question: XSS, projectId: 'p', runId: 'r', taskId: 't', packageId: 'pkg-xyz', revision: 4, operation: 'AUTONOMOUS_DECISION', contextFingerprint: 'c', nonce: 'n',
       options: [{ id: 'a', label: XSS, description: 'desc <b>' }, { id: 'b', label: 'B' }], recommendedOptionId: 'b', allowFreeText: true,
       maxFreeTextLength: 2000, expiresAt: new Date(Date.now() + 60_000).toISOString(), requestedAt: new Date().toISOString(),
     }, { answer: (...a: any[]) => { got = a; } });
     const radios = node.all().filter((n: FakeNode) => n.tagName === 'input' && n.type === 'radio');
     expect(radios.map((r: FakeNode) => r.value)).toEqual(['a', 'b']);
     expect(node.textContent).toContain('Önerilen');
+    for (const f of ['pkg-xyz', '4', 'AUTONOMOUS_DECISION']) expect(node.textContent).toContain(f);
     expect(node.textContent).toContain(XSS);
     const ta = node.all().find((n: FakeNode) => n.id === 'free-text');
     expect(ta.maxLength).toBe(2000);
