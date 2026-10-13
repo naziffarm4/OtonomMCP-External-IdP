@@ -10,6 +10,7 @@ import { RateLimiter, SECURITY_HEADERS, cookie, parseCookies, readJson, sendErro
 import { loadOrCreateClientToken, loadOrCreateSigningKey, safeEqual, sha256Hex, type SigningKey } from './keys';
 import { RequestService } from './requests';
 import { MAX_SCREENSHOT_BYTES, RunMonitorService } from './runs';
+import { PreferenceService } from './preferences';
 import { InstructionService } from './instructions';
 import { ResumeService, newResumeId } from './resumes';
 import * as nodeCrypto from 'node:crypto';
@@ -52,6 +53,7 @@ export interface Idp {
   runs: RunMonitorService;
   instructions: InstructionService;
   resumes: ResumeService;
+  preferences: PreferenceService;
   clientToken: string;
   /** Setup code generated on this start (undefined if already set up or provided by env). */
   setupCode?: string;
@@ -69,6 +71,7 @@ export function createIdp(cfg: IdpConfig): Idp {
   const runs = new RunMonitorService(db, cfg);
   const instructions = new InstructionService(db, cfg, key);
   const resumes = new ResumeService(db, cfg);
+  const preferences = new PreferenceService(db, cfg);
   requests.attachResumeService(resumes);
   const setupCode = auth.ensureSetupCode();
   const statics = loadStatic();
@@ -252,6 +255,14 @@ export function createIdp(cfg: IdpConfig): Idp {
       return sendJson(res, 200, runs.putScreenshot(m[1], decodeURIComponent(m[2]), await readJson(req, Math.ceil(MAX_SCREENSHOT_BYTES * 1.5))));
     }
 
+    // ---------- cross-project preferences (Director memory; informational only) ----------
+    if (p === '/api/preferences') {
+      requireBearer(req);
+      if (method === 'GET') return sendJson(res, 200, preferences.list());
+      if (method === 'PUT') return sendJson(res, 200, preferences.push(await readJson(req, cfg.maxBodyBytes * 4)));
+      throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
+    }
+
     // ---------- run monitor (OtonomMCP -> IdP, informational only) ----------
     if ((m = /^\/api\/runs\/([^/]+)(\/events)?$/.exec(p))) {
       requireBearer(req);
@@ -315,6 +326,20 @@ export function createIdp(cfg: IdpConfig): Idp {
       const s = requireSession(req, true);
       const b = asObject(await readJson(req, cfg.maxBodyBytes));
       return sendJson(res, 200, { ok: true, credentialId: await auth.registrationVerify(s.idHash, s.user, b.response as never) });
+    }
+    if (p === '/api/ui/preferences' && method === 'GET') {
+      requireSession(req, false);
+      return sendJson(res, 200, preferences.list());
+    }
+    if (p === '/api/ui/preferences' && method === 'POST') {
+      const s = requireSession(req, true);
+      return sendJson(res, 200, preferences.create(await readJson(req, cfg.maxBodyBytes), s.user.id));
+    }
+    if ((m = /^\/api\/ui\/preferences\/([^/]+)$/.exec(p)) && (method === 'PUT' || method === 'DELETE')) {
+      const s = requireSession(req, true);
+      const id = decodeURIComponent(m[1]);
+      if (method === 'DELETE') return sendJson(res, 200, preferences.remove(id, s.user.id));
+      return sendJson(res, 200, preferences.update(id, await readJson(req, cfg.maxBodyBytes), s.user.id));
     }
     if (p === '/api/ui/runs' && method === 'GET') {
       requireSession(req, false);
@@ -448,6 +473,7 @@ export function createIdp(cfg: IdpConfig): Idp {
     runs,
     instructions,
     resumes,
+    preferences,
     clientToken,
     setupCode,
     startedAt,

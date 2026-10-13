@@ -405,6 +405,12 @@
         kvTable(doc, [['Eylem', a.actionType], ['Görev', a.taskId], ['Zaman', fmtTime(a.at)]]),
         el(doc, 'div', { className: 'summary' }, a.rationale)));
     }
+    var notes = (data.events || []).filter(function (e) { return e.type === 'PROGRESS_NOTE'; });
+    if (notes.length) {
+      var nl = el(doc, 'ul', { className: 'list progress-notes' });
+      notes.forEach(function (e) { nl.appendChild(el(doc, 'li', null, el(doc, 'span', { className: 'muted' }, fmtTime(e.at) + ' · '), el(doc, 'div', { className: 'summary report-text' }, e.message))); });
+      wrap.appendChild(el(doc, 'section', { className: 'card', id: 'progress-notes' }, el(doc, 'h2', null, 'Director ilerleme notları'), nl));
+    }
     var tl = el(doc, 'ul', { className: 'list timeline' });
     (data.events || []).forEach(function (e) {
       tl.appendChild(el(doc, 'li', { className: 'ev ' + (e.level === 'error' ? 'error' : e.level === 'warn' ? 'warn' : 'info') },
@@ -414,6 +420,31 @@
     wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Zaman çizelgesi (en yeni üstte)'),
       (data.events || []).length ? tl : el(doc, 'p', null, 'Henüz olay yok.')));
     return wrap;
+  }
+
+  var SOURCE_TR = { clarification: 'netleştirme cevabı', design: 'tasarım seçimi', note: 'not', ui: 'elle eklendi' };
+  function renderPreferences(doc, data, handlers) {
+    var sec = el(doc, 'section', { className: 'card', id: 'prefs' }, el(doc, 'h1', null, 'Tercihlerim (Director hafızası)'),
+      el(doc, 'p', { className: 'muted' }, 'Director bu tercihleri yeni projelerde soruları önceden doldurmak için kullanır ve varsaydıklarını plan onayında gösterir. Düzenleyebilir veya silebilirsiniz.'));
+    var items = data.items || [];
+    if (!items.length) sec.appendChild(el(doc, 'p', null, 'Henüz kayıtlı tercih yok.'));
+    var list = el(doc, 'ul', { className: 'list prefs' });
+    items.forEach(function (it) {
+      var topic = el(doc, 'input', { type: 'text', value: it.topic, maxLength: 200, className: 'pref-topic' });
+      var text = el(doc, 'textarea', { rows: 2, maxLength: 1000, className: 'pref-text', value: it.text });
+      list.appendChild(el(doc, 'li', { className: 'pref', id: 'pref-' + it.id },
+        el(doc, 'div', { className: 'muted' }, (SOURCE_TR[it.source] || it.source) + (it.project ? ' · ' + it.project : '') + ' · ' + fmtTime(it.updatedAt)),
+        topic, text,
+        el(doc, 'p', null,
+          el(doc, 'button', { type: 'button', onclick: function () { handlers.save(it.id, topic.value, text.value); } }, 'Kaydet'),
+          el(doc, 'button', { type: 'button', className: 'danger', onclick: function () { handlers.remove(it.id); } }, 'Sil'))));
+    });
+    sec.appendChild(list);
+    var nt = el(doc, 'input', { type: 'text', maxLength: 200, placeholder: 'Konu (örn. Renkler)', id: 'pref-new-topic' });
+    var nx = el(doc, 'textarea', { rows: 2, maxLength: 1000, placeholder: 'Tercih (örn. Pembe istemiyorum; sıcak doğal tonlar)', id: 'pref-new-text' });
+    sec.appendChild(el(doc, 'h2', null, 'Yeni tercih ekle'));
+    sec.appendChild(el(doc, 'div', null, nt, nx, el(doc, 'p', null, el(doc, 'button', { type: 'button', id: 'pref-add', onclick: function () { handlers.add(nt.value, nx.value); } }, 'Ekle'))));
+    return sec;
   }
 
   // ---------- network ----------
@@ -635,6 +666,16 @@
     return api('GET', '/api/ui/runs/' + encodeURIComponent(id)).then(function (data) { clear(v); v.appendChild(renderRunDetail(doc, data, instrHandlers)); });
   }
 
+  function showPreferences() {
+    var doc = root.document, v = view();
+    var h = {
+      save: function (id, topic, text) { api('PUT', '/api/ui/preferences/' + encodeURIComponent(id), { topic: topic, text: text }).then(showPreferences).catch(showError); },
+      remove: function (id) { askConfirm('Tercih silinsin mi?', 'Director bu tercihi artık kullanmaz ve tekrar eklemez.', 'Evet, sil', function () { api('DELETE', '/api/ui/preferences/' + encodeURIComponent(id)).then(showPreferences).catch(showError); }); },
+      add: function (topic, text) { api('POST', '/api/ui/preferences', { topic: topic, text: text }).then(showPreferences).catch(showError); },
+    };
+    return api('GET', '/api/ui/preferences').then(function (data) { clear(v); v.appendChild(renderPreferences(doc, data, h)); });
+  }
+
   function route() {
     var h = root.location.hash || '#/';
     var p;
@@ -645,6 +686,7 @@
     if ((p = /^#\/approvals\/([0-9a-fA-F-]{36})$/.exec(h))) return showApproval(p[1]).catch(showError);
     if ((p = /^#\/decisions\/([0-9a-fA-F-]{36})$/.exec(h))) return showDecision(p[1]).catch(showError);
     if (h === '#/runs') { startPolling(h, showRuns); return showRuns().catch(showError); }
+    if (h === '#/tercihler') return showPreferences().catch(showError);
     if ((p = /^#\/runs\/([A-Za-z0-9._:%-]{1,400})$/.exec(h))) {
       var rid = decodeURIComponent(p[1]);
       startPolling(h, function () { return showRun(rid); });
@@ -654,7 +696,7 @@
     return showHome().catch(showError);
   }
 
-  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail, renderInstructions: renderInstructions, renderResume: renderResume };
+  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail, renderInstructions: renderInstructions, renderResume: renderResume, renderPreferences: renderPreferences };
   if (typeof module !== 'undefined' && module.exports) module.exports = exported;
 
   if (root.document && !root.__IDP_TEST__) {

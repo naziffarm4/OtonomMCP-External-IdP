@@ -42,3 +42,7 @@ button.danger { background:var(--bad); } button.danger.small { padding:2px 10px;
 .shot { margin: 0; }
 .shot img { width: 100%; height: auto; border: 1px solid #ddd; border-radius: 6px; }
 .shot figcaption { font-size: 0.85em; color: #666; }
+.toplink { margin-left: 1rem; }
+.prefs .pref { display: grid; gap: .4rem; padding: .6rem 0; border-bottom: 1px solid #ddd; }
+.pref-topic, .pref-text, #pref-new-topic, #pref-new-text { width: 100%; box-sizing: border-box; }
+.progress-notes li { margin-bottom: .6rem; }

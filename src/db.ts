@@ -324,6 +324,25 @@ export const MIGRATIONS: readonly Migration[] = [
       );
     `,
   },
+  {
+    version: 9,
+    name: 'cross-project user preferences (Director memory)',
+    sql: `
+      CREATE TABLE IF NOT EXISTS preferences (
+        id TEXT PRIMARY KEY,
+        topic TEXT NOT NULL,
+        text TEXT NOT NULL,
+        source TEXT NOT NULL,
+        project TEXT,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS preference_tombstones (
+        id TEXT PRIMARY KEY,
+        deleted_at INTEGER NOT NULL
+      );
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {
