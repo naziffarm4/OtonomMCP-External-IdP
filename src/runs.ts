@@ -17,7 +17,7 @@ const SHOT_NAME_RE = /^[A-Za-z0-9._-]{1,80}$/;
 const DATA_URL_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 export const RUN_STATUSES = ['PENDING_APPROVAL', 'RUNNING', 'BLOCKED_ON_HUMAN', 'WAITING_DECISION', 'COMPLETED', 'FAILED', 'STOPPED', 'CONFIGURATION_ERROR', 'REJECTED'] as const;
 export const FINISHED_STATUSES = ['COMPLETED', 'FAILED', 'STOPPED', 'CONFIGURATION_ERROR', 'REJECTED'];
-export const EVENT_TYPES = ['RUN_STARTED', 'APPROVAL_REQUESTED', 'MANDATE_SEALED', 'CYCLE_START', 'DIRECTOR_ACTION', 'AGY_DISPATCH', 'AGY_RESULT', 'VERIFICATION', 'CYCLE_RESULT', 'REPLAN', 'ANALYSIS', 'DECISION_REQUESTED', 'DECISION_ANSWERED', 'DIRECTOR_ANSWER', 'PROGRESS_NOTE', 'TASK_ACCEPTED', 'TASK_BLOCKED', 'COMMIT', 'BUDGET', 'RUN_FINISHED', 'INFO'] as const;
+export const EVENT_TYPES = ['RUN_STARTED', 'APPROVAL_REQUESTED', 'MANDATE_SEALED', 'CYCLE_START', 'DIRECTOR_ACTION', 'AGY_DISPATCH', 'AGY_RESULT', 'VERIFICATION', 'CYCLE_RESULT', 'REPLAN', 'ANALYSIS', 'DECISION_REQUESTED', 'DECISION_ANSWERED', 'DIRECTOR_ANSWER', 'PROGRESS_NOTE', 'DECISION_LOG', 'TASK_ACCEPTED', 'TASK_BLOCKED', 'COMMIT', 'BUDGET', 'RUN_FINISHED', 'INFO'] as const;
 const LEVELS = ['info', 'warn', 'error'];
 const ENTRY_POINTS = ['aidm_run_spec', 'aidm_autonomous_start'];
 const SNAPSHOT_FIELDS = ['runId', 'seq', 'projectId', 'projectName', 'entryPoint', 'status', 'startedAt', 'updatedAt', 'finishedAt', 'model', 'budget', 'currentTaskId', 'tasks', 'lastDirectorAction', 'pendingApprovalId', 'pendingDecisionIds', 'stopReason'];
@@ -148,7 +148,7 @@ export function validateEvents(body: unknown): EventIn[] {
       type: oneOf(e, 'type', EVENT_TYPES),
       level: oneOf(e, 'level', LEVELS),
       taskId: optText(e, 'taskId', 128),
-      message: v.text(e, 'message', e.type === 'PROGRESS_NOTE' ? 1500 : 500)!,
+      message: v.text(e, 'message', e.type === 'PROGRESS_NOTE' ? 1500 : e.type === 'DECISION_LOG' ? 700 : 500)!,
     };
   });
 }

@@ -46,3 +46,5 @@ button.danger { background:var(--bad); } button.danger.small { padding:2px 10px;
 .prefs .pref { display: grid; gap: .4rem; padding: .6rem 0; border-bottom: 1px solid #ddd; }
 .pref-topic, .pref-text, #pref-new-topic, #pref-new-text { width: 100%; box-sizing: border-box; }
 .progress-notes li { margin-bottom: .6rem; }
+.decision-log li { margin-bottom: .45rem; }
+.decision-why { font-size: .9em; margin-left: 1rem; }

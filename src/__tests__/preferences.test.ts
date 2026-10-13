@@ -34,7 +34,7 @@ describe('cross-project preferences (Director memory)', () => {
   });
 
   test('progress notes are accepted as run events', async () => {
-    expect((await h.bearer('POST', '/api/runs/r1/events', { events: [{ seq: 1, at: new Date().toISOString(), type: 'PROGRESS_NOTE', level: 'info', taskId: null, message: 'Ne oldu: ...' }] })).status).toBe(200);
+    expect((await h.bearer('POST', '/api/runs/r1/events', { events: [{ seq: 1, at: new Date().toISOString(), type: 'PROGRESS_NOTE', level: 'info', taskId: null, message: 'Ne oldu: ...' }, { seq: 2, at: new Date().toISOString(), type: 'DECISION_LOG', level: 'info', taskId: 'T1', message: '[Plan] x — ' + 'g'.repeat(650) }] })).status).toBe(200);
   });
 
   test('UI renders preferences and progress notes as text', () => {

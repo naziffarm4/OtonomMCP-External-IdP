@@ -411,6 +411,19 @@
       notes.forEach(function (e) { nl.appendChild(el(doc, 'li', null, el(doc, 'span', { className: 'muted' }, fmtTime(e.at) + ' · '), el(doc, 'div', { className: 'summary report-text' }, e.message))); });
       wrap.appendChild(el(doc, 'section', { className: 'card', id: 'progress-notes' }, el(doc, 'h2', null, 'Director ilerleme notları'), nl));
     }
+    var decs = (data.events || []).filter(function (e) { return e.type === 'DECISION_LOG'; }).slice().reverse();
+    if (decs.length) {
+      var dl = el(doc, 'ol', { className: 'list decision-log' });
+      decs.forEach(function (e) {
+        var m = /^\[([^\]]+)\]\s*([\s\S]*?)(?:\s+—\s+([\s\S]*))?$/.exec(e.message || '') || [null, '', e.message || '', ''];
+        dl.appendChild(el(doc, 'li', null,
+          el(doc, 'span', { className: 'muted' }, fmtTime(e.at) + (e.taskId ? ' · ' + e.taskId : '') + ' · '),
+          el(doc, 'strong', null, m[1] ? m[1] + ': ' : ''), m[2] || '',
+          m[3] ? el(doc, 'div', { className: 'muted decision-why' }, 'Gerekçe: ' + m[3]) : ''));
+      });
+      wrap.appendChild(el(doc, 'section', { className: 'card', id: 'decision-log' }, el(doc, 'h2', null, 'Karar günlüğü (' + decs.length + ')'),
+        el(doc, 'p', { className: 'muted' }, 'Salt okunur. Director/AIDM kararları kısa gerekçeleriyle; tam liste projede .ai-manager/reports/karar-gunlugu-<run>.md.'), dl));
+    }
     var tl = el(doc, 'ul', { className: 'list timeline' });
     (data.events || []).forEach(function (e) {
       tl.appendChild(el(doc, 'li', { className: 'ev ' + (e.level === 'error' ? 'error' : e.level === 'warn' ? 'warn' : 'info') },

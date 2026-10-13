@@ -183,6 +183,26 @@ describe('approval UI', () => {
     expect(text).toContain('Çalışıyor');
   });
 
+  test('karar günlüğü: read-only section, chronological, rationale split, text-only', () => {
+    const d: any = detail('2026-10-12T15:59:57.000Z');
+    d.events = [
+      { seq: 5, at: serverTime, type: 'DECISION_LOG', level: 'info', taskId: 'T1', message: '[Görev kabulü] T1 kabul edildi — Bağımsız doğrulama başarılı oldu.' },
+      { seq: 4, at: serverTime, type: 'DECISION_LOG', level: 'info', taskId: null, message: '[Plan] ' + XSS + ' — ' + XSS },
+      ...d.events,
+    ];
+    const node = ui.renderRunDetail(fakeDoc, d);
+    const sec = node.all().find((n: FakeNode) => n.attrs?.id === 'decision-log' || (n as any).id === 'decision-log');
+    expect(sec).toBeTruthy();
+    const items = sec.all().filter((n: FakeNode) => n.tagName === 'li').map((n: FakeNode) => n.textContent);
+    expect(items).toHaveLength(2);
+    expect(items[0]).toContain('Plan: ');
+    expect(items[1]).toContain('Gerekçe: Bağımsız doğrulama başarılı oldu.');
+    expect(items[1]).toContain('T1');
+    expect(node.textContent).toContain('Karar günlüğü (2)');
+    expect(sec.all().some((n: FakeNode) => n.tagName === 'button' || n.tagName === 'input' || n.tagName === 'script')).toBe(false);
+    expect(ui.renderRunDetail(fakeDoc, detail(serverTime)).textContent).not.toContain('Karar günlüğü');
+  });
+
   test('completion report: text + screenshot images only from the run screenshot endpoint', () => {
     const d: any = detail('2026-10-12T15:59:57.000Z', 'COMPLETED');
     d.report = { summary: XSS, updatedAt: serverTime, screenshots: [{ name: 'index-mobile.jpg', caption: XSS }] };
