@@ -63,6 +63,26 @@ describe('live instructions', () => {
     expect(JSON.stringify(ui.json)).not.toContain(it0.token); // tokens never go to the browser
   });
 
+  test("ASK ('Soru sor'): question delivered, Director answer stored and shown; answer only for ASK/APPLIED", async () => {
+    const { browser, auth } = await enroll(h);
+    await openChannel();
+    const q = await send(browser, auth, { mode: 'ASK', text: 'Şu an hangi görevdesin, ne kadar harcadın?' });
+    expect(q.status).toBe(200);
+    const id = q.json.instructionId;
+    const it0 = (await h.bearer('GET', `/api/runs/${RUN}/instructions`)).json.instructions[0];
+    expect(decodeJwt(it0.token).payload).toMatchObject({ mode: 'ASK', text: 'Şu an hangi görevdesin, ne kadar harcadın?' });
+    await h.bearer('POST', `/api/runs/${RUN}/instructions/${id}/ack`, { status: 'RECEIVED' });
+    expect((await h.bearer('POST', `/api/runs/${RUN}/instructions/${id}/ack`, { status: 'REJECTED', answer: 'x' })).status).toBe(400);
+    const ok = await h.bearer('POST', `/api/runs/${RUN}/instructions/${id}/ack`, { status: 'APPLIED', answer: 'TASK-003 üzerindeyim; $0.42 harcandı.' });
+    expect(ok.json.status).toBe('APPLIED');
+    const ui = await browser.req('GET', `/api/ui/runs/${RUN}`);
+    expect(ui.json.instructions[0]).toMatchObject({ instructionId: id, mode: 'ASK', answer: 'TASK-003 üzerindeyim; $0.42 harcandı.' });
+    const n = await send(browser, auth, { mode: 'NOTE', text: 'not' });
+    await h.bearer('POST', `/api/runs/${RUN}/instructions/${n.json.instructionId}/ack`, { status: 'RECEIVED' });
+    expect((await h.bearer('POST', `/api/runs/${RUN}/instructions/${n.json.instructionId}/ack`, { status: 'APPLIED', answer: 'x' })).status).toBe(400);
+    expect((await h.bearer('POST', `/api/runs/${RUN}/events`, { events: [{ seq: 50, at: new Date().toISOString(), type: 'DIRECTOR_ANSWER', level: 'info', taskId: null, message: 'Yanıt: ...' }] })).status).toBe(200);
+  });
+
   test('NOTE and STOP modes; STOP text optional; taskId null when not targeted', async () => {
     const { browser, auth } = await enroll(h);
     await openChannel();
@@ -222,7 +242,7 @@ describe('migration 4 upgrades a live v3 database in place', () => {
     raw.close();
     const h2 = await startHarness({ dataDir: dir });
     try {
-      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(6);
+      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(7);
       expect(h2.idp.runs.detail(RUN, null).run.status).toBe('RUNNING');
       const b = h2.browser();
       await b.req('GET', '/api/ui/state');

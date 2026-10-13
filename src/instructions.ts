@@ -13,7 +13,8 @@ import * as v from './validation';
 import { HttpError } from './validation';
 
 export const INSTRUCTION_OPERATION = 'AUTONOMOUS_INSTRUCTION';
-export const MODES = ['NOTE', 'PAUSE_AND_APPLY', 'STOP'] as const;
+export const MODES = ['NOTE', 'PAUSE_AND_APPLY', 'STOP', 'ASK'] as const;
+export const MAX_ANSWER = 4000;
 export type InstructionMode = (typeof MODES)[number];
 export type InstructionStatus = 'PENDING_DELIVERY' | 'RECEIVED' | 'APPLIED' | 'REJECTED' | 'EXPIRED';
 export const INSTRUCTION_TTL_SECONDS = 15 * 60;
@@ -48,6 +49,7 @@ interface InstructionRow {
   token_expires_at: number;
   status: InstructionStatus;
   note: string | null;
+  answer?: string | null;
   created_at: number;
   received_at: number | null;
   finished_at: number | null;
@@ -208,24 +210,27 @@ export class InstructionService {
     const runId = validateRunId(pathRunId);
     const instructionId = v.uuid({ instructionId: instructionIdRaw }, 'instructionId');
     const o = v.asObject(body);
-    v.rejectUnknownKeys(o, ['status', 'note']);
+    v.rejectUnknownKeys(o, ['status', 'note', 'answer']);
     const status = o.status;
+    // ASK ('Soru sor'): the Director's plain-Turkish answer, shown in the run page.
+    const answer = o.answer === undefined || o.answer === null ? null : v.text(o, 'answer', MAX_ANSWER)!;
     if (status !== 'RECEIVED' && status !== 'APPLIED' && status !== 'REJECTED') throw v.bad("status must be 'RECEIVED', 'APPLIED' or 'REJECTED'");
     const note = o.note === undefined || o.note === null ? null : v.text(o, 'note', 1000)!;
     this.expireOverdue();
     return transaction(this.db, () => {
-      const r = this.db.prepare('SELECT status, run_id FROM instructions WHERE instruction_id = ?').get(instructionId) as { status: InstructionStatus; run_id: string } | undefined;
+      const r = this.db.prepare('SELECT status, run_id, mode FROM instructions WHERE instruction_id = ?').get(instructionId) as { status: InstructionStatus; run_id: string; mode: string } | undefined;
       if (!r || r.run_id !== runId) throw new HttpError(404, 'NOT_FOUND', 'instruction not found for this run');
+      if (answer !== null && (r.mode !== 'ASK' || status !== 'APPLIED')) throw v.bad('answer is only accepted when an ASK instruction is APPLIED');
       if (!(TRANSITIONS[r.status] ?? []).includes(status)) throw new HttpError(409, 'INVALID_TRANSITION', `cannot go from ${r.status} to ${status}`);
       const now = this.cfg.now();
       const upd = this.db
         .prepare(
-          `UPDATE instructions SET status = ?, note = COALESCE(?, note),
+          `UPDATE instructions SET status = ?, note = COALESCE(?, note), answer = COALESCE(?, answer),
              received_at = CASE WHEN ? = 'RECEIVED' THEN ? ELSE received_at END,
              finished_at = CASE WHEN ? IN ('APPLIED','REJECTED') THEN ? ELSE finished_at END
            WHERE instruction_id = ? AND status = ?`,
         )
-        .run(status, note, status, now, status, now, instructionId, r.status);
+        .run(status, note, answer, status, now, status, now, instructionId, r.status);
       if (upd.changes !== 1) throw new HttpError(409, 'INVALID_TRANSITION', 'concurrent update');
       audit(this.db, now, 'otonommcp', `instruction.${status.toLowerCase()}`, instructionId, note ? { note } : undefined);
       return { runId, instructionId, status: status as InstructionStatus };
@@ -250,6 +255,7 @@ export class InstructionService {
         revision: r.revision,
         status: r.status,
         note: r.note,
+        answer: r.answer ?? null,
         createdAt: iso(r.created_at),
         receivedAt: r.received_at ? iso(r.received_at) : null,
         finishedAt: r.finished_at ? iso(r.finished_at) : null,

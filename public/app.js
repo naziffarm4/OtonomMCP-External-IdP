@@ -292,7 +292,7 @@
   }
 
   var INSTR_STATUS_TR = { PENDING_DELIVERY: 'İletilmeyi bekliyor', RECEIVED: 'Alındı', APPLIED: 'Uygulandı', REJECTED: 'Reddedildi', EXPIRED: 'Süresi doldu' };
-  var MODE_TR = { NOTE: 'Sadece not', PAUSE_AND_APPLY: 'Duraklat ve uygula', STOP: 'Durdur' };
+  var MODE_TR = { NOTE: 'Sadece not', PAUSE_AND_APPLY: 'Duraklat ve uygula', STOP: 'Durdur', ASK: 'Soru sor' };
 
   /** Instruction form + list. handlers: { draft:{mode,text,taskId}, send(draft) }. */
   function renderInstructions(doc, data, handlers) {
@@ -302,7 +302,7 @@
     if (ch.canInstruct && handlers) {
       var draft = handlers.draft || (handlers.draft = { mode: 'NOTE', text: '', taskId: '' });
       var radios = el(doc, 'div', { className: 'modes' });
-      ['NOTE', 'PAUSE_AND_APPLY', 'STOP'].forEach(function (m) {
+      ['NOTE', 'PAUSE_AND_APPLY', 'STOP', 'ASK'].forEach(function (m) {
         var r = el(doc, 'input', { type: 'radio', name: 'instr-mode', value: m, checked: draft.mode === m,
           onchange: function () { draft.mode = m; } });
         radios.appendChild(el(doc, 'label', { className: 'opt' }, r, ' ' + MODE_TR[m]));
@@ -334,6 +334,8 @@
         el(doc, 'span', { className: 'status instr-' + String(i.status).replace(/[^A-Z_]/g, '') }, INSTR_STATUS_TR[i.status] || i.status), ' ',
         el(doc, 'strong', null, MODE_TR[i.mode] || i.mode), i.taskId ? ' [' + i.taskId + ']' : '', ' · ' + fmtTime(i.createdAt),
         i.text ? el(doc, 'div', { className: 'summary' }, i.text) : null,
+        i.answer ? el(doc, 'div', { className: 'summary answer' }, el(doc, 'strong', null, "Director'ın yanıtı: "), i.answer) : null,
+        i.mode === 'ASK' && !i.answer && (i.status === 'PENDING_DELIVERY' || i.status === 'RECEIVED') ? el(doc, 'div', { className: 'muted' }, 'Yanıt bekleniyor… (çalışma durmaz)') : null,
         i.note ? el(doc, 'div', { className: 'muted' }, 'Not: ' + i.note) : null));
     });
     card.appendChild(el(doc, 'h2', null, 'Gönderilen talimatlar (' + (data.instructions || []).length + ')'));

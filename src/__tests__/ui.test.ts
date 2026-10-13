@@ -266,3 +266,17 @@ describe('resume button ("Kaldığı yerden devam et")', () => {
     expect(ui.renderResume(fakeDoc, { runId: 'r1', canResume: false, reason: 'x', pending: null }, {}).textContent).toBe('');
   });
 });
+
+describe("instructions: 'Soru sor'", () => {
+  test('ASK option offered; answer rendered as text', () => {
+    const data = { run: { runId: 'r', status: 'RUNNING', snapshot: { tasks: [] } }, instructionChannel: { open: true, canInstruct: true },
+      instructions: [{ instructionId: 'i', mode: 'ASK', text: 'Soru?', status: 'APPLIED', answer: '<b>yanıt</b>', createdAt: '2026-10-13T07:00:00.000Z' },
+        { instructionId: 'j', mode: 'ASK', text: 'İkinci?', status: 'RECEIVED', answer: null, createdAt: '2026-10-13T07:01:00.000Z' }] };
+    const node = ui.renderInstructions(fakeDoc, data, { send: () => {} });
+    const t = node.textContent;
+    expect(t).toContain('Soru sor');
+    expect(t).toContain("Director'ın yanıtı: <b>yanıt</b>");
+    expect(t).toContain('Yanıt bekleniyor');
+    expect(node.all().some((n: FakeNode) => n.value === 'ASK')).toBe(true);
+  });
+});

@@ -269,6 +269,42 @@ export const MIGRATIONS: readonly Migration[] = [
       CREATE INDEX idx_resume_run ON resume_requests(run_id, created_at);
     `,
   },
+  {
+    version: 7,
+    name: "instructions: mode ASK ('Soru sor') + Director answer",
+    sql: `
+      CREATE TABLE instructions_v7 (
+        instruction_id TEXT PRIMARY KEY,
+        run_id TEXT NOT NULL,
+        user_id TEXT NOT NULL REFERENCES users(id),
+        credential_id TEXT NOT NULL,
+        mode TEXT NOT NULL CHECK (mode IN ('NOTE','PAUSE_AND_APPLY','STOP','ASK')),
+        text TEXT NOT NULL,
+        task_id TEXT,
+        project_id TEXT NOT NULL,
+        package_id TEXT NOT NULL,
+        revision INTEGER NOT NULL,
+        context_fingerprint TEXT NOT NULL,
+        nonce TEXT NOT NULL UNIQUE,
+        token TEXT NOT NULL,
+        token_jti TEXT NOT NULL UNIQUE,
+        token_expires_at INTEGER NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('PENDING_DELIVERY','RECEIVED','APPLIED','REJECTED','EXPIRED')),
+        note TEXT,
+        created_at INTEGER NOT NULL,
+        received_at INTEGER,
+        finished_at INTEGER,
+        answer TEXT
+      );
+      INSERT INTO instructions_v7 (instruction_id, run_id, user_id, credential_id, mode, text, task_id, project_id, package_id, revision,
+        context_fingerprint, nonce, token, token_jti, token_expires_at, status, note, created_at, received_at, finished_at)
+        SELECT instruction_id, run_id, user_id, credential_id, mode, text, task_id, project_id, package_id, revision,
+        context_fingerprint, nonce, token, token_jti, token_expires_at, status, note, created_at, received_at, finished_at FROM instructions;
+      DROP TABLE instructions;
+      ALTER TABLE instructions_v7 RENAME TO instructions;
+      CREATE INDEX idx_instr_run ON instructions(run_id, created_at);
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {
