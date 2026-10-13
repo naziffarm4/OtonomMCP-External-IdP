@@ -242,7 +242,7 @@ describe('migration 4 upgrades a live v3 database in place', () => {
     raw.close();
     const h2 = await startHarness({ dataDir: dir });
     try {
-      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(7);
+      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(8);
       expect(h2.idp.runs.detail(RUN, null).run.status).toBe('RUNNING');
       const b = h2.browser();
       await b.req('GET', '/api/ui/state');

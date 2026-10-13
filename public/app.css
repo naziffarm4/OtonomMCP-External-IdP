@@ -37,3 +37,8 @@ select { width:100%; padding:8px; border-radius:6px; border:1px solid #334155; b
 .status.instr-PENDING_DELIVERY { background:var(--warn); color:#111; } .status.instr-RECEIVED { background:var(--acc); }
 button.danger { background:var(--bad); } button.danger.small { padding:2px 10px; font-size:13px; }
 .criteria{margin:.2em 0 .4em 1.6em;font-size:.9em;color:#555}.question-block{margin:.8em 0}
+.report-text { white-space: pre-wrap; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.shot { margin: 0; }
+.shot img { width: 100%; height: auto; border: 1px solid #ddd; border-radius: 6px; }
+.shot figcaption { font-size: 0.85em; color: #666; }

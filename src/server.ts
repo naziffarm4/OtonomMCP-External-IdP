@@ -9,7 +9,7 @@ import { openDatabase, type Db } from './db';
 import { RateLimiter, SECURITY_HEADERS, cookie, parseCookies, readJson, sendError, sendJson } from './http-util';
 import { loadOrCreateClientToken, loadOrCreateSigningKey, safeEqual, sha256Hex, type SigningKey } from './keys';
 import { RequestService } from './requests';
-import { RunMonitorService } from './runs';
+import { MAX_SCREENSHOT_BYTES, RunMonitorService } from './runs';
 import { InstructionService } from './instructions';
 import { ResumeService, newResumeId } from './resumes';
 import * as nodeCrypto from 'node:crypto';
@@ -242,6 +242,16 @@ export function createIdp(cfg: IdpConfig): Idp {
       return sendJson(res, 200, resumes.result(m[1], await readJson(req, cfg.maxBodyBytes)));
     }
 
+    // ---------- completion report + screenshots (OtonomMCP -> IdP, informational only) ----------
+    if ((m = /^\/api\/runs\/([^/]+)\/report$/.exec(p)) && method === 'PUT') {
+      requireBearer(req);
+      return sendJson(res, 200, runs.putReport(m[1], await readJson(req, cfg.maxBodyBytes)));
+    }
+    if ((m = /^\/api\/runs\/([^/]+)\/screenshots\/([^/]+)$/.exec(p)) && method === 'PUT') {
+      requireBearer(req);
+      return sendJson(res, 200, runs.putScreenshot(m[1], decodeURIComponent(m[2]), await readJson(req, Math.ceil(MAX_SCREENSHOT_BYTES * 1.5))));
+    }
+
     // ---------- run monitor (OtonomMCP -> IdP, informational only) ----------
     if ((m = /^\/api\/runs\/([^/]+)(\/events)?$/.exec(p))) {
       requireBearer(req);
@@ -317,6 +327,13 @@ export function createIdp(cfg: IdpConfig): Idp {
     if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'DELETE') {
       const s = requireSession(req, true);
       return sendJson(res, 200, runs.deleteRun(m[1], s.user.id));
+    }
+    if ((m = /^\/api\/ui\/runs\/([^/]+)\/screenshots\/([^/]+)$/.exec(p)) && method === 'GET') {
+      requireSession(req, false);
+      const shot = runs.screenshot(m[1], decodeURIComponent(m[2]));
+      res.writeHead(200, { ...SECURITY_HEADERS, 'Content-Type': shot.contentType, 'Content-Length': shot.bytes.length, 'Cache-Control': 'private, max-age=3600' });
+      res.end(shot.bytes);
+      return;
     }
     if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'GET') {
       requireSession(req, false);

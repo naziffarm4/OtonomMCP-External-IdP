@@ -183,6 +183,17 @@ describe('approval UI', () => {
     expect(text).toContain('Çalışıyor');
   });
 
+  test('completion report: text + screenshot images only from the run screenshot endpoint', () => {
+    const d: any = detail('2026-10-12T15:59:57.000Z', 'COMPLETED');
+    d.report = { summary: XSS, updatedAt: serverTime, screenshots: [{ name: 'index-mobile.jpg', caption: XSS }] };
+    const node = ui.renderRunDetail(fakeDoc, d);
+    expect(node.textContent).toContain('Tamamlama raporu');
+    const imgs = node.all().filter((n: FakeNode) => n.tagName === 'img');
+    expect(imgs.length).toBe(1);
+    expect(imgs[0].attrs.src).toBe('/api/ui/runs/run-1/screenshots/index-mobile.jpg');
+    expect(node.all().some((n: FakeNode) => n.tagName === 'script')).toBe(false);
+  });
+
   test('stale warning only for RUNNING runs without updates for > 2 min', () => {
     expect(ui.renderRunDetail(fakeDoc, detail('2026-10-12T15:57:00.000Z')).textContent).toContain('Bağlantı yok / duraklamış olabilir');
     expect(ui.renderRunDetail(fakeDoc, detail('2026-10-12T15:57:00.000Z', 'COMPLETED')).textContent).not.toContain('Bağlantı yok');

@@ -10,6 +10,11 @@ import { HttpError } from './validation';
 export const RUN_ID_RE = /^[A-Za-z0-9._:-]{1,128}$/;
 export const MAX_EVENTS_PER_RUN = 2000;
 export const MAX_RUNS = 200;
+export const MAX_REPORT_CHARS = 20_000;
+export const MAX_SCREENSHOTS_PER_RUN = 24;
+export const MAX_SCREENSHOT_BYTES = 400 * 1024;
+const SHOT_NAME_RE = /^[A-Za-z0-9._-]{1,80}$/;
+const DATA_URL_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 export const RUN_STATUSES = ['PENDING_APPROVAL', 'RUNNING', 'BLOCKED_ON_HUMAN', 'WAITING_DECISION', 'COMPLETED', 'FAILED', 'STOPPED', 'CONFIGURATION_ERROR', 'REJECTED'] as const;
 export const FINISHED_STATUSES = ['COMPLETED', 'FAILED', 'STOPPED', 'CONFIGURATION_ERROR', 'REJECTED'];
 export const EVENT_TYPES = ['RUN_STARTED', 'APPROVAL_REQUESTED', 'MANDATE_SEALED', 'CYCLE_START', 'DIRECTOR_ACTION', 'AGY_DISPATCH', 'AGY_RESULT', 'VERIFICATION', 'CYCLE_RESULT', 'REPLAN', 'ANALYSIS', 'DECISION_REQUESTED', 'DECISION_ANSWERED', 'DIRECTOR_ANSWER', 'TASK_ACCEPTED', 'TASK_BLOCKED', 'COMMIT', 'BUDGET', 'RUN_FINISHED', 'INFO'] as const;
@@ -224,7 +229,13 @@ export class RunMonitorService {
       .prepare(`SELECT run_id FROM runs WHERE status IN (${ph}) AND run_id != ? ORDER BY received_at ASC LIMIT ?`)
       .all(...FINISHED_STATUSES, keep, n - MAX_RUNS) as { run_id: string }[];
     const del = this.db.prepare('DELETE FROM runs WHERE run_id = ?');
-    for (const r of victims) del.run(r.run_id); // events cascade
+    const delRep = this.db.prepare('DELETE FROM run_reports WHERE run_id = ?');
+    const delShots = this.db.prepare('DELETE FROM run_screenshots WHERE run_id = ?');
+    for (const r of victims) {
+      del.run(r.run_id); // events cascade
+      delRep.run(r.run_id);
+      delShots.run(r.run_id);
+    }
   }
 
   private summary(r: RunRow) {
@@ -255,6 +266,8 @@ export class RunMonitorService {
   private deleteRow(runId: string, actor: string, status: string, reason: string): { events: number; instructions: number } {
     const events = (this.db.prepare('SELECT COUNT(*) n FROM run_events WHERE run_id = ?').get(runId) as { n: number }).n;
     this.db.prepare('DELETE FROM run_events WHERE run_id = ?').run(runId);
+    this.db.prepare('DELETE FROM run_reports WHERE run_id = ?').run(runId);
+    this.db.prepare('DELETE FROM run_screenshots WHERE run_id = ?').run(runId);
     this.db.prepare('DELETE FROM runs WHERE run_id = ?').run(runId);
     this.db.prepare('DELETE FROM instruction_channels WHERE run_id = ?').run(runId);
     const instructions = Number(this.db.prepare('DELETE FROM instructions WHERE run_id = ?').run(runId).changes);
@@ -317,6 +330,63 @@ export class RunMonitorService {
       run: { ...this.summary(r), snapshot: r.snapshot ? (JSON.parse(r.snapshot) as RunSnapshot) : null },
       events,
       lastSeq: lastSeq ?? -1,
+      report: this.report(runId),
     };
+  }
+
+  /** Completion report (plain Turkish text, rendered as text — never HTML). */
+  putReport(pathRunId: string, body: unknown): { runId: string; stored: true } {
+    const runId = validateRunId(pathRunId);
+    const o = v.asObject(body);
+    v.rejectUnknownKeys(o, ['summary']);
+    const summary = v.text(o, 'summary', MAX_REPORT_CHARS, false, 1)!;
+    const now = this.cfg.now();
+    this.ensureRun(runId, now);
+    this.db
+      .prepare('INSERT INTO run_reports (run_id, summary, updated_at) VALUES (?, ?, ?) ON CONFLICT(run_id) DO UPDATE SET summary = excluded.summary, updated_at = excluded.updated_at')
+      .run(runId, summary, now);
+    return { runId, stored: true };
+  }
+
+  putScreenshot(pathRunId: string, nameRaw: string, body: unknown): { runId: string; name: string; stored: true } {
+    const runId = validateRunId(pathRunId);
+    if (!SHOT_NAME_RE.test(nameRaw)) throw v.bad('screenshot name must be 1-80 chars [A-Za-z0-9._-]');
+    const o = v.asObject(body);
+    v.rejectUnknownKeys(o, ['caption', 'dataUrl']);
+    const caption = v.text(o, 'caption', 200)!;
+    const dataUrl = o.dataUrl;
+    if (typeof dataUrl !== 'string' || dataUrl.length > MAX_SCREENSHOT_BYTES * 1.4 || !DATA_URL_RE.test(dataUrl)) throw v.bad('dataUrl must be a base64 jpeg/png/webp data URL within the size limit');
+    const now = this.cfg.now();
+    return transaction(this.db, () => {
+      this.ensureRun(runId, now);
+      const n = (this.db.prepare('SELECT COUNT(*) n FROM run_screenshots WHERE run_id = ? AND name <> ?').get(runId, nameRaw) as { n: number }).n;
+      if (n >= MAX_SCREENSHOTS_PER_RUN) throw new HttpError(409, 'TOO_MANY_SCREENSHOTS', `at most ${MAX_SCREENSHOTS_PER_RUN} screenshots per run`);
+      this.db
+        .prepare('INSERT INTO run_screenshots (run_id, name, caption, data_url, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(run_id, name) DO UPDATE SET caption = excluded.caption, data_url = excluded.data_url, created_at = excluded.created_at')
+        .run(runId, nameRaw, caption, dataUrl, now);
+      return { runId, name: nameRaw, stored: true as const };
+    });
+  }
+
+  report(runId: string): { summary: string; updatedAt: string; screenshots: { name: string; caption: string }[] } | null {
+    const r = this.db.prepare('SELECT summary, updated_at FROM run_reports WHERE run_id = ?').get(runId) as { summary: string; updated_at: number } | undefined;
+    const shots = this.db.prepare('SELECT name, caption FROM run_screenshots WHERE run_id = ? ORDER BY name').all(runId) as { name: string; caption: string }[];
+    if (!r && !shots.length) return null;
+    return { summary: r?.summary ?? '', updatedAt: iso(r?.updated_at ?? this.cfg.now()), screenshots: shots.map((x) => ({ name: x.name, caption: x.caption })) };
+  }
+
+  /** Screenshot bytes for the UI (same-origin <img>). */
+  screenshot(runIdRaw: string, nameRaw: string): { contentType: string; bytes: Buffer } {
+    const runId = validateRunId(runIdRaw);
+    if (!SHOT_NAME_RE.test(nameRaw)) throw v.bad('bad screenshot name');
+    const r = this.db.prepare('SELECT data_url FROM run_screenshots WHERE run_id = ? AND name = ?').get(runId, nameRaw) as { data_url: string } | undefined;
+    if (!r) throw new HttpError(404, 'NOT_FOUND', 'screenshot not found');
+    const m = DATA_URL_RE.exec(r.data_url)!;
+    return { contentType: `image/${m[1]}`, bytes: Buffer.from(r.data_url.slice(r.data_url.indexOf(',') + 1), 'base64') };
+  }
+
+  private ensureRun(runId: string, now: number): void {
+    const exists = this.db.prepare('SELECT 1 FROM runs WHERE run_id = ?').get(runId);
+    if (!exists) this.db.prepare(`INSERT INTO runs (run_id, seq, has_snapshot, status, updated_at, received_at) VALUES (?, -1, 0, 'RUNNING', ?, ?)`).run(runId, now, now);
   }
 }

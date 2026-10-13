@@ -7,7 +7,7 @@
   var state = { csrf: null, user: null, needsSetup: false };
 
   // ---------- DOM helpers (text-only) ----------
-  var SAFE_ATTRS = { selected: 1, max: 1, id: 1, className: 1, type: 1, name: 1, value: 1, htmlFor: 1, maxLength: 1, placeholder: 1, checked: 1, disabled: 1, autocomplete: 1, rows: 1 };
+  var SAFE_ATTRS = { selected: 1, max: 1, id: 1, className: 1, type: 1, name: 1, value: 1, htmlFor: 1, maxLength: 1, placeholder: 1, checked: 1, disabled: 1, autocomplete: 1, rows: 1, alt: 1, loading: 1 };
 
   function el(doc, tag, attrs) {
     var node = doc.createElement(tag);
@@ -17,6 +17,10 @@
           var h = String(attrs[k]);
           if (h.charAt(0) !== '#') throw new Error('only in-app links allowed');
           node.setAttribute('href', h);
+        } else if (k === 'src') {
+          var u = String(attrs[k]);
+          if (tag !== 'img' || u.indexOf('/api/ui/runs/') !== 0) throw new Error('only run screenshot images allowed');
+          node.setAttribute('src', u);
         } else if (k === 'onclick' || k === 'onsubmit' || k === 'onchange') {
           node.addEventListener(k.slice(2), attrs[k]);
         } else if (SAFE_ATTRS[k]) {
@@ -343,6 +347,23 @@
     return card;
   }
 
+  function renderReport(doc, runId, rep) {
+    var sec = el(doc, 'section', { className: 'card', id: 'run-report' }, el(doc, 'h2', null, 'Tamamlama raporu'));
+    if (rep.summary) sec.appendChild(el(doc, 'div', { className: 'summary report-text' }, rep.summary));
+    var shots = rep.screenshots || [];
+    if (shots.length) {
+      var g = el(doc, 'div', { className: 'shots' });
+      shots.forEach(function (x) {
+        g.appendChild(el(doc, 'figure', { className: 'shot' },
+          el(doc, 'img', { src: '/api/ui/runs/' + encodeURIComponent(runId) + '/screenshots/' + encodeURIComponent(x.name), alt: x.caption, loading: 'lazy' }),
+          el(doc, 'figcaption', null, x.caption)));
+      });
+      sec.appendChild(el(doc, 'h2', null, 'Ekran görüntüleri'));
+      sec.appendChild(g);
+    }
+    return sec;
+  }
+
   function renderRunDetail(doc, data, handlers) {
     var run = data.run, s = run.snapshot || {};
     var wrap = el(doc, 'div', { className: 'run-detail' });
@@ -359,6 +380,7 @@
       ]),
       el(doc, 'h2', null, 'Bütçe'), budgetBar(doc, s.budget));
     wrap.appendChild(head);
+    if (data.report) wrap.appendChild(renderReport(doc, run.runId, data.report));
     var links = el(doc, 'div', null);
     if (s.pendingApprovalId) links.appendChild(el(doc, 'p', null, el(doc, 'a', { href: '#/approvals/' + encodeURIComponent(s.pendingApprovalId) }, 'Bekleyen onaya git →')));
     (s.pendingDecisionIds || []).forEach(function (id) {

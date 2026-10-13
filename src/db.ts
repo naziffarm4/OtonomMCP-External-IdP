@@ -305,6 +305,25 @@ export const MIGRATIONS: readonly Migration[] = [
       CREATE INDEX idx_instr_run ON instructions(run_id, created_at);
     `,
   },
+  {
+    version: 8,
+    name: 'run completion report + screenshots (informational)',
+    sql: `
+      CREATE TABLE IF NOT EXISTS run_reports (
+        run_id TEXT PRIMARY KEY,
+        summary TEXT NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS run_screenshots (
+        run_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        caption TEXT NOT NULL,
+        data_url TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        PRIMARY KEY (run_id, name)
+      );
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {
