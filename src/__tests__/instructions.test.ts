@@ -213,7 +213,7 @@ describe('migration 4 upgrades a live v3 database in place', () => {
     h1.idp.runs.putSnapshot(RUN, snapshot({ runId: RUN }));
     await h1.close();
     const raw = new DatabaseSync(`${dir}/idp.sqlite`);
-    raw.exec(`DROP TABLE instructions; DROP TABLE instruction_channels; DROP TABLE webauthn_challenges;
+    raw.exec(`DROP TABLE IF EXISTS resume_requests; DROP TABLE instructions; DROP TABLE instruction_channels; DROP TABLE webauthn_challenges;
       CREATE TABLE webauthn_challenges (id TEXT PRIMARY KEY, challenge TEXT NOT NULL UNIQUE,
         purpose TEXT NOT NULL CHECK (purpose IN ('setup','register','login','approve','decide')), binding_hash TEXT NOT NULL,
         user_id TEXT, target_id TEXT, payload TEXT, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, used_at INTEGER);
@@ -222,7 +222,7 @@ describe('migration 4 upgrades a live v3 database in place', () => {
     raw.close();
     const h2 = await startHarness({ dataDir: dir });
     try {
-      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(5);
+      expect((h2.idp.db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(6);
       expect(h2.idp.runs.detail(RUN, null).run.status).toBe('RUNNING');
       const b = h2.browser();
       await b.req('GET', '/api/ui/state');

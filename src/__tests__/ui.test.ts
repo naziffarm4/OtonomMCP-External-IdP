@@ -251,3 +251,18 @@ describe('approval UI', () => {
   });
 });
 
+
+describe('resume button ("Kaldığı yerden devam et")', () => {
+  test('shown with a handler for resumable runs; status of the last request shown; hidden otherwise', () => {
+    let pressed = 0;
+    const on = ui.renderResume(fakeDoc, { runId: 'r1', canResume: true, reason: null, pending: null }, { resume: () => { pressed++; } });
+    const btn = on.all().find((n: FakeNode) => n.id === 'run-resume');
+    expect(btn.textContent).toBe('Kaldığı yerden devam et');
+    btn.listeners.click ? btn.listeners.click[0]() : btn.onclick();
+    expect(pressed).toBe(1);
+    const busy = ui.renderResume(fakeDoc, { runId: 'r1', canResume: false, reason: 'işleniyor', pending: { status: 'CLAIMED', createdAt: '2026-10-13T06:00:00.000Z', note: null } }, { resume: () => {} });
+    expect(busy.all().find((n: FakeNode) => n.id === 'run-resume')).toBeUndefined();
+    expect(busy.textContent).toContain('Alındı, başlatılıyor');
+    expect(ui.renderResume(fakeDoc, { runId: 'r1', canResume: false, reason: 'x', pending: null }, {}).textContent).toBe('');
+  });
+});

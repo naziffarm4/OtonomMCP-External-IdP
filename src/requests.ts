@@ -6,6 +6,7 @@ import type { SigningKey } from './keys';
 import type { User } from './auth';
 import * as v from './validation';
 import { HttpError } from './validation';
+import type { ResumeService } from './resumes';
 
 export type ApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
 export type DecisionStatus = 'PENDING' | 'ANSWERED' | 'EXPIRED';
@@ -78,7 +79,7 @@ export interface ClarificationAnswer {
 
 const APPROVAL_FIELDS = [
   'requestId', 'projectId', 'packageId', 'revision', 'contextFingerprint', 'specFingerprint', 'directorSessionId',
-  'taskId', 'operation', 'nonce', 'summary', 'requestedAt', 'expiresAt',
+  'taskId', 'operation', 'nonce', 'summary', 'requestedAt', 'expiresAt', 'resumeRequestId',
 ] as const;
 const DECISION_FIELDS = [
   'decisionId', 'projectId', 'runId', 'taskId', 'packageId', 'revision', 'operation', 'contextFingerprint', 'question', 'options', 'allowFreeText',
@@ -140,7 +141,13 @@ function parseQuestions(raw: unknown): ClarificationQuestion[] {
 const iso = (ms: number) => new Date(ms).toISOString();
 
 export class RequestService {
+  private resumes?: ResumeService;
   constructor(private readonly db: Db, private readonly cfg: IdpConfig, private readonly key: SigningKey) {}
+
+  /** Enables passkey-signed "Kaldığı yerden devam et" requests to approve pkg-resume requests. */
+  attachResumeService(r: ResumeService): void {
+    this.resumes = r;
+  }
 
   /** Marks overdue PENDING items EXPIRED (persisted, audited). */
   expireOverdue(): void {
@@ -183,6 +190,7 @@ export class RequestService {
       expiresAt: v.isoTime(o, 'expiresAt'),
     };
     v.validateWindow(rec.requestedAt, rec.expiresAt, now, this.cfg.maxRequestTtlSeconds);
+    let autoApproved = false;
     transaction(this.db, () => {
       if (this.db.prepare('SELECT 1 FROM approval_requests WHERE request_id = ?').get(rec.requestId)) {
         throw new HttpError(409, 'DUPLICATE_REQUEST', 'requestId already exists');
@@ -197,7 +205,22 @@ export class RequestService {
         .run(rec.requestId, rec.projectId, rec.packageId, rec.revision, rec.contextFingerprint, rec.specFingerprint,
           rec.directorSessionId ?? null, rec.taskId ?? null, rec.operation, rec.nonce, rec.summary, rec.requestedAt, rec.expiresAt, now);
       audit(this.db, now, 'otonommcp', 'approval.created', rec.requestId, { projectId: rec.projectId, operation: rec.operation });
+      if (o.resumeRequestId !== undefined && o.resumeRequestId !== null) {
+        // Only a resume of the very run the human pressed "Kaldığı yerden devam et" for.
+        if (!this.resumes) throw new HttpError(400, 'RESUME_UNSUPPORTED', 'resume requests are not enabled');
+        if (!rec.packageId.startsWith('pkg-resume')) throw v.bad('resumeRequestId is only valid for pkg-resume packages');
+        const sum = JSON.parse(rec.summary) as { resumeOfRunId?: unknown };
+        const rr = this.resumes.consumeForApproval(o.resumeRequestId, rec.projectId, sum.resumeOfRunId, rec.requestId);
+        const user = this.db.prepare('SELECT * FROM users WHERE id = ?').get(rr.user_id) as User | undefined;
+        if (!user || user.disabled) throw new HttpError(403, 'FORBIDDEN', 'resume requester is no longer active');
+        this.approve(rec.requestId, user, rr.credential_id);
+        audit(this.db, now, user.id, 'approval.approved_by_resume_request', rec.requestId, { resumeId: rr.resume_id, runId: rr.run_id });
+        autoApproved = true;
+      }
     });
+    if (autoApproved) {
+      return { requestId: rec.requestId, status: 'APPROVED' as never, approvalUrl: `${this.cfg.origin}/#/approvals/${rec.requestId}`, expiresAt: iso(rec.expiresAt) };
+    }
     return { requestId: rec.requestId, status: 'PENDING', approvalUrl: `${this.cfg.origin}/#/approvals/${rec.requestId}`, expiresAt: iso(rec.expiresAt) };
   }
 

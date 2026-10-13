@@ -13,8 +13,8 @@ import { audit, deleteMeta, getMeta, setMeta, transaction, type Db } from './db'
 import { safeEqual, sha256Hex } from './keys';
 import { HttpError, bad } from './validation';
 
-export type ChallengePurpose = 'setup' | 'register' | 'login' | 'approve' | 'decide' | 'instruct';
-export type StepUpPurpose = 'approve' | 'decide' | 'instruct';
+export type ChallengePurpose = 'setup' | 'register' | 'login' | 'approve' | 'decide' | 'instruct' | 'resume';
+export type StepUpPurpose = 'approve' | 'decide' | 'instruct' | 'resume';
 
 export interface User {
   id: string;

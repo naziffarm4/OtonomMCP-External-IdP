@@ -235,6 +235,40 @@ export const MIGRATIONS: readonly Migration[] = [
       ALTER TABLE decision_answers ADD COLUMN answers TEXT;
     `,
   },
+  {
+    version: 6,
+    name: 'resume requests ("Kaldığı yerden devam et"); challenge purpose resume',
+    sql: `
+      DROP TABLE webauthn_challenges;
+      CREATE TABLE webauthn_challenges (
+        id TEXT PRIMARY KEY,
+        challenge TEXT NOT NULL UNIQUE,
+        purpose TEXT NOT NULL CHECK (purpose IN ('setup','register','login','approve','decide','instruct','resume')),
+        binding_hash TEXT NOT NULL,
+        user_id TEXT,
+        target_id TEXT,
+        payload TEXT,
+        created_at INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL,
+        used_at INTEGER
+      );
+      CREATE TABLE resume_requests (
+        resume_id TEXT PRIMARY KEY,
+        run_id TEXT NOT NULL,
+        project_id TEXT NOT NULL,
+        user_id TEXT NOT NULL REFERENCES users(id),
+        credential_id TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('PENDING','CLAIMED','STARTED','APPROVED','FAILED','EXPIRED')),
+        approval_request_id TEXT UNIQUE,
+        note TEXT,
+        created_at INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL,
+        claimed_at INTEGER,
+        finished_at INTEGER
+      );
+      CREATE INDEX idx_resume_run ON resume_requests(run_id, created_at);
+    `,
+  },
 ];
 
 export function openDatabase(dataDir: string, fileName = 'idp.sqlite'): Db {

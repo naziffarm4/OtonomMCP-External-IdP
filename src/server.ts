@@ -11,6 +11,7 @@ import { loadOrCreateClientToken, loadOrCreateSigningKey, safeEqual, sha256Hex, 
 import { RequestService } from './requests';
 import { RunMonitorService } from './runs';
 import { InstructionService } from './instructions';
+import { ResumeService, newResumeId } from './resumes';
 import * as nodeCrypto from 'node:crypto';
 import { HttpError, asObject } from './validation';
 
@@ -50,6 +51,7 @@ export interface Idp {
   requests: RequestService;
   runs: RunMonitorService;
   instructions: InstructionService;
+  resumes: ResumeService;
   clientToken: string;
   /** Setup code generated on this start (undefined if already set up or provided by env). */
   setupCode?: string;
@@ -66,6 +68,8 @@ export function createIdp(cfg: IdpConfig): Idp {
   const requests = new RequestService(db, cfg, key);
   const runs = new RunMonitorService(db, cfg);
   const instructions = new InstructionService(db, cfg, key);
+  const resumes = new ResumeService(db, cfg);
+  requests.attachResumeService(resumes);
   const setupCode = auth.ensureSetupCode();
   const statics = loadStatic();
   const limiter = new RateLimiter(cfg.now);
@@ -227,6 +231,17 @@ export function createIdp(cfg: IdpConfig): Idp {
       throw new HttpError(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
     }
 
+    // ---------- resume requests: machine side (aidm watcher, bearer) ----------
+    if (p === '/api/resume-requests' && method === 'GET') {
+      requireBearer(req);
+      return sendJson(res, 200, resumes.listPending(url.searchParams.get('status')));
+    }
+    if ((m = /^\/api\/resume-requests\/([^/]+)\/(claim|result)$/.exec(p)) && method === 'POST') {
+      requireBearer(req);
+      if (m[2] === 'claim') return sendJson(res, 200, resumes.claim(m[1]));
+      return sendJson(res, 200, resumes.result(m[1], await readJson(req, cfg.maxBodyBytes)));
+    }
+
     // ---------- run monitor (OtonomMCP -> IdP, informational only) ----------
     if ((m = /^\/api\/runs\/([^/]+)(\/events)?$/.exec(p))) {
       requireBearer(req);
@@ -305,7 +320,7 @@ export function createIdp(cfg: IdpConfig): Idp {
     }
     if ((m = /^\/api\/ui\/runs\/([^/]+)$/.exec(p)) && method === 'GET') {
       requireSession(req, false);
-      return sendJson(res, 200, { ...runs.detail(m[1], url.searchParams.get('sinceSeq')), ...instructions.viewForRun(m[1]) });
+      return sendJson(res, 200, { ...runs.detail(m[1], url.searchParams.get('sinceSeq')), ...instructions.viewForRun(m[1]), resume: resumes.eligibility(m[1]) });
     }
     // Live instruction: 1) options (validates the form, binds it to a new instructionId + passkey challenge)
     if ((m = /^\/api\/ui\/runs\/([^/]+)\/instructions\/options$/.exec(p)) && method === 'POST') {
@@ -326,6 +341,29 @@ export function createIdp(cfg: IdpConfig): Idp {
       const draft = payload as { runId: string; mode: 'NOTE' | 'PAUSE_AND_APPLY' | 'STOP'; text: string; taskId: string | null };
       if (!draft || draft.runId !== m[1]) throw new HttpError(401, 'WEBAUTHN_FAILED', 'Challenge bound to a different run');
       return sendJson(res, 200, instructions.create(instructionId, draft, s.user, credentialId));
+    }
+    // "Kaldığı yerden devam et": eligibility, then options (challenge bound to runId), then signed submit
+    if ((m = /^\/api\/ui\/runs\/([^/]+)\/resume$/.exec(p)) && method === 'GET') {
+      requireSession(req, false);
+      return sendJson(res, 200, resumes.eligibility(m[1]));
+    }
+    if ((m = /^\/api\/ui\/runs\/([^/]+)\/resume\/options$/.exec(p)) && method === 'POST') {
+      rateLimit(req, 'auth', cfg.authRateLimitPerMinute);
+      const s = requireSession(req, true);
+      const e = resumes.eligibility(m[1]);
+      if (!e.canResume) throw new HttpError(409, 'NOT_RESUMABLE', e.reason ?? 'not resumable');
+      const resumeId = newResumeId();
+      const options = await auth.stepUpOptions(s.idHash, s.user, 'resume', resumeId, { runId: e.runId });
+      return sendJson(res, 200, { resumeId, options });
+    }
+    if ((m = /^\/api\/ui\/runs\/([^/]+)\/resume\/([0-9a-fA-F-]{36})$/.exec(p)) && method === 'POST') {
+      rateLimit(req, 'auth', cfg.authRateLimitPerMinute);
+      const s = requireSession(req, true);
+      const b = asObject(await readJson(req, cfg.maxBodyBytes));
+      const resumeId = m[2].toLowerCase();
+      const { credentialId, payload } = await auth.stepUpVerifyWithPayload(s.idHash, s.user, 'resume', resumeId, b.assertion);
+      if (!payload || (payload as { runId?: string }).runId !== m[1]) throw new HttpError(401, 'WEBAUTHN_FAILED', 'Challenge bound to a different run');
+      return sendJson(res, 200, resumes.create(resumeId, m[1], s.user, credentialId));
     }
     if (p === '/api/ui/pending' && method === 'GET') {
       requireSession(req, false);
@@ -392,6 +430,7 @@ export function createIdp(cfg: IdpConfig): Idp {
     requests,
     runs,
     instructions,
+    resumes,
     clientToken,
     setupCode,
     startedAt,

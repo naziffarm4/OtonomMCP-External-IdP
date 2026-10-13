@@ -212,7 +212,7 @@ describe('migration 3 upgrades a live v2 database in place', () => {
     await h1.close();
     // Turn it into an exact v2 database (as on Nazif-PC): drop the v3 objects and its migration row.
     const raw = new DatabaseSync(`${dir}/idp.sqlite`);
-    raw.exec('ALTER TABLE decision_requests DROP COLUMN questions; ALTER TABLE decision_answers DROP COLUMN answers; DROP TABLE IF EXISTS instructions; DROP TABLE IF EXISTS instruction_channels; DROP TABLE run_events; DROP TABLE runs; DELETE FROM schema_migrations WHERE version >= 3;');
+    raw.exec('ALTER TABLE decision_requests DROP COLUMN questions; ALTER TABLE decision_answers DROP COLUMN answers; DROP TABLE IF EXISTS resume_requests; DROP TABLE IF EXISTS instructions; DROP TABLE IF EXISTS instruction_channels; DROP TABLE run_events; DROP TABLE runs; DELETE FROM schema_migrations WHERE version >= 3;');
     expect((raw.prepare('SELECT MAX(version) v FROM schema_migrations').get() as { v: number }).v).toBe(2);
     raw.close();
 

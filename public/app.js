@@ -274,6 +274,23 @@
     return card;
   }
 
+  var RESUME_STATUS_TR = { PENDING: 'OtonomMCP izleyicisinin almasını bekliyor', CLAIMED: 'Alındı, başlatılıyor', APPROVED: 'Onaylandı, çalışma devam ediyor', STARTED: 'Başlatıldı', FAILED: 'Başlatılamadı', EXPIRED: 'Süresi doldu (izleyici çalışmıyor olabilir)' };
+  /** "Kaldığı yerden devam et" card for stopped runs; handlers.resume() asks for the passkey. */
+  function renderResume(doc, r, handlers) {
+    var card = el(doc, 'section', { className: 'card resume' }, el(doc, 'h2', null, 'Kaldığı yerden devam'));
+    if (r.canResume) {
+      card.appendChild(el(doc, 'p', null, 'Çalışma durdu. Passkey ile onaylarsan OtonomMCP aynı çalıştırmayı (' + r.runId + ') arka planda kaldığı yerden sürdürür; Antigravity gerekmez.'));
+      if (handlers && handlers.resume) card.appendChild(el(doc, 'p', null, el(doc, 'button', { type: 'button', id: 'run-resume', onclick: function () { handlers.resume(); } }, 'Kaldığı yerden devam et')));
+    } else if (r.reason && r.pending) {
+      card.appendChild(el(doc, 'p', null, r.reason));
+    }
+    if (r.pending) {
+      card.appendChild(kvTable(doc, [['Son devam isteği', RESUME_STATUS_TR[r.pending.status] || r.pending.status], ['Zaman', fmtTime(r.pending.createdAt)], ['Not', r.pending.note]]));
+    }
+    if (!r.canResume && !r.pending) return el(doc, 'span', null);
+    return card;
+  }
+
   var INSTR_STATUS_TR = { PENDING_DELIVERY: 'İletilmeyi bekliyor', RECEIVED: 'Alındı', APPLIED: 'Uygulandı', REJECTED: 'Reddedildi', EXPIRED: 'Süresi doldu' };
   var MODE_TR = { NOTE: 'Sadece not', PAUSE_AND_APPLY: 'Duraklat ve uygula', STOP: 'Durdur' };
 
@@ -355,6 +372,7 @@
         el(doc, 'td', null, String(t.cycles) + (t.maxAttempts !== null && t.maxAttempts !== undefined ? ' / ' + t.maxAttempts : '')),
         el(doc, 'td', null, t.lastSummary || '')));
     });
+    if (data.resume) wrap.appendChild(renderResume(doc, data.resume, handlers));
     if (data.instructionChannel || data.instructions) wrap.appendChild(renderInstructions(doc, data, handlers));
     wrap.appendChild(el(doc, 'section', { className: 'card' }, el(doc, 'h2', null, 'Görevler (' + tasks.length + ')'), tasks.length ? tt : el(doc, 'p', null, 'Görev bilgisi yok.')));
     if (s.lastDirectorAction) {
@@ -571,7 +589,20 @@
           .then(function () { instrHandlers.draft = null; return showRun(id); })
           .catch(showError)
           .then(function () { instrHandlers.busy = false; });
-      }, onDelete: function (run) { deleteRun(run, function () { root.location.hash = '#/runs'; }); } };
+      }, onDelete: function (run) { deleteRun(run, function () { root.location.hash = '#/runs'; }); },
+      resume: function () {
+        if (instrHandlers.busy) return;
+        instrHandlers.busy = true;
+        var base = '/api/ui/runs/' + encodeURIComponent(id) + '/resume';
+        api('POST', base + '/options', {})
+          .then(function (r) {
+            return wa().startAuthentication({ optionsJSON: r.options }).then(function (assertion) {
+              return api('POST', base + '/' + encodeURIComponent(r.resumeId), { assertion: assertion });
+            });
+          })
+          .catch(showError)
+          .then(function () { instrHandlers.busy = false; return showRun(id); });
+      } };
     }
     // Don't re-render under the user's cursor while a passkey prompt is open or the textarea has focus.
     if (instrHandlers.busy || (doc.activeElement && doc.activeElement.id && /^instr-/.test(doc.activeElement.id) && v.firstChild)) {
@@ -599,7 +630,7 @@
     return showHome().catch(showError);
   }
 
-  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail, renderInstructions: renderInstructions };
+  var exported = { el: el, renderApprovalDetail: renderApprovalDetail, renderDecisionDetail: renderDecisionDetail, renderPending: renderPending, remaining: remaining, renderRunsList: renderRunsList, renderRunDetail: renderRunDetail, renderInstructions: renderInstructions, renderResume: renderResume };
   if (typeof module !== 'undefined' && module.exports) module.exports = exported;
 
   if (root.document && !root.__IDP_TEST__) {
